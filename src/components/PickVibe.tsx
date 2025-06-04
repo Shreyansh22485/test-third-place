@@ -24,7 +24,13 @@ function PickVibe() {
           unoptimized
         />
       </div>
-
+           <div className="flex mt-10 justify-center items-center  bg-white">
+    <div className="border w-[210px]  bg-black rounded-2xl px-10 py-2 flex items-center justify-center">
+      <span className="text-white  text-[20px]  tracking-wide">
+       SIGN UP NOW!
+      </span>
+    </div>
+  </div>
     
     </div>
   );

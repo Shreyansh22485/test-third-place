@@ -1,153 +1,167 @@
 "use client";
-import React, { useState } from 'react';
-import Image from 'next/image';
 
+import React, { useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useSwipeable } from "react-swipeable";
+import Image from "next/image";
+
+/* ---------- slide data ---------- */
 const slides = [
   {
     id: 1,
-    title: 'SHOW UP & LET THE MAGIC HAPPEN',
+    title: "Tell Us About You",
     description:
-      'Complete a quick personality test and let us curate experiences tailored just for you.',
-    gif: '/step1.gif',
+      " Take a short personality test—so we can curate experiences tailored just for you.",
+    image: "/step1.gif",
   },
   {
     id: 2,
-    title: 'DISCOVER YOUR TRIBE',
+    title: "Get Matched",
     description:
-      'Find your people through curated experiences that match your vibe.',
-    gif: '/step2-ezgif.com-reverse.gif',
+      "Our algorithm connects you with strangers you’ll vibe with for epic evenings and deep conversations.",
+    image: "/step2-ezgif.com-reverse.gif",
   },
   {
     id: 3,
-    title: 'MAKE LASTING CONNECTIONS',
+    title: "Show Up. Let the Magic Unfold",
     description:
-      'Engage in meaningful events and build lifelong friendships.',
-    gif: '/step3-ezgif.com-crop.gif',
+      "Join handpicked events, show up, and spark genuine connections. Real people, real moments, and real life—this is where the magic happens.",
+    image: "/step3-ezgif.com-crop.gif",
   },
 ];
 
-const StepCarousel: React.FC = () => {
-  const [current, setCurrent] = useState(0);
+/* width of the fixed card frame */
+const CARD_W = 310;
+const clamp = (v: number, max: number) => Math.max(0, Math.min(v, max));
 
-  const next = () => {
-    if (current < slides.length - 1) setCurrent(current + 1);
-  };
-  const prev = () => {
-    if (current > 0) setCurrent(current - 1);
+export default function StepCarousel() {
+  const [idx, setIdx] = useState(0);
+  const [dir, setDir] = useState(0); // -1 = back, 1 = forward
+  const lock = useRef(false);        // stops wheel spam
+
+  /* ---------- move helpers ---------- */
+  const next  = () => setIdx((i) => clamp(i + 1, slides.length - 1));
+  const prev  = () => setIdx((i) => clamp(i - 1, slides.length - 1));
+
+  /* ---------- swipeable (touch / mouse / track-pad) ---------- */
+  const swipe = useSwipeable({
+    onSwipedLeft: () => { setDir(1);  next(); },
+    onSwipedRight: () => { setDir(-1); prev(); },
+    trackMouse: true,       // enables desktop drag
+    trackTouch: true,       // enables phones/tablets
+    delta: 30,              // min px before trigger
+    preventScrollOnSwipe: true,
+  });
+
+  /* ---------- wheel (two-finger track-pad) ---------- */
+  const onWheel = (e: React.WheelEvent) => {
+    if (lock.current) return;
+    const big = Math.abs(e.deltaX) > 30 || Math.abs(e.deltaY) > 30;
+    if (!big) return;
+
+    lock.current = true;
+    if (e.deltaX > 0 || e.deltaY > 0) { setDir(1);  next(); }
+    else                              { setDir(-1); prev(); }
+    setTimeout(() => (lock.current = false), 550); // unlock after animation
   };
 
+  /* ---------- framer variants ---------- */
+  const variants = {
+    enter: (d: number) => ({ x: d > 0 ? CARD_W : -CARD_W, opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (d: number) => ({ x: d > 0 ? -CARD_W : CARD_W, opacity: 0 }),
+  };
+
+  /* ---------- mini card component ---------- */
+  const Card = ({ step }: { step: typeof slides[number] }) => (
+    <div
+      className="w-[310px] h-[380px] rounded-2xl shadow-sm
+                 flex flex-col items-center px-6 py-6"
+      style={{ backgroundColor: "#FAF0E5" }}
+    >
+      <div className="w-8 h-8 flex items-center justify-center rounded-full bg-black
+                      text-white font-bold text-sm mb-4">
+        {step.id}
+      </div>
+      <h3 className="text-center  text-[20px]  mb-3 leading-tight px-2">
+        {step.title}
+      </h3>
+      <p className="text-center text-[14px] text-black  mb-4 leading-relaxed px-2">
+        {step.description}
+      </p>
+      <div className="flex-1 flex items-end justify-center -mb-5 w-full">
+        <Image
+          src={step.image}
+          alt={`Step ${step.id}`}
+          width={323.23}
+          height={189}
+          className="object-contain"
+          unoptimized
+          priority={step.id === 1}
+        />
+      </div>
+    </div>
+  );
+
+  /* ---------- progress bar ---------- */
+  const pct = ((idx + 1) / slides.length) * 100;
+
+  /* ---------- render ---------- */
   return (
-    <div className="w-full bg-white flex flex-col items-center pt-8 pb-8">
-      {/* Heading */}
+    <div className="flex flex-col items-center w-full bg-white py-4 space-y-5">
+      {/* headings */}
       <h1 className="text-black text-2xl sm:text-3xl md:text-4xl font-semibold text-center font-serif">
         HOW IT <span className="italic">WORKS ?</span>
       </h1>
-      <h2 className="text-black text-center font-serif mb-6">
+      <h2 className="text-black text-center">
         Real connection in 3 easy steps
       </h2>
 
-      {/* Progress Bar */}
-      <div className="w-full flex justify-center mb-8 px-4">
-        <div className="relative w-24 md:w-32 h-1 bg-gray-300 rounded-full">
-          <div
-            className="absolute top-0 left-0 h-1 bg-black rounded-full transition-all duration-300"
-            style={{
-              width: `${((current + 1) / slides.length) * 100}%`,
-            }}
+      {/* progress */}
+      <div className="w-[280px] h-px rounded-full bg-[#E5E5E5] overflow-hidden">
+        <div className="h-full bg-black transition-all" style={{ width: `${pct}%` }} />
+      </div>
+
+      {/* frame */}
+      <div
+        {...swipe}                         /* swipeable props */
+        onWheel={onWheel}                  /* track-pad wheel */
+        className="relative w-[310px] h-[380px] overflow-hidden"
+      >
+        <AnimatePresence custom={dir}>
+          <motion.div
+            key={slides[idx].id}
+            custom={dir}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.5 }}
+            className="w-full h-full flex items-center justify-center"
+          >
+            <Card step={slides[idx]} />
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* dots */}
+      <div className="flex space-x-2">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            aria-label={`Go to step ${i + 1}`}
+            onClick={() => { if (i === idx) return; setDir(i > idx ? 1 : -1); setIdx(i); }}
+            className={`w-2 h-2 rounded-full transition-colors
+                        ${i === idx ? "bg-black" : "bg-gray-300"}`}
           />
-        </div>
+        ))}
       </div>
 
-      {/* Slide Content */}
-      <div className="flex flex-col lg:flex-row lg:gap-12 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-xl mx-auto">
-        <div className="bg-[#FAF0E5] rounded-2xl shadow-lg px-4 py-6 flex flex-col items-center flex-1 min-h-[430px]">
-          {/* Step Circle (now always visible at the top) */}
-          <div className="w-10 h-10 flex items-center justify-center rounded-full bg-black text-white font-semibold text-lg mb-3">
-            {slides[current].id}
-          </div>
-          <div className="w-full flex flex-col items-center flex-1">
-            <h3 className="text-black text-center text-lg lg:text-xl font-serif italic font-semibold mb-3">
-              {slides[current].title}
-            </h3>
-            <p className="text-center text-black mb-4 text-sm lg:text-base font-serif leading-relaxed">
-              {slides[current].description}
-            </p>
-            {/* GIF at the bottom, sticking to the card's end */}
-            <div className="flex-1 flex items-end w-full">
-              <div className="w-60 h-60 sm:w-72 sm:h-72 lg:w-80 lg:h-80 mx-auto">
-                <Image
-                  src={slides[current].gif}
-                  alt={`Slide ${slides[current].id} GIF`}
-                  width={320}
-                  height={320}
-                  className="object-contain"
-                  unoptimized
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation Arrows (OUTSIDE the card) */}
-      <div className="flex items-center gap-8 mt-6">
-        {current > 0 ? (
-          <button
-            onClick={prev}
-            aria-label="Previous slide"
-            className="p-2 hover:bg-gray-200 rounded-full"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-              className="w-6 h-6 text-black"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </button>
-        ) : (
-          <div className="w-8 h-8" />
-        )}
-
-        {current < slides.length - 1 ? (
-          <button
-            onClick={next}
-            aria-label="Next slide"
-            className="p-2 hover:bg-gray-200 rounded-full"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-              className="w-6 h-6 text-black"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </button>
-        ) : (
-          <div className="w-8 h-8" />
-        )}
-      </div>
-
-      {/* Call-to-Action Button */}
-      <button className="mt-8 w-[70%] md:w-[50%] lg:w-auto bg-black text-white italic rounded-full py-3 px-8 text-base lg:text-lg font-serif shadow-md hover:bg-gray-800 transition-colors">
+      {/* CTA */}
+      <button className="w-[230px] mb-20 bg-black text-white italic rounded-xl py-3 px-1
+                         text-[18px]   hover:bg-gray-800 transition-colors">
         START YOUR JOURNEY
       </button>
     </div>
   );
-};
-
-export default StepCarousel;
+}

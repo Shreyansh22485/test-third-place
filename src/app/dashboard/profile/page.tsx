@@ -234,30 +234,30 @@ function ProfilePage() {
   const isPersonalityDone = true;
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-10 md:pb-16">
+    <div className="min-h-screen  pb-10 md:pb-16">
       {/* ───────────────────── HEADER ───────────────────── */}
       <header className="h-12 border-b border-gray-200 bg-white flex items-center justify-center italic font-semibold text-gray-700">
         <span className="text-lg">PROFILE</span>
       </header>
 
-      <section className="mx-auto mt-6 w-full max-w-md md:max-w-md">
+      <section className="mx-auto mt-6 w-full max-w-md px-4 sm:px-0">
         {/* ───────────────── BASIC INFO ───────────────── */}
-        <h3 className="text-xs font-semibold text-gray-500 tracking-wider mb-1 px-2 sm:px-0">
+        <h3 className="text-xs font-semibold text-gray-500 tracking-wider mb-1 italic px-2 sm:px-0">
           BASIC INFO
         </h3>
-        <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
+       <div className=" rounded-lg border border-gray-200 overflow-hidden mb-8">
           <Row icon={<UserIcon />} title="Name" right="Abhishek kumar" />
           <Row icon={<PhoneIcon />} title="Phone number" right="+91 7991100164" />
         </div>
 
         {/* ───────────── CURATION PROFILE ───────────── */}
         <div className="flex items-center justify-between mb-1 px-2 sm:px-0">
-          <h3 className="text-xs font-semibold text-gray-500 tracking-wider">
+          <h3 className="text-xs  italic font-semibold text-gray-500 tracking-wider">
             CURATION PROFILE
           </h3>
           <StatusBadge completed={isPersonalityDone} />
         </div>
-        <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
+      <div className="rounded-lg border border-gray-200 overflow-hidden mb-8">
           <Row
             icon={<BotIcon />}
             title="Take the personality test"
@@ -267,28 +267,28 @@ function ProfilePage() {
         </div>
 
         {/* ──────────── JOIN THE COMMUNITY ──────────── */}
-        <h3 className="text-xs font-semibold text-gray-500 tracking-wider mb-1 px-2 sm:px-0">
+        <h3 className="text-xs  italic font-semibold text-gray-500 tracking-wider mb-1 px-2 sm:px-0">
           JOIN THE COMMUNITY
         </h3>
-        <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
+       <div className=" rounded-md border border-gray-200 overflow-hidden mb-8">
           <Row icon={<WhatsappIcon />} title="WhatsApp" right="early access 💌" arrow />
           <Row icon={<InstaIcon />} title="Instagram" right="catch the vibe 📸" arrow />
         </div>
 
         {/* ─────────────── SUPPORT ─────────────── */}
-        <h3 className="text-xs font-semibold text-gray-500 tracking-wider mb-1 px-2 sm:px-0">
+        <h3 className="text-xs italic font-semibold text-gray-500 tracking-wider mb-1 px-2 sm:px-0">
           SUPPORT
         </h3>
-        <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
+      <div className="bg-white rounded-md border border-gray-200 overflow-hidden mb-8">
           <Row icon={<ChatIcon />} title="Text us" right="+91-6364124613" arrow />
           <Row icon={<MailIcon />} title="Email us" right="hello@yourthirdplace.in" arrow />
         </div>
 
         {/* ─────────────── ABOUT ─────────────── */}
-        <h3 className="text-xs font-semibold text-gray-500 tracking-wider mb-1 px-2 sm:px-0">
+        <h3 className="text-xs italic font-semibold text-gray-500 tracking-wider mb-1 px-2 sm:px-0">
           ABOUT
         </h3>
-        <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
+     <div className="bg-white rounded-md border border-gray-200 overflow-hidden mb-8">
           <Row icon={<InfoIcon />} title="How Third Place works?" arrow />
           <Row icon={<DocIcon />} title="Privacy policy" arrow />
           <Row icon={<DocIcon />} title="Terms of service" arrow />
@@ -296,10 +296,10 @@ function ProfilePage() {
         </div>
 
         {/* ─────────────── MANAGE ─────────────── */}
-        <h3 className="text-xs font-semibold text-gray-500 tracking-wider mb-1 px-2 sm:px-0">
+        <h3 className="text-xs italic font-semibold text-gray-500 tracking-wider mb-1 px-2 sm:px-0">
           MANAGE
         </h3>
-        <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
+       <div className="bg-white rounded-md border border-gray-200 overflow-hidden mb-8">
           <Row icon={<LogoutIcon />} title="Logout" arrow />
         </div>
       </section>

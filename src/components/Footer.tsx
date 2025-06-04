@@ -39,7 +39,7 @@ function Footer() {
           </div>
 
           {/* Become a Partner */}
-          <p className="mt-2 text-base underline underline-offset-2">
+          <p className="mt-2 text-base text-white underline underline-offset-2">
             BECOME A PARTNER
           </p>
         </div>

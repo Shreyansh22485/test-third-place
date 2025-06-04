@@ -66,11 +66,11 @@ function Sidebar() {
             <Icon
               size={24}
               strokeWidth={2}
-              className={active ? "stroke-teal-600" : "stroke-black"}
+              className={active ? "black" : "stroke-gray-500"}
             />
             <span
               className={`mt-1 text-xs font-medium ${
-                active ? "text-teal-600" : "text-black"
+                active ? "text-black" : "text-gray-500"
               }`}
             >
               {name}

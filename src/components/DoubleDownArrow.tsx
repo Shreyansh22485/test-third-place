@@ -1,5 +1,13 @@
+"use client"
+import React from 'react';
+import { motion } from 'framer-motion';
+
 const DoubleDownArrow = () => (
-  <div className="flex justify-center items-center bg-black w-full py-8">
+  <motion.div
+    className="flex justify-center items-center bg-black w-full  mb-10 mt-10"
+    animate={{ y: [0, 10, 0, -10, 0] }}
+    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+  >
     <svg
       width="60"
       height="60"
@@ -22,7 +30,7 @@ const DoubleDownArrow = () => (
         strokeLinejoin="round"
       />
     </svg>
-  </div>
+  </motion.div>
 );
 
 export default DoubleDownArrow;

@@ -3,8 +3,8 @@ import React from "react";
 
 function MobileHeader() {
   return (
-    <header className="w-full flex items-center justify-between px-4 py-2">
-      {/* Logo on the far left */}
+    <header className="w-full flex items-center justify-between pr-4 py-2 -mb-2">
+      {/* Logo on the far left with adjusted left margin */}
       <Image
         src="/Logo_001-01.png"
         alt="Third Place Logo"
@@ -15,19 +15,13 @@ function MobileHeader() {
       />
 
       {/* City + arrow on the far right */}
-      <div className="flex items-center gap-1">
-        <span className="text-0.5xl font-normal tracking-tight">Bengaluru</span>
-        <svg
-          width="10"
-          height="6"
-          viewBox="0 0 10 6"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+      <div className="flex items-center gap-2">
+        <span className="text-base tracking-tight uppercase">Bengaluru</span>
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
           <path
-            d="M1 1L5 5L9 1"
-            stroke="currentColor"
-            strokeWidth="1.2"
+            d="M4 6l4 4 4-4"
+            stroke="#222"
+            strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
           />

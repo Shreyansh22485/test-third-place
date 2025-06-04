@@ -1,3 +1,4 @@
+import WhatsappSection from "@/components/ui/WhatsappSection";
 import DoubleDownArrow from "../components/DoubleDownArrow";
 import FindTribe from "../components/FindTribe";
 import JoinNowDiv from "../components/FirstButton";
@@ -12,7 +13,7 @@ import WhyNeed from "../components/WhyNeed";
 
 export default function Home() {
   return (
-      <div>
+      <div className="bg-black">
                <div className="sticky top-0 z-50 ">
                         <Header/>
                </div>
@@ -42,6 +43,9 @@ export default function Home() {
                     <div>
                       <FindTribe/>
                     </div>
+                    <div>
+                      <WhatsappSection/>
+                      </div>
                     <div>
                       <Footer/>
                     </div>

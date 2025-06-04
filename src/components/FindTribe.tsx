@@ -51,9 +51,11 @@ export default function FindTribe() {
       ref={sectionRef}
       className="bg-black rounded-2xl p-10 flex flex-col items-center justify-center w-full overflow-hidden"
     >
-      <h2 className="text-4xl text-white font-semibold mb-8">
-        FIND YOUR <span className="italic">TRIBE</span>
+      <h2 className="text-4xl text-white mb-8">
+        FIND YOUR <span className="italic"> PEOPLE</span>
       </h2>
+      <p className=" text-white "> Say "yes" and discover the people,places,and</p>
+      <p className=" text-white mb-8"> moments you were never supposed to miss.</p>
       <div
         className="relative w-full max-w-4xl flex items-center justify-center"
         style={{
