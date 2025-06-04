@@ -290,10 +290,18 @@ function ProfilePage() {
           ABOUT
         </h3>
         <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
-          <Row icon={<InfoIcon />} title="How Third Place works?" arrow />
-          <Row icon={<DocIcon />} title="Privacy policy" arrow />
-          <Row icon={<DocIcon />} title="Terms of service" arrow />
-          <Row icon={<DocIcon />} title="Cancellations & refunds" arrow />
+          <Link href="/how-it-works">
+            <Row icon={<InfoIcon />} title="How Third Place works?" arrow />
+          </Link>
+          <Link href="/privacy-policy">
+            <Row icon={<DocIcon />} title="Privacy policy" arrow />
+          </Link>
+          <Link href="/terms-of-service">
+            <Row icon={<DocIcon />} title="Terms of service" arrow />
+          </Link>
+          <Link href="/cancellation-refund-policy">
+            <Row icon={<DocIcon />} title="Cancellations & refunds" arrow />
+          </Link>
         </div>
 
         {/* ─────────────── MANAGE ─────────────── */}
