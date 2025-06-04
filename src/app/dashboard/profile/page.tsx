@@ -1,4 +1,5 @@
 import React, { JSX } from "react";
+import Link from "next/link";
 
 /* ───────────────────────────────── ICONS ─────────────────────────────── */
 
@@ -288,7 +289,7 @@ function ProfilePage() {
         <h3 className="text-xs italic font-semibold text-gray-500 tracking-wider mb-1 px-2 sm:px-0">
           ABOUT
         </h3>
-     <div className="bg-white rounded-md border border-gray-200 overflow-hidden mb-8">
+        <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
           <Row icon={<InfoIcon />} title="How Third Place works?" arrow />
           <Row icon={<DocIcon />} title="Privacy policy" arrow />
           <Row icon={<DocIcon />} title="Terms of service" arrow />
