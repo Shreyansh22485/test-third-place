@@ -2,6 +2,7 @@ import {
   ConfirmationResult, 
   RecaptchaVerifier, 
   signInWithPhoneNumber,
+  signOut,
   User 
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -81,7 +82,6 @@ export class AuthService {
       }
     }
   }
-
   // Verify OTP
   async verifyOTP(confirmationResult: ConfirmationResult, otp: string): Promise<User> {
     try {
@@ -90,7 +90,13 @@ export class AuthService {
       const userCredential = await confirmationResult.confirm(otp);
       const user = userCredential.user;
       
+      // Get and store the Firebase ID token for API calls
+      const idToken = await user.getIdToken();
+      localStorage.setItem('authToken', idToken);
+      
       console.log('OTP verified successfully, user:', user.uid);
+      console.log('Auth token stored in localStorage');
+      
       return user;
     } catch (error: any) {
       console.error('Error verifying OTP:', error);
@@ -156,12 +162,24 @@ export class AuthService {
       throw new Error(error.message || 'Failed to register user');
     }
   }
-
   // Clean up resources
   cleanup(): void {
     if (this.recaptchaVerifier) {
       this.recaptchaVerifier.clear();
       this.recaptchaVerifier = null;
+    }
+  }
+
+  // Sign out user from Firebase
+  async signOut(): Promise<void> {
+    try {
+      await signOut(auth);
+      // Clear token from localStorage
+      localStorage.removeItem('authToken');
+      console.log('User signed out successfully');
+    } catch (error: any) {
+      console.error('Error signing out:', error);
+      throw new Error(error.message || 'Failed to sign out');
     }
   }
 }

@@ -2,9 +2,11 @@
 import React, { useState } from 'react';
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from "@/components/AuthProvider";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user, loading } = useAuth();
 
   return (
     <nav className="bg-black bg-opacity-80 text-white backdrop-blur-md px-4 md:px-6 lg:px-8 flex items-center justify-between relative">
@@ -18,12 +20,10 @@ function Header() {
           className="object-contain brightness-0 invert"
           priority
         />
-      </div>
-
-      {/* Desktop Navigation */}
+      </div>      {/* Desktop Navigation */}
       <div className="hidden lg:flex items-center gap-6 text-sm font-medium">
         <Link href="/about-us" className="hover:text-pink-400 transition-colors font-semibold">About Us</Link>
-        <Link href="/howitworks" className="hover:text-pink-400 transition-colors font-semibold">Login / Sign up</Link>
+        <Link href="/sign-in" className="hover:text-pink-400 transition-colors font-semibold">Login / Sign up</Link>
         <Link href="/howitworks" className="hover:text-pink-400 transition-colors font-semibold">How It Works?</Link>
         <Link href="/events" className="hover:text-pink-400 transition-colors font-semibold">Upcoming events</Link>
         <Link href="/events" className="hover:text-pink-400 transition-colors font-semibold">Become a partner</Link>
@@ -63,9 +63,8 @@ function Header() {
             <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </button>
-          <Link href="/about-us" className="py-2 text-white font-semibold hover:text-pink-400 w-full text-left ml-5 mt-8">About Us</Link>
-          <Link href="/about" className="py-2 text-white font-semibold hover:text-pink-400 w-full text-left ml-5">Login /Sign up</Link>
+          </button>          <Link href="/about-us" className="py-2 text-white font-semibold hover:text-pink-400 w-full text-left ml-5 mt-8">About Us</Link>
+          <Link href="/sign-in" className="py-2 text-white font-semibold hover:text-pink-400 w-full text-left ml-5">Login /Sign up</Link>
           <Link href="/howitworks" className="py-2 text-white font-semibold hover:text-pink-400 w-full text-left ml-5">How It Works?</Link>
           <Link href="/events" className="py-2 text-white font-semibold hover:text-pink-400 w-full text-left ml-5">Upcoming Events</Link>
           <Link href="/about" className="py-2 text-white font-semibold hover:text-pink-400 w-full text-left ml-5">Become a partner</Link>

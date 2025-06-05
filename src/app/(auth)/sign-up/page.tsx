@@ -7,6 +7,7 @@ import { ArrowLeft, ChevronDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { authService } from '@/services/auth.service';
 import { ConfirmationResult } from 'firebase/auth';
+import { useAuth } from '@/components/AuthProvider';
 
 interface FormData {
   phoneNumber: string;
@@ -26,10 +27,21 @@ interface FormData {
 
 export default function SignUpPage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);  const [formData, setFormData] = useState<FormData>({
+  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+
+  // Add console logging for debugging
+  useEffect(() => {
+    console.log('🔐 Sign-Up Page: Auth state', {
+      isAuthenticated: !!user,
+      uid: user?.uid,
+      phoneNumber: user?.phoneNumber,
+      authLoading
+    });
+  }, [user, authLoading]);const [formData, setFormData] = useState<FormData>({
     phoneNumber: '',
     countryCode: '+91',
     otp: '',
@@ -143,7 +155,12 @@ export default function SignUpPage() {
       // Registration successful, redirect to dashboard
       router.push('/dashboard');
     } catch (error: any) {
-      setError(error.message);
+      // Check if the error is about user already existing
+      if (error.message && error.message.includes('User already registered')) {
+        setError('EXISTING_USER');
+      } else {
+        setError(error.message);
+      }
     }
     
     setLoading(false);
@@ -224,9 +241,7 @@ export default function SignUpPage() {
           className="w-full bg-black text-white py-3 rounded-lg text-xl font-medium disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-800 transition-colors font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 500 }}
         >
           {loading ? 'Sending OTP...' : 'Continue'}
-        </button>
-
-        <div className="text-left">
+        </button>        <div className="text-left">
           <p className="font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300, fontSize: '12px', lineHeight: '18px' }}>
             By clicking Continue I agree to Third Place&apos;s{' '}
             <Link href="/terms-of-service" className="underline " style={{ fontWeight: 500 }}>
@@ -235,6 +250,15 @@ export default function SignUpPage() {
             &{' '}
             <Link href="/privacy-policy" className="underline" style={{ fontWeight: 500 }}>
               Privacy Policy
+            </Link>
+          </p>
+        </div>
+
+        <div className="text-left">
+          <p className="text-xl text-gray-600 font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}>
+            Already have an account?{' '}
+            <Link href="/sign-in" className="text-black underline font-medium" style={{ fontWeight: 500 }}>
+              Sign in
             </Link>
           </p>
         </div>

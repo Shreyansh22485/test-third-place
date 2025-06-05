@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { auth } from '@/lib/firebase';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
 
@@ -11,14 +12,48 @@ export const api = axios.create({
 
 // Add a request interceptor to include auth token
 api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+  async (config) => {
+    try {
+      // Get current user from Firebase
+      const user = auth.currentUser;
+      
+      if (user) {
+        // Get fresh token (Firebase handles refresh automatically)
+        const token = await user.getIdToken();
+        config.headers.Authorization = `Bearer ${token}`;
+        // Store fresh token in localStorage
+        localStorage.setItem('authToken', token);
+      } else {
+        // If no user, try to get token from localStorage as fallback
+        const token = localStorage.getItem('authToken');
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+      }
+    } catch (error) {
+      console.error('Error getting auth token:', error);
+      // Clear invalid token
+      localStorage.removeItem('authToken');
     }
+    
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor to handle auth errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Clear invalid token and redirect to sign-in
+      localStorage.removeItem('authToken');
+      if (typeof window !== 'undefined') {
+        window.location.href = '/sign-in';
+      }
+    }
     return Promise.reject(error);
   }
 );

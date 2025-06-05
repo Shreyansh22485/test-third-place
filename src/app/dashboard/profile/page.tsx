@@ -1,5 +1,8 @@
+"use client";
+
 import React, { JSX } from "react";
 import Link from "next/link";
+import { useUser } from "@/hooks/useUser";
 
 /* ───────────────────────────────── ICONS ─────────────────────────────── */
 
@@ -201,12 +204,16 @@ interface RowProps {
   right?: string;
   sub?: string;
   arrow?: boolean;
+  onClick?: () => void;
 }
 
-const Row = ({ icon, title, right, sub, arrow = false }: RowProps) => (
+const Row = ({ icon, title, right, sub, arrow = false, onClick }: RowProps) => (
   <div
-    className="flex items-center justify-between py-3 px-2 sm:px-4 
-               border-b last:border-b-0 border-gray-200"
+    className={`flex items-center justify-between py-3 px-2 sm:px-4 
+               border-b last:border-b-0 border-gray-200 ${
+                 onClick ? 'cursor-pointer hover:bg-gray-50' : ''
+               }`}
+    onClick={onClick}
   >
     <div className="flex items-start gap-3">
       <div className="mt-[2px] text-gray-600">{icon}</div>
@@ -231,8 +238,53 @@ const Row = ({ icon, title, right, sub, arrow = false }: RowProps) => (
 /* ────────────────────────────── PAGE ──────────────────────────────── */
 
 function ProfilePage() {
-  // Flip this to false to toggle the badge color/text:
-  const isPersonalityDone = true;
+  const { user, loading, error, logout } = useUser();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-2"></div>
+          <p className="text-gray-600">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">No user profile found</p>
+          <Link href="/sign-in" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+            Sign In
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const handleLogout = () => {
+    if (confirm('Are you sure you want to logout?')) {
+      logout();
+    }
+  };
 
   return (
     <div className="min-h-screen  pb-10 md:pb-16">
@@ -241,14 +293,21 @@ function ProfilePage() {
         <span className="text-lg">PROFILE</span>
       </header>
 
-      <section className="mx-auto mt-6 w-full max-w-md px-4 sm:px-0">
-        {/* ───────────────── BASIC INFO ───────────────── */}
+      <section className="mx-auto mt-6 w-full max-w-md px-4 sm:px-0">        {/* ───────────────── BASIC INFO ───────────────── */}
         <h3 className="text-xs font-semibold text-gray-500 tracking-wider mb-1 italic px-2 sm:px-0">
           BASIC INFO
         </h3>
-       <div className=" rounded-lg border border-gray-200 overflow-hidden mb-8">
-          <Row icon={<UserIcon />} title="Name" right="Abhishek kumar" />
-          <Row icon={<PhoneIcon />} title="Phone number" right="+91 7991100164" />
+        <div className=" rounded-lg border border-gray-200 overflow-hidden mb-8">
+          <Row 
+            icon={<UserIcon />} 
+            title="Name" 
+            right={`${user.firstName} ${user.lastName}`} 
+          />
+          <Row 
+            icon={<PhoneIcon />} 
+            title="Phone number" 
+            right={user.phoneNumber} 
+          />
         </div>
 
         {/* ───────────── CURATION PROFILE ───────────── */}
@@ -256,9 +315,9 @@ function ProfilePage() {
           <h3 className="text-xs  italic font-semibold text-gray-500 tracking-wider">
             CURATION PROFILE
           </h3>
-          <StatusBadge completed={isPersonalityDone} />
+          <StatusBadge completed={user.personalityTestCompleted} />
         </div>
-      <div className="rounded-lg border border-gray-200 overflow-hidden mb-8">
+        <div className="rounded-lg border border-gray-200 overflow-hidden mb-8">
           <Row
             icon={<BotIcon />}
             title="Take the personality test"
@@ -304,12 +363,16 @@ function ProfilePage() {
           </Link>
         </div>
 
-        {/* ─────────────── MANAGE ─────────────── */}
-        <h3 className="text-xs italic font-semibold text-gray-500 tracking-wider mb-1 px-2 sm:px-0">
+        {/* ─────────────── MANAGE ─────────────── */}        <h3 className="text-xs italic font-semibold text-gray-500 tracking-wider mb-1 px-2 sm:px-0">
           MANAGE
         </h3>
-       <div className="bg-white rounded-md border border-gray-200 overflow-hidden mb-8">
-          <Row icon={<LogoutIcon />} title="Logout" arrow />
+        <div className="bg-white rounded-md border border-gray-200 overflow-hidden mb-8">
+          <Row 
+            icon={<LogoutIcon />} 
+            title="Logout" 
+            arrow 
+            onClick={handleLogout}
+          />
         </div>
       </section>
     </div>
