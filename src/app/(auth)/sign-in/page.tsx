@@ -44,13 +44,12 @@ export default function SignInPage() {
         style={{ width: `${(currentStep / totalSteps) * 100}%` }}
       />
     </div>
-  );  const renderPhoneStep = () => (
-    <div className="space-y-6">
+  );  const renderPhoneStep = () => (    <div className="space-y-6">
       <div className="text-left space-y-2">
         <h1 className="text-xl font-medium text-gray-900 font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 500 }}>
           Welcome to third place.
         </h1>
-        <p className="text-gray-600 text-xl font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}>
+        <p className="text-xl font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}>
           <span className="font-medium" style={{ fontWeight: 500 }}>Third Place</span> helps you meet <span className="font-medium" style={{ fontWeight: 500 }}>new people</span>, discover your <span className="font-medium" style={{ fontWeight: 500 }}>city</span>, & deepen your <span className="font-medium" style={{ fontWeight: 500 }}>relationships</span>.
         </p>
       </div>
@@ -112,12 +111,11 @@ export default function SignInPage() {
       </div>
     </div>
   );  const renderOtpStep = () => (
-    <div className="space-y-6">
-      <div className="text-left space-y-2">
+    <div className="space-y-6">      <div className="text-left space-y-2">
         <h1 className="text-xl font-medium text-gray-900 font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 500 }}>
           Welcome to third place.
         </h1>
-        <p className="text-gray-600 text-xl font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}>
+        <p className="text-xl font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}>
           <span className="font-medium" style={{ fontWeight: 500 }}>Third Place</span> helps you meet <span className="font-medium" style={{ fontWeight: 500 }}>new people</span>, discover your <span className="font-medium" style={{ fontWeight: 500 }}>city</span>, & deepen your <span className="font-medium" style={{ fontWeight: 500 }}>relationships</span>.
         </p>
       </div>
