@@ -133,21 +133,23 @@ export default function SignUpPage() {
     setLoading(false);
   };  const handleSignUp = async () => {
     setLoading(true);
-    setError('');
-
-    try {      const userData = {
+    setError('');    try {      const userData = {
         phoneNumber: `${formData.countryCode}${formData.phoneNumber}`,
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),
-        email: formData.email.toLowerCase().trim(),
         gender: formData.gender,
         dateOfBirth: formData.dateOfBirth,
-        address: {
-          city: formData.address.city.trim(),
-          state: formData.address.state.trim(),
-          country: formData.address.country,
-          pincode: formData.address.pincode.trim()
-        }
+        // Only include email if it's not empty
+        ...(formData.email.trim() && { email: formData.email.toLowerCase().trim() }),
+        // Only include address if any field is not empty
+        ...((formData.address.city.trim() || formData.address.state.trim() || formData.address.pincode.trim()) && {
+          address: {
+            ...(formData.address.city.trim() && { city: formData.address.city.trim() }),
+            ...(formData.address.state.trim() && { state: formData.address.state.trim() }),
+            country: formData.address.country,
+            ...(formData.address.pincode.trim() && { pincode: formData.address.pincode.trim() })
+          }
+        })
       };
 
       await authService.registerUser(userData);
@@ -334,9 +336,7 @@ export default function SignUpPage() {
             onChange={(e) => handleInputChange('firstName', e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-3 py-3 text-xl font-light focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}
           />
-        </div>
-
-        <div>
+        </div>        <div>
           <label className="block text-xl text-gray-700 mb-1 font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}>
             Last name*
           </label>
@@ -345,19 +345,6 @@ export default function SignUpPage() {
             placeholder="Enter your last name"
             value={formData.lastName}
             onChange={(e) => handleInputChange('lastName', e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-3 text-xl font-light focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}
-          />
-        </div>
-
-        <div>
-          <label className="block text-xl text-gray-700 mb-1 font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}>
-            Email*
-          </label>
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={formData.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-3 py-3 text-xl font-light focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}
           />
         </div>
@@ -392,50 +379,9 @@ export default function SignUpPage() {
               onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-3 text-xl font-light focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}
             />
-          </div>        </div>
-
-        <div>
-          <label className="block text-xl text-gray-700 mb-1 font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}>
-            City*
-          </label>
-          <input
-            type="text"
-            placeholder="Enter your city"
-            value={formData.address.city}
-            onChange={(e) => handleInputChange('address.city', e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-3 text-xl font-light focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}
-          />
-        </div>
-
-        <div>
-          <label className="block text-xl text-gray-700 mb-1 font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}>
-            State*
-          </label>
-          <input
-            type="text"
-            placeholder="Enter your state"
-            value={formData.address.state}
-            onChange={(e) => handleInputChange('address.state', e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-3 text-xl font-light focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}
-          />
-        </div>
-
-        <div>
-          <label className="block text-xl text-gray-700 mb-1 font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}>
-            Pincode*
-          </label>
-          <input
-            type="text"
-            placeholder="Enter your pincode"
-            value={formData.address.pincode}
-            onChange={(e) => handleInputChange('address.pincode', e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-3 text-xl font-light focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}
-          />
-        </div>
-
-        <button
+          </div>        </div>        <button
           onClick={handleNext}
-          disabled={!formData.firstName || !formData.lastName || !formData.email || !formData.gender || !formData.dateOfBirth || !formData.address.city || !formData.address.state || !formData.address.pincode || loading}
+          disabled={!formData.firstName || !formData.lastName || !formData.gender || !formData.dateOfBirth || loading}
           className="w-full bg-black text-white py-3 rounded-lg text-xl font-medium disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-800 transition-colors font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 500 }}
         >
           {loading ? 'Creating Account...' : 'Sign up'}
@@ -453,13 +399,8 @@ export default function SignUpPage() {
     if (!formData.firstName.trim()) {
       setError('First name is required');
       return;
-    }
-    if (!formData.lastName.trim()) {
+    }    if (!formData.lastName.trim()) {
       setError('Last name is required');
-      return;
-    }
-    if (!formData.email || !validateEmail(formData.email)) {
-      setError('Please enter a valid email address');
       return;
     }
     if (!formData.gender) {
@@ -469,9 +410,7 @@ export default function SignUpPage() {
     if (!formData.dateOfBirth) {
       setError('Please select your date of birth');
       return;
-    }
-
-    // Check age (must be at least 18)
+    }    // Check age (must be at least 18)
     const birthDate = new Date(formData.dateOfBirth);
     const today = new Date();
     const age = today.getFullYear() - birthDate.getFullYear();
@@ -479,24 +418,6 @@ export default function SignUpPage() {
     
     if (age < 18 || (age === 18 && monthDiff < 0) || (age === 18 && monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       setError('You must be at least 18 years old to sign up');
-      return;
-    }
-
-    // Validation for address
-    if (!formData.address.city.trim()) {
-      setError('City is required');
-      return;
-    }
-    if (!formData.address.state.trim()) {
-      setError('State is required');
-      return;
-    }
-    if (!formData.address.pincode.trim()) {
-      setError('Pincode is required');
-      return;
-    }
-    if (!/^\d{6}$/.test(formData.address.pincode)) {
-      setError('Please enter a valid 6-digit pincode');
       return;
     }
 
