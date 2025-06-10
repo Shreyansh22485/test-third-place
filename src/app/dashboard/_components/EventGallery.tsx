@@ -84,7 +84,7 @@ export default function EventGallery() {
     : 0;
 
   return (
-    <div className="space-y-5 pl-1 md:space-y-0">
+    <div className="space-y-5 pl-1  pr-1 md:space-y-0">
       {/* FILTER BAR */}
       <div className="inline-block rounded-2xl border border-gray-200 p-3 md:p-2 min-w-full md:mb-8">
         <p className="mb-2 text-[22px] -mt-3 font-[500px] italic tracking-wide">
@@ -177,7 +177,7 @@ export default function EventGallery() {
         <div className="md:hidden mt-2 -mb-5">
           <Progress
             value={progressValue}
-            className="h-px  w-[348px] bg-[#BDBDBD] [&>div]:bg-[#000000]"
+            className="h-px  w-[343px] bg-[#BDBDBD] [&>div]:bg-[#000000]"
           /> 
         </div>
       </div>
