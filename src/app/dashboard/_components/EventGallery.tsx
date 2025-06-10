@@ -10,39 +10,59 @@ import {
 } from "react";
 import { Listbox } from "@headlessui/react";
 import { useRouter } from "next/navigation";
-import { events, type Event } from "../events";
+import { eventService, type BackendEvent } from "@/services/events.service";
 import { Carousel, Card as AppleCard } from "@/components/ui/apple-cards-carousel";
 import MobileEventCard from "./MobileEventCard";
 import { Progress } from "@/components/ui/progress";
 
 export default function EventGallery() {
-  const [selectedSlug, setSelectedSlug] = useState<string>("");
+  const [events, setEvents] = useState<BackendEvent[]>([]);
+  const [selectedEventId, setSelectedEventId] = useState<string>("");
   const [scrollPct, setScrollPct] = useState<number>(0);
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const router = useRouter();
+  const router = useRouter();  // Fetch events from backend
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const fetchedEvents = await eventService.getAllEvents();
+        console.log('Fetched events:', fetchedEvents); // Debug log
+        setEvents(fetchedEvents);
+      } catch (error) {
+        console.error('Failed to fetch events:', error);
+        setEvents([]); // Set empty array on error
+      }
+    };
 
-  const visibleEvents: Event[] = useMemo(
-    () =>
-      selectedSlug ? events.filter((e) => e.slug === selectedSlug) : events,
-    [selectedSlug]
-  );
-
+    fetchEvents();
+  }, []);const visibleEvents: BackendEvent[] = useMemo(() => {
+    console.log('Events in useMemo:', events, 'Type:', typeof events, 'IsArray:', Array.isArray(events));
+    
+    // Ensure events is always an array
+    const eventsArray = Array.isArray(events) ? events : [];
+    
+    const result = selectedEventId 
+      ? eventsArray.filter((e) => e._id === selectedEventId) 
+      : eventsArray;
+    
+    console.log('Visible events result:', result, 'IsArray:', Array.isArray(result));
+    return result;
+  }, [selectedEventId, events]);
   const appleCards = visibleEvents.map((evt, index) => (
     <div
-      key={evt.slug}
-      onClick={() => router.push(`/events/${evt.slug}`)}
+      key={evt._id}
+      onClick={() => router.push(`/events/${evt._id}`)}
       className="cursor-pointer"
     >
       <AppleCard
         index={index}
         enableModal={false}
         card={{
-          category: evt.event_location,
-          title: evt.event_name,
-          src: evt.cover_photo_link,
+          category: evt.eventLocation.venueName,
+          title: evt.title,
+          src: evt.imageUrls[0] || '/1.png', // Use first image or fallback
           content: (
             <p className="text-neutral-600 dark:text-neutral-400 text-base md:text-xl font-sans max-w-3xl mx-auto">
-              {evt.short_description ?? "Tap to learn more"}
+              {evt.description || "Tap to learn more"}
             </p>
           ),
         }}
@@ -55,17 +75,15 @@ export default function EventGallery() {
     const pct = (el.scrollLeft / (el.scrollWidth - el.clientWidth)) * 100;
     setScrollPct(pct);
   };
-
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollLeft = 0;
       setScrollPct(0);
     }
-  }, [selectedSlug]);
-
+  }, [selectedEventId]);
   // For Listbox display
-  const selectedEvent = selectedSlug
-    ? events.find((e) => e.slug === selectedSlug)
+  const selectedEvent = selectedEventId && Array.isArray(events)
+    ? events.find((e) => e._id === selectedEventId)
     : null;
 
   // --- Progress bar logic for mobile ---
@@ -89,9 +107,8 @@ export default function EventGallery() {
       <div className="inline-block rounded-2xl border border-gray-200 p-3 md:p-2 min-w-full md:mb-8">
         <p className="mb-2 text-[22px] -mt-3 font-[500px] italic tracking-wide">
           CURATE MY NIGHT ✨
-        </p>
-        <div className="relative w-full">
-          <Listbox value={selectedSlug} onChange={setSelectedSlug}>
+        </p>        <div className="relative w-full">
+          <Listbox value={selectedEventId} onChange={setSelectedEventId}>
             <div className="relative">
           <Listbox.Button
   /* added `relative` and tweaked right-padding */
@@ -139,11 +156,11 @@ export default function EventGallery() {
                       All Events
                     </li>
                   )}
-                </Listbox.Option>
-                {events.map((evt) => (
+                          </Listbox.Option>
+                {Array.isArray(events) && events.map((evt) => (
                   <Listbox.Option
-                    key={evt.slug}
-                    value={evt.slug}
+                    key={evt._id}
+                    value={evt._id}
                     as={Fragment}
                   >
                     {({ active, selected }) => (
@@ -154,7 +171,7 @@ export default function EventGallery() {
                           ${selected ? "font-semibold" : ""}
                         `}
                       >
-                        {evt.event_name}
+                        {evt.title}
                       </li>
                     )}
                   </Listbox.Option>
@@ -191,7 +208,7 @@ export default function EventGallery() {
       >
         {visibleEvents.map((evt) => (
           <div
-            key={evt.slug}
+            key={evt._id}
             className="
               snap-center shrink-0
               w-[92vw] max-w-[315px]
