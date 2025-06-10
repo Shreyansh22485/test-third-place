@@ -1,17 +1,24 @@
 import React from 'react';
+import { DM_Sans } from 'next/font/google';
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  display: 'swap',
+});
 
 function NewsSection() {
   return (
-    <div className="bg-black w-full py-12 px-2 sm:px-4 md:px-6 lg:px-8">
-      <div className="flex flex-col-reverse lg:flex-row items-center max-w-6xl mx-auto gap-8">
+    <div className={`bg-black w-full py-16 px-2 sm:px-4 md:px-6 lg:px-8 ${dmSans.className}`}>
+      <div className="flex flex-col-reverse font-sans lg:flex-row items-center max-w-6xl mx-auto gap-8">
         {/* Left: News Card */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center">
           <div className="relative flex gap-3 md:gap-6 items-start">
             {/* Vertical white line */}
             <div className="absolute left-0 top-0 h-full w-1 bg-white rounded-full" />
             <div className="pl-3 sm:pl-5 md:pl-8 w-full">
-              <div className="bg-white text-black font-bold px-3 py-1.5 rounded text-xs sm:text-sm md:text-base w-fit mb-3 md:mb-4 shadow-md">
-                NEWS
+              <div className="bg-white text-black font-bold h-[20px] font-sans text-[14px] px-3  rounded text-xs sm:text-sm md:text-base w-fit mb-3 md:mb-4 shadow-md">
+                BREAKING NEWS
               </div>
               <h3 className="font-bold uppercase font-sans tracking-tight leading-snug text-left w-full text-white">
                 <span

@@ -86,25 +86,64 @@ export default function EventGallery() {
     ? events.find((e) => e._id === selectedEventId)
     : null;
 
+  // --- Progress bar logic for mobile ---
+  const getActiveIndex = () => {
+    if (!scrollRef.current) return 0;
+    const el = scrollRef.current;
+    const card = el.querySelector('div > div');
+    const cardWidth = card?.clientWidth || 1;
+    // 20 is the space-x-5 (1.25rem)
+    const idx = Math.round(el.scrollLeft / (cardWidth + 20));
+    return Math.min(idx, visibleEvents.length - 1);
+  };
+  const activeIndex = getActiveIndex();
+  const progressValue = visibleEvents.length
+    ? ((activeIndex + 1) / visibleEvents.length) * 100
+    : 0;
+
   return (
-    <div className="space-y-5 md:space-y-0">
+    <div className="space-y-5 pl-1  pr-1 md:space-y-0">
       {/* FILTER BAR */}
-      <div className="inline-block rounded-4xl border border-gray-200 p-3 md:p-2 min-w-full">
-        <p className="mb-2 text-xl font-semibold italic tracking-wide">
+      <div className="inline-block rounded-2xl border border-gray-200 p-3 md:p-2 min-w-full md:mb-8">
+        <p className="mb-2 text-[22px] -mt-3 font-[500px] italic tracking-wide">
           CURATE MY NIGHT ✨
         </p>        <div className="relative w-full">
           <Listbox value={selectedEventId} onChange={setSelectedEventId}>
             <div className="relative">
-              <Listbox.Button className="w-60 mb-2 pr-8 rounded-2xl bg-gray-100 border border-gray-300
-                px-3 py-2 text-sm outline-none min-w-full appearance-none
-                focus:ring-2 focus:ring-gray-300 focus:border-gray-300
-                transition flex justify-between items-center">
-                {selectedEvent ? selectedEvent.title : 'Choose your "vibe"'}
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="ml-2">
-                  <path d="M4 6l4 4 4-4" stroke="#222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </Listbox.Button>
-              <Listbox.Options className="absolute z-10 mt-1 w-full bg-white rounded-xl shadow-lg border border-gray-200 max-h-60 overflow-auto">
+          <Listbox.Button
+  /* added `relative` and tweaked right-padding */
+  className="relative w-60 -mt-1 pr-10 text-[18px] rounded-2xl bg-gray-100 h-[35px]
+             px-3 py-2 text-sm outline-none min-w-full appearance-none
+             focus:ring-2 focus:ring-gray-300 focus:border-gray-300
+             transition flex items-center"
+>
+  {selectedEvent ? (
+    <span className="truncate">{selectedEvent.event_name}</span>
+  ) : (
+    <span className="whitespace-nowrap">
+      Choose your <span className="italic">"vibe"</span>
+    </span>
+  )}
+
+  {/* perfectly centred & 4 px from the right */}
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
+  >
+    <path
+      d="M6 9l6 6 6-6"
+      stroke="#222"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+</Listbox.Button>
+
+              <Listbox.Options className="absolute z-10 mt-1 w-full bg-white rounded-xl shadow-lg border border-gray-200 max-h-60 overflow-auto list-none">
                 <Listbox.Option key="" value="" as={Fragment}>
                   {({ active, selected }) => (
                     <li
@@ -144,34 +183,35 @@ export default function EventGallery() {
       </div>
 
       {/* INVITE HEADER + PROGRESS */}
-      <div className="inline-block rounded-xl p-3 md:p-2 min-w-full sm:mt-3 -mt-5">
-        <p className="text-[22px] font-semibold italic tracking-wide">
+      <div className="inline-block pl-1 rounded-xl p-3 md:p-2 min-w-full sm:mt-3 -mt-7">
+        <p className="text-[22px]  italic  tracking-wide">
           YOU'RE INVITED IN&nbsp;•&nbsp;
           <span className="text-gray-400">{visibleEvents.length}</span>
         </p>
-        <p className="text-[16px] text-black">
+        <p className="text-[16px] -mt-1 text-black">
           A few special evenings are curated just for you.
         </p>
-        <div className="md:hidden mt-3">
+        <div className="md:hidden mt-2 -mb-5">
           <Progress
-            value={scrollPct}
-            className="h-px w-full bg-[#BDBDBD] [&>div]:bg-[#000000]"
-          />
+            value={progressValue}
+            className="h-px  w-[343px] bg-[#BDBDBD] [&>div]:bg-[#000000]"
+          /> 
         </div>
       </div>
 
       {/* MOBILE: horizontal scroll cards */}
-    <div
-  ref={scrollRef}
-  onScroll={handleScroll}
-  className="md:hidden flex space-x-5 overflow-x-auto px-4 -mx-4 pb-16
-             snap-x snap-mandatory scroll-smooth scrollbar-hide"
->        {visibleEvents.map((evt) => (
+      <div
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="md:hidden flex space-x-5 overflow-x-auto px-4.5 -mx-4 pb-16
+                   snap-x snap-mandatory scroll-smooth scrollbar-hide"
+      >
+        {visibleEvents.map((evt) => (
           <div
             key={evt._id}
             className="
               snap-center shrink-0
-              w-[92vw] max-w-[310px]
+              w-[92vw] max-w-[315px]
               h-[52vh]
             "
           >
