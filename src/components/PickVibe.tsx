@@ -3,32 +3,32 @@ import Image from 'next/image';
 
 function PickVibe() {
   return (
-    <div className=" w-full bg-white text-black flex flex-col items-center justify-center text-center p-4 pb-35 pt-5">
-      <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-serif mb-3">
+    <div className=" w-full bg-white text-black flex flex-col items-center justify-center text-center p-4 pb-13 py-3 -mt-2">
+      <h1 className="text-[32px] sm:text-5xl md:text-6xl lg:text-7xl  font-serif mb-1">
         PICK YOUR <span className="italic">VIBE</span>
       </h1>
-      <h2 className="text-lg sm:text-xl md:text-2xl font-serif font-normal mb-1">
+      <h2 className="text-[18px] sm:text-xl -mt-0.5 md:text-2xl ">
         From cozy dinners to dance-all-night
       </h2>
-      <h2 className="text-lg sm:text-xl md:text-2xl font-serif font-normal">
+      <h2 className="text-[18px]  -mt-0.5 sm:text-xl md:text-2xl ">
         parties- it's all here.
       </h2>
 
-      <div className="bg-white items-center flex flex-col justify-center  mt-10">
+      <div className="bg-white items-center flex flex-col justify-center  mt-4">
         <Image
           src="/protoType1.svg"
           alt="Animated character"
-          width={355}
-          height={629}
+          width={260}
+          height={580}
           className="object-contain"
           unoptimized
         />
       </div>
-           <div className="flex mt-10 justify-center items-center  bg-white">
-    <div className="border w-[210px]  bg-black rounded-2xl px-10 py-2 flex items-center justify-center">
-      <span className="text-white  text-[20px]  tracking-wide">
+           <div className="flex mt-8 mb-5 justify-center items-center  bg-white">
+    <div className="border w-[170px] h-[40px]  bg-black rounded-xl px-6 py-1.5 flex items-center justify-center">
+      <button className="text-white  text-[18px]  tracking-wide">
        SIGN UP NOW!
-      </span>
+      </button>
     </div>
   </div>
     

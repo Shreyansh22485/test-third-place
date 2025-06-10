@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 const DoubleDownArrow = () => (
   <motion.div
-    className="flex justify-center items-center bg-black w-full  mb-10 mt-10"
+    className="flex justify-center items-center bg-black w-full mb-10 mt-10"
     animate={{ y: [0, 10, 0, -10, 0] }}
     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
   >

@@ -4,98 +4,108 @@ import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSwipeable } from "react-swipeable";
 import Image from "next/image";
-
+import { DM_Sans } from "next/font/google";
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  display: 'swap',
+});
 /* ---------- slide data ---------- */
 const slides = [
   {
     id: 1,
-    title: "Tell Us About You",
+    title: "TELL US ABOUT YOU",
     description:
-      " Take a short personality test—so we can curate experiences tailored just for you.",
+      "Take a quick personality test — so we can match you with the right people and the right vibes.",
     image: "/step1.gif",
   },
   {
     id: 2,
-    title: "Get Matched",
+    title: "GET MATCHED",
     description:
-      "Our algorithm connects you with strangers you’ll vibe with for epic evenings and deep conversations.",
+      "Our algorithm matches you with amazing people for unforgettable evenings and deep conversations.",
     image: "/step2-ezgif.com-reverse.gif",
   },
   {
     id: 3,
-    title: "Show Up. Let the Magic Unfold",
+    title: "SHOW UP & LET THE MAGIC HAPPEN",
     description:
-      "Join handpicked events, show up, and spark genuine connections. Real people, real moments, and real life—this is where the magic happens.",
+      "Join curated experiences, meet real people, and spark something real—right here, in real life. ✨",
     image: "/step3-ezgif.com-crop.gif",
   },
 ];
 
-/* width of the fixed card frame */
-const CARD_W = 310;
-const clamp = (v: number, max: number) => Math.max(0, Math.min(v, max));
+/* card sizing */
+const CARD_W = 270;
+const CARD_H = 320;
+const clamp = (v, max) => Math.max(0, Math.min(v, max));
 
 export default function StepCarousel() {
   const [idx, setIdx] = useState(0);
-  const [dir, setDir] = useState(0); // -1 = back, 1 = forward
-  const lock = useRef(false);        // stops wheel spam
+  const [dir, setDir] = useState(0); // -1 = back, 1 = next
+  const lock = useRef(false);
 
-  /* ---------- move helpers ---------- */
-  const next  = () => setIdx((i) => clamp(i + 1, slides.length - 1));
-  const prev  = () => setIdx((i) => clamp(i - 1, slides.length - 1));
+  /* ---------- slide helpers ---------- */
+  const next = () => setIdx((i) => clamp(i + 1, slides.length - 1));
+  const prev = () => setIdx((i) => clamp(i - 1, slides.length - 1));
 
-  /* ---------- swipeable (touch / mouse / track-pad) ---------- */
-  const swipe = useSwipeable({
-    onSwipedLeft: () => { setDir(1);  next(); },
-    onSwipedRight: () => { setDir(-1); prev(); },
-    trackMouse: true,       // enables desktop drag
-    trackTouch: true,       // enables phones/tablets
-    delta: 30,              // min px before trigger
+  /* ---------- swipe ---------- */
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => {
+      setDir(1);
+      next();
+    },
+    onSwipedRight: () => {
+      setDir(-1);
+      prev();
+    },
+    trackMouse: true,
+    trackTouch: true,
+    delta: 5,
     preventScrollOnSwipe: true,
+    rotationAngle: 5,
+    touchEventOptions: { passive: false },
   });
 
-  /* ---------- wheel (two-finger track-pad) ---------- */
-  const onWheel = (e: React.WheelEvent) => {
+  /* ---------- wheel ---------- */
+  const onWheel = (e) => {
     if (lock.current) return;
-    const big = Math.abs(e.deltaX) > 30 || Math.abs(e.deltaY) > 30;
-    if (!big) return;
-
+    if (Math.abs(e.deltaX) < 15 && Math.abs(e.deltaY) < 15) return;
     lock.current = true;
-    if (e.deltaX > 0 || e.deltaY > 0) { setDir(1);  next(); }
-    else                              { setDir(-1); prev(); }
-    setTimeout(() => (lock.current = false), 550); // unlock after animation
+    e.deltaX > 0 || e.deltaY > 0 ? (setDir(1), next()) : (setDir(-1), prev());
+    setTimeout(() => (lock.current = false), 350);
   };
 
   /* ---------- framer variants ---------- */
   const variants = {
-    enter: (d: number) => ({ x: d > 0 ? CARD_W : -CARD_W, opacity: 0 }),
+    enter: (d) => ({ x: d > 0 ? CARD_W : -CARD_W, opacity: 0 }),
     center: { x: 0, opacity: 1 },
-    exit: (d: number) => ({ x: d > 0 ? -CARD_W : CARD_W, opacity: 0 }),
+    exit: (d) => ({ x: d > 0 ? -CARD_W : CARD_W, opacity: 0 }),
   };
 
-  /* ---------- mini card component ---------- */
-  const Card = ({ step }: { step: typeof slides[number] }) => (
+  /* ---------- Card ---------- */
+  const Card = ({ step }) => (
     <div
-      className="w-[310px] h-[380px] rounded-2xl shadow-sm
-                 flex flex-col items-center px-6 py-6"
-      style={{ backgroundColor: "#FAF0E5" }}
+      className="rounded-2xl shadow-sm flex flex-col items-center px-4 py-5"
+      style={{ width: CARD_W, height: CARD_H, backgroundColor: "#FAF0E5" }}
+      {...swipeHandlers}
     >
-      <div className="w-8 h-8 flex items-center justify-center rounded-full bg-black
-                      text-white font-bold text-sm mb-4">
+     <div className={`w-6 h-6 flex items-center justify-center rounded-full bg-black text-white text-[16px] py-3.5 px-3.5 mb-3 select-none ${dmSans.className}`}>
+
         {step.id}
       </div>
-      <h3 className="text-center  text-[20px]  mb-3 leading-tight px-2">
+      <h3 className="text-center text-[18px] font-medium leading-tight mb-1 select-none">
         {step.title}
       </h3>
-      <p className="text-center text-[14px] text-black  mb-4 leading-relaxed px-2">
+      <p className="text-center text-[14px] leading-relaxed mb-3 select-none">
         {step.description}
       </p>
-      <div className="flex-1 flex items-end justify-center -mb-5 w-full">
+      <div className="relative flex-1 w-full pointer-events-none -mb-12" >
         <Image
           src={step.image}
           alt={`Step ${step.id}`}
-          width={323.23}
-          height={189}
-          className="object-contain"
+          fill
+          style={{ objectFit: "contain" }}
           unoptimized
           priority={step.id === 1}
         />
@@ -103,32 +113,32 @@ export default function StepCarousel() {
     </div>
   );
 
-  /* ---------- progress bar ---------- */
+  /* ---------- progress ---------- */
   const pct = ((idx + 1) / slides.length) * 100;
 
-  /* ---------- render ---------- */
   return (
-    <div className="flex flex-col items-center w-full bg-white py-4 space-y-5">
-      {/* headings */}
-      <h1 className="text-black text-2xl sm:text-3xl md:text-4xl font-semibold text-center font-serif">
-        HOW IT <span className="italic">WORKS ?</span>
+    <div
+      className="flex flex-col items-center w-full bg-white space-y-4 select-none"
+      {...swipeHandlers}
+      onWheel={onWheel}
+      style={{ touchAction: "pan-y pinch-zoom" }}
+    >
+      {/* Headings */}
+      <h1 className="text-black text-[28px] sm:text-3xl mt-12 text-center">
+        HOW IT <span className="italic">WORKS?</span>
       </h1>
-      <h2 className="text-black text-center">
+      <h2 className="text-black text-center text-[15px] sm:text-base -mt-3">
         Real connection in 3 easy steps
       </h2>
 
-      {/* progress */}
-      <div className="w-[280px] h-px rounded-full bg-[#E5E5E5] overflow-hidden">
+      {/* Progress Bar */}
+      <div className="w-[240px] h-px bg-[#E5E5E5] rounded-full overflow-hidden">
         <div className="h-full bg-black transition-all" style={{ width: `${pct}%` }} />
       </div>
 
-      {/* frame */}
-      <div
-        {...swipe}                         /* swipeable props */
-        onWheel={onWheel}                  /* track-pad wheel */
-        className="relative w-[310px] h-[380px] overflow-hidden"
-      >
-        <AnimatePresence custom={dir}>
+      {/* Slide Frame */}
+      <div className="relative overflow-hidden" style={{ width: CARD_W, height: CARD_H }}>
+        <AnimatePresence custom={dir} initial={false} mode="popLayout">
           <motion.div
             key={slides[idx].id}
             custom={dir}
@@ -136,30 +146,16 @@ export default function StepCarousel() {
             initial="enter"
             animate="center"
             exit="exit"
-            transition={{ duration: 0.5 }}
-            className="w-full h-full flex items-center justify-center"
+            transition={{ type: "spring", stiffness: 260, damping: 28 }}
+            className="absolute inset-0 flex items-center justify-center"
           >
             <Card step={slides[idx]} />
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* dots */}
-      <div className="flex space-x-2">
-        {slides.map((_, i) => (
-          <button
-            key={i}
-            aria-label={`Go to step ${i + 1}`}
-            onClick={() => { if (i === idx) return; setDir(i > idx ? 1 : -1); setIdx(i); }}
-            className={`w-2 h-2 rounded-full transition-colors
-                        ${i === idx ? "bg-black" : "bg-gray-300"}`}
-          />
-        ))}
-      </div>
-
       {/* CTA */}
-      <button className="w-[230px] mb-20 bg-black text-white italic rounded-xl py-3 px-1
-                         text-[18px]   hover:bg-gray-800 transition-colors">
+      <button className="w-[210px] mb-14 mt-4 bg-black h-[40px] text-white rounded-xl py-1.5 text-[18px] hover:bg-gray-800 transition-colors">
         START YOUR JOURNEY
       </button>
     </div>

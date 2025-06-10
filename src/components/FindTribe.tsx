@@ -3,10 +3,10 @@ import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 const images = [
-  { src: "/1.png", alt: "Up" },
-  { src: "/4.png", alt: "Left" },
-  { src: "/3.png", alt: "Right" },
-  { src: "/2.png", alt: "Down" },
+  { src: "/2.png", alt: "Up" },
+  { src: "/3.png", alt: "Left" },
+  { src: "/4.png", alt: "Right" },
+  { src: "/1.png", alt: "Down" },
 ];
 
 export default function FindTribe() {
@@ -49,13 +49,13 @@ export default function FindTribe() {
   return (
     <div
       ref={sectionRef}
-      className="bg-black rounded-2xl p-10 flex flex-col items-center justify-center w-full overflow-hidden"
+      className="bg-black rounded-2xl pt-13 flex flex-col items-center justify-center w-full overflow-hidden"
     >
-      <h2 className="text-4xl text-white mb-8">
+      <h2 className="text-[32px] text-white mb-1">
         FIND YOUR <span className="italic"> PEOPLE</span>
       </h2>
-      <p className=" text-white "> Say "yes" and discover the people,places,and</p>
-      <p className=" text-white mb-8"> moments you were never supposed to miss.</p>
+      <p className=" text-white w-full pl-7 justify-center text-[18px]"> Say "yes" and discover the people, places, and</p>
+      <p className=" text-white w-full pl-9 justify-center text-[18px] mb-13"> moments you were never supposed to miss.</p>
       <div
         className="relative w-full max-w-4xl flex items-center justify-center"
         style={{

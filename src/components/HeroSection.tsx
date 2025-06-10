@@ -19,13 +19,13 @@ function HeroSection() {
       <div className="w-full px-4 mt-8 flex flex-col lg:flex-row lg:items-center lg:justify-between max-w-6xl mx-auto">
         {/* Text content */}
         <div className="w-full lg:w-2/3 text-center lg:text-left">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight mb-2">
-            REAL CONNECTION
+          <h1 className="text-[32px] sm:text-5xl md:text-6xl lg:text-7xl  text-white tracking-tight ">
+            REAL CONNECTIONS,
           </h1>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight mb-4">
+          <h1 className="text-[32px] sm:text-5xl md:text-6xl lg:text-7xl text-white tracking-tight -mt-2 mb-4">
             REAL LIFE
           </h1>
-          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-200 max-w-2xl mx-auto lg:mx-0">
+          <p className="text-[18px] sm:text-xl md:text-2xl lg:text-3xl text-gray-200 max-w-2xl mx-auto lg:mx-0">
             Find your people through curated experiences.
           </p>
         </div>
