@@ -23,27 +23,26 @@ export default function MobileEventCard({ evt }: { evt: BackendEvent }) {
           md:w-full md:h-56
           overflow-hidden rounded-xl
         "
-      >
-        <Image
-          src={evt.imageUrls[0] || '/1.png'}
-          alt={evt.title}
+      >        <Image
+          src={evt.imageUrls?.[0] || evt.cover_photo_link || '/1.png'}
+          alt={evt.title || evt.event_name || 'Event'}
           fill
           className="object-cover rounded-3xl transition-transform duration-200 hover:scale-105"
           priority
         />
         <span className="absolute bottom-3 right-3 rounded-md bg-black/70 px-2 py-1 text-xs font-semibold text-white backdrop-blur">
-          {new Date(evt.startTime).toLocaleDateString("en-IN", {
+          {evt.startTime ? new Date(evt.startTime).toLocaleDateString("en-IN", {
             day: "2-digit",
             month: "short",
-          })}
+          }) : 'TBD'}
         </span>
       </div>
 
       {/* ---------- TEXT ---------- */}
       <div className="grow flex flex-col justify-between">
         <div>
-          <h3 className="text-base text-[22px] font-[500] leading-snug">{evt.title}</h3>
-          <p className="text-[16px] font-[300] -mt-2 text-black">{evt.eventLocation.venueName}</p>
+          <h3 className="text-base text-[22px] font-[500] leading-snug">{evt.title || evt.event_name || 'Event Title'}</h3>
+          <p className="text-[16px] font-[300] -mt-2 text-black">{evt.eventLocation?.venueName || evt.location || 'Location TBD'}</p>
         </div>
       </div>
     </div>

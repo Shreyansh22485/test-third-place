@@ -1,6 +1,10 @@
+"use client";
+
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   MapPin,
@@ -12,21 +16,149 @@ import {
 } from "lucide-react";
 
 import { eventService, type BackendEvent } from "@/services/events.service";
+import { paymentService } from "@/services/payment.service";
+import { personalityTestService } from "@/services/personalityTest.service";
+import { useRazorpay } from "@/hooks/useRazorpay";
+import PaymentUtils from "@/utils/payment.utils";
+import { useUser } from "@/hooks/useUser";
 
 type PageProps = { params: any };
 
-export default async function EventPage({ params }: PageProps) {
-  const { id } = await params;
-  
-  let event: BackendEvent;
-  try {
-    event = await eventService.getEventById(id);
-  } catch (error) {
-    console.error('Error fetching event:', error);
-    return notFound();
-  }
+export default function EventPage({ params }: PageProps) {
+  const [event, setEvent] = useState<BackendEvent | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [numberOfSeats, setNumberOfSeats] = useState(1);
+  const router = useRouter();
+  const { openRazorpay } = useRazorpay();
+  const { user } = useUser();
 
-  if (!event) return notFound();
+  useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        const { id } = await params;
+        const fetchedEvent = await eventService.getEventById(id);
+        setEvent(fetchedEvent);
+      } catch (error) {
+        console.error('Error fetching event:', error);
+        return notFound();
+      }
+    };
+
+    fetchEvent();
+  }, [params]);
+
+  if (!event) return <div>Loading...</div>;  const handleContinue = async () => {
+    try {
+      setIsLoading(true);
+
+      // Log payment initiation
+      PaymentUtils.logPaymentActivity('PAYMENT_INITIATED', {
+        eventId: event._id,
+        eventName: event.title,
+        numberOfSeats,
+        totalAmount: event.experienceTicketPrice + event.price
+      });
+
+      // 1. Check if personality test is completed
+      const testStatus = await personalityTestService.getTestStatus();
+      
+      if (!testStatus.personalityTestCompleted) {
+        router.push('/personality-test');
+        return;
+      }
+
+      // 2. Create payment order
+      const orderResponse = await paymentService.createPaymentOrder(event._id, numberOfSeats);
+      
+      PaymentUtils.logPaymentActivity('ORDER_CREATED', {
+        orderId: orderResponse.data.orderId,
+        bookingId: orderResponse.data.bookingId,
+        amount: orderResponse.data.amount
+      });
+
+      // 3. Validate order response
+      if (!orderResponse.data.orderId || !orderResponse.data.razorpayKeyId) {
+        throw new Error('Invalid order response from server');
+      }      // 4. Open Razorpay checkout
+      await openRazorpay({
+        key: orderResponse.data.razorpayKeyId,
+        amount: orderResponse.data.amount * 100, // Backend sends in rupees, Razorpay needs paise
+        currency: orderResponse.data.currency || 'INR',
+        name: 'The Third Place',
+        description: `Booking for ${orderResponse.data.event.name}`,
+        order_id: orderResponse.data.orderId,
+        handler: async (response: any) => {
+          try {
+            console.log('Payment success:', response);
+            
+            // Verify payment
+            await paymentService.verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              bookingId: orderResponse.data.bookingId,
+            });
+
+            // Redirect to success page
+            router.push(`/booking-success/${orderResponse.data.bookingId}`);
+          } catch (error) {
+            console.error('Payment verification failed:', error);
+            
+            // Cancel the booking on verification failure
+            await paymentService.cancelBooking(orderResponse.data.bookingId);
+            
+            alert('Payment verification failed. Your booking has been cancelled. Please try again.');
+          }
+        },
+        prefill: {
+          name: user ? `${user.firstName} ${user.lastName}` : '',
+          email: user?.email || '',
+          contact: user?.phoneNumber || '',
+        },
+        theme: {
+          color: '#000000',
+        },
+        modal: {
+          ondismiss: async () => {
+            try {
+              console.log('Payment cancelled by user');
+              
+              // Cancel the booking when payment is dismissed
+              await paymentService.cancelBooking(orderResponse.data.bookingId);
+              
+              // Also call the failure handler
+              await paymentService.handlePaymentFailure({
+                razorpay_order_id: orderResponse.data.orderId,
+                bookingId: orderResponse.data.bookingId,
+                error: { code: 'USER_CANCELLED', description: 'Payment cancelled by user' }
+              });
+              
+              console.log('Booking cancelled due to payment dismissal');
+            } catch (error) {
+              console.error('Error handling payment cancellation:', error);
+            }
+          },
+        },
+        retry: {
+          enabled: false, // Disable retry to prevent multiple bookings
+        },
+      });
+
+    } catch (error: any) {
+      console.error('Payment process failed:', error);
+      
+      // Show user-friendly error message
+      if (error.message.includes('minimum amount')) {
+        alert('The order amount is too low. Please contact support.');
+      } else if (error.message.includes('Invalid payment request')) {
+        alert('There was an issue with your booking request. Please try again.');
+      } else {
+        alert(error.message || 'Something went wrong. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
   // itinerary text - use backend description or default
   const itinerary = event.description || 
     "This experience will start with dinner with your closest matches and continue with going to a nearby bar for a holiday party with a live band.";
@@ -52,12 +184,15 @@ export default async function EventPage({ params }: PageProps) {
   });
 
   return (
-    <div className="bg-[#FAFAFA]">
-      {/* Sticky footer CTA */}
+    <div className="bg-[#FAFAFA]">      {/* Sticky footer CTA */}
       <footer className="fixed inset-x-0 bottom-0 z-10 border-t border-gray-300 bg-[#FAFAFA] px-4 py-3 backdrop-blur md:px-0">
         <div className="mx-auto w-full md:max-w-lg">
-          <button className="w-full rounded-full bg-black py-3 text-sm font-semibold text-white shadow-sm hover:opacity-90 transition">
-            Continue
+          <button 
+            onClick={handleContinue}
+            disabled={isLoading}
+            className="w-full rounded-full bg-black py-3 text-sm font-semibold text-white shadow-sm hover:opacity-90 transition disabled:opacity-50"
+          >
+            {isLoading ? 'Processing...' : 'Continue'}
           </button>
         </div>
       </footer>
@@ -82,12 +217,17 @@ export default async function EventPage({ params }: PageProps) {
             priority
             className="h-[436px] w-full object-cover"
           />
-        </div>
-
-        {/* Event title */}
+        </div>        {/* Event title */}
         <h1 className="mt-6 text-center text-lg font-semibold text-black">
           {event.title}
         </h1>
+
+        {/* Payment Mode Indicator */}
+        <div className="mt-2 text-center">
+          <span className={`text-xs px-2 py-1 rounded-full ${PaymentUtils.getPaymentModeClass()}`}>
+            {PaymentUtils.getPaymentModeText()}
+          </span>
+        </div>
 
         {/* Time + Location */}
         <div className="mt-3 overflow-hidden rounded-md border bg-white text-sm text-black divide-y divide-gray-300 border-gray-300">
