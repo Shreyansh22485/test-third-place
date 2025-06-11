@@ -14,26 +14,31 @@ export const api = axios.create({
 api.interceptors.request.use(
   async (config) => {
     try {
-      // Get current user from Firebase
-      const user = auth.currentUser;
-      
-      if (user) {
-        // Get fresh token (Firebase handles refresh automatically)
-        const token = await user.getIdToken();
-        config.headers.Authorization = `Bearer ${token}`;
-        // Store fresh token in localStorage
-        localStorage.setItem('authToken', token);
-      } else {
-        // If no user, try to get token from localStorage as fallback
-        const token = localStorage.getItem('authToken');
-        if (token) {
+      // Only try to get auth token on the client side
+      if (typeof window !== 'undefined') {
+        // Get current user from Firebase
+        const user = auth.currentUser;
+        
+        if (user) {
+          // Get fresh token (Firebase handles refresh automatically)
+          const token = await user.getIdToken();
           config.headers.Authorization = `Bearer ${token}`;
+          // Store fresh token in localStorage
+          localStorage.setItem('authToken', token);
+        } else {
+          // If no user, try to get token from localStorage as fallback
+          const token = localStorage.getItem('authToken');
+          if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+          }
         }
       }
     } catch (error) {
       console.error('Error getting auth token:', error);
-      // Clear invalid token
-      localStorage.removeItem('authToken');
+      // Clear invalid token (only on client side)
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('authToken');
+      }
     }
     
     return config;
@@ -48,9 +53,9 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Clear invalid token and redirect to sign-in
-      localStorage.removeItem('authToken');
+      // Clear invalid token and redirect to sign-in (only on client side)
       if (typeof window !== 'undefined') {
+        localStorage.removeItem('authToken');
         window.location.href = '/sign-in';
       }
     }
