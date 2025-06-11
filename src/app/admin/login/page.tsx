@@ -14,14 +14,14 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      const result = await adminService.login(formData.email, formData.password);
+      // Use fallback authentication for now
+      const result = await adminService.loginWithFallback(formData.email, formData.password);
       
       if (result.success) {
         router.push('/admin/dashboard');
