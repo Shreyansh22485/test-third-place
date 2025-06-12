@@ -1,23 +1,42 @@
+'use client';
+
 import React from 'react';
+import { Volume2, VolumeX } from 'lucide-react';
 import JoinNowDiv from './FirstButton';
 
-function HeroSection() {
-  return (
-    <section className="w-full flex flex-col items-center justify-start bg-black">
-      {/* Full-width video at the top */}
-      <video
-        className="w-full h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[80vh] object-cover"
-        src="/Video1(website).mp4"
-        poster="/images/mainarea-poster.jpg"
-        autoPlay
-        loop
-        muted
-        playsInline
-      />
+type Props = {
+  videoId: string;
+  activeVideo: string | null;
+  setActiveVideo: (id: string | null) => void;
+};
 
-      {/* Responsive content below the video */}
+function HeroSection({ videoId, activeVideo, setActiveVideo }: Props) {
+  const isMuted = activeVideo !== videoId;
+
+  return (
+    <section className="w-full mt-10 flex flex-col items-center justify-start bg-black">
+      {/* Video wrapper */}
+      <div className="relative w-full">
+        <video
+          
+          src="https://firebasestorage.googleapis.com/v0/b/thirdplace-3f85e.firebasestorage.app/o/Video1(website).mp4?alt=media&token=1c8758fb-eb82-4798-a411-e32f0e3c0c77"
+          poster="/images/mainarea-poster.jpg"
+          autoPlay
+          loop
+          playsInline
+          muted={isMuted}
+        />
+        {/* Mute / un-mute button - now left side, bigger */}
+        <button
+          onClick={() => setActiveVideo(isMuted ? videoId : null)}
+          className="absolute bottom-4 left-4 bg-black/70 text-white p-3 rounded-full backdrop-blur-lg"
+        >
+          {isMuted ? <VolumeX size={28} /> : <Volume2 size={28} />}
+        </button>
+      </div>
+
+      {/* -------- Existing content below stays exactly the same -------- */}
       <div className="w-full px-4 mt-8 flex flex-col lg:flex-row lg:items-center lg:justify-between max-w-6xl mx-auto">
-        {/* Text content */}
         <div className="w-full lg:w-2/3 text-center lg:text-left">
           <h1 className="text-[32px] sm:text-5xl md:text-6xl lg:text-7xl  text-white tracking-tight ">
             REAL CONNECTIONS,
@@ -29,7 +48,6 @@ function HeroSection() {
             Find your people through curated experiences.
           </p>
         </div>
-        {/* Button */}
         <div className="mt-6 lg:mt-0 lg:ml-8 flex justify-center lg:justify-end w-full lg:w-1/3">
           <JoinNowDiv />
         </div>

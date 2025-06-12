@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useSwipeable } from "react-swipeable";
 import Image from "next/image";
 import { DM_Sans } from "next/font/google";
+import Link from "next/link";
 const dmSans = DM_Sans({
   subsets: ['latin'],
   weight: ['400', '700'],
@@ -155,9 +156,12 @@ export default function StepCarousel() {
       </div>
 
       {/* CTA */}
-      <button className="w-[210px] mb-14 mt-4 bg-black h-[40px] text-white rounded-xl py-1.5 text-[18px] hover:bg-gray-800 transition-colors">
-        START YOUR JOURNEY
-      </button>
+    <Link
+  href="/sign-up"
+  className="w-[210px] mb-14 mt-4 bg-black h-[40px] text-white rounded-xl py-1.5 text-[18px] hover:bg-gray-800 transition-colors flex items-center justify-center"
+>
+  START YOUR JOURNEY
+</Link>
     </div>
   );
 }
