@@ -9,17 +9,17 @@ export default function NoInvites() {
      
 
       {/* Content */}
-      <main className="flex flex-1 flex-col items-center justify-center text-center px-4 -mt-100">
+      <main className="flex flex-1 flex-col items-center justify-center text-center px-4 -mt-110">
       
         <Ticket className="h-19 w-16 stroke-1 rotate-315" />
 
         {/* Empty state heading */}
-        <h2 className="mt-5 text-[32px] font-medium leading-snug">
-          No Invites accepted&nbsp;<span className="italic">… yet!</span>
+        <h2 className="mt-2 text-[28px] font-medium leading-snug">
+          No Invites accepted&nbsp;… yet!
         </h2>
 
         {/* Sub‑copy */}
-        <p className="mt-3 text-[18px] text-gray-800">A few beautiful nights are waiting.</p>
+        <p className="mt-1 text-[18px] text-gray-800">A few beautiful nights are waiting.</p>
         <p className="-mt-1 text-[18px] text-gray-800">Just for you</p>
 
         {/* Call‑to‑action button */}

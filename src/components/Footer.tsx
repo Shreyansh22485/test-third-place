@@ -16,22 +16,12 @@ function Footer() {
         />
 
         {/* Crafted with love text */}
-        <div className="flex items-center justify-center mb-3 -mt-5">
-          <span className='text-[14px]'>Crafted with</span>
-          {/* Orange heart SVG */}
-          <svg
-            className="mx-1"
-            width="25"
-            height="25"
-            viewBox="0 0 24 24"
-            fill="#FF7F50"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{ display: 'inline', verticalAlign: 'middle' }}
-          >
-            <path d="M12 21s-6.5-5.7-8.6-8.1C1.2 10.1 1 7.7 2.7 6A5.1 5.1 0 0 1 7.9 5.9c1 .4 2 .9 2.1 2.1.1-1.2 1.1-1.7 2.1-2.1A5.1 5.1 0 0 1 21.3 6c1.7 1.7 1.5 4.1-.7 6.9C18.5 15.3 12 21 12 21z" />
-          </svg>
-          <span className='text-[16px]'>in Bengaluru, India</span>
-        </div>
+       <div className="flex items-center justify-center mb-3 -mt-5 space-x-1">
+  <span className="text-[14px]">Crafted with</span>
+  <span className="text-[16px]">🧡</span>
+  <span className="text-[16px]">in Bengaluru, India</span>
+   </div>
+
 
         {/* Social Icons */}
         <div className="flex space-x-2 mb-2">
