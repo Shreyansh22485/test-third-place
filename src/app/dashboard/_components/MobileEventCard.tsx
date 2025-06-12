@@ -25,8 +25,8 @@ export default function MobileEventCard({ evt }: { evt: BackendEvent }) {
         "
       >
         <Image
-          src={evt.imageUrls?.[0] || evt.cover_photo_link || "/1.png"}
-          alt={evt.title || evt.event_name || "Event"}
+          src={evt.imageUrls?.[0]  || "/1.png"}
+          alt={evt.title || "Event"}
           fill
           className="object-cover rounded-xl transition-transform duration-200 hover:scale-105"
           priority
@@ -54,10 +54,10 @@ export default function MobileEventCard({ evt }: { evt: BackendEvent }) {
       <div className="grow flex mt-1 flex-col justify-between">
         <div>
           <h3 className="text-base text-[22px] font-[500] leading-snug">
-            {evt.title || evt.event_name || "Event Title"}
+            {evt.title || "Event Title"}
           </h3>
           <p className="text-[16px] font-[300] -mt-2 text-black">
-            {evt.eventLocation?.venueName || evt.location || "Location TBD"}
+            {evt.eventLocation?.venueName  || "Location TBD"}
           </p>
         </div>
       </div>

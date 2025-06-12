@@ -40,11 +40,12 @@ export default function InvitesGallery() {
   // Convert BookedEvent to Event-like structure for display
   const displayEvents = useMemo(() => {
     return bookedEvents.map(booking => ({
+      ...booking.eventId,
       slug: booking.eventId._id,
       event_name: booking.eventId.title,
       event_description: booking.eventId.description,
-      event_location: booking.eventId.eventLocation?.venueName || booking.eventId.location || 'Location TBD',
-      cover_photo_link: booking.eventId.imageUrls?.[0] || booking.eventId.cover_photo_link || '/placeholder-event.jpg',
+      event_location: booking.eventId.eventLocation?.venueName || 'Location TBD',
+      cover_photo_link: booking.eventId.imageUrls?.[0] || '/placeholder-event.jpg',
       event_date: booking.eventId.startTime,
       event_price: booking.eventId.price,
       _id: booking.eventId._id,
