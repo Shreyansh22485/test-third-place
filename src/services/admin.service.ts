@@ -282,8 +282,8 @@ class AdminService {
       const headers: Record<string, string> = {};
       
       // Copy authorization header only, browser will set Content-Type for FormData
-      if (authHeaders.Authorization) {
-        headers.Authorization = authHeaders.Authorization;
+      if (authHeaders && typeof authHeaders === 'object' && !Array.isArray(authHeaders) && 'Authorization' in authHeaders) {
+        headers.Authorization = (authHeaders as Record<string, string>).Authorization;
       }
       
       const response = await fetch(endpoint, {
@@ -373,17 +373,18 @@ class AdminService {
       
       if (eventData.discountedPrice && parseFloat(eventData.discountedPrice) > 0) {
         formData.append('discountedPrice', parseFloat(eventData.discountedPrice).toString());
-      }
-
-      // Add matching tags
+      }      // Add matching tags
       if (eventData.matchingTags && eventData.matchingTags.length > 0) {
         formData.append('matchingTags', JSON.stringify(eventData.matchingTags));
+      } else {
+        formData.append('matchingTags', JSON.stringify([]));
       }
 
-      // Add existing image URLs that should be kept
-      if (eventData.existingImageUrls && eventData.existingImageUrls.length > 0) {
-        formData.append('imageUrls', JSON.stringify(eventData.existingImageUrls));
-      }
+      // Add existing image URLs that should be kept (always send as array)
+      const existingImages = eventData.existingImageUrls && Array.isArray(eventData.existingImageUrls) 
+        ? eventData.existingImageUrls 
+        : [];
+      formData.append('imageUrls', JSON.stringify(existingImages));
 
       // Add new image files
       if (eventData.images && eventData.images.length > 0) {
@@ -397,8 +398,8 @@ class AdminService {
       const headers: Record<string, string> = {};
       
       // Copy authorization header only, browser will set Content-Type for FormData
-      if (authHeaders.Authorization) {
-        headers.Authorization = authHeaders.Authorization;
+      if (authHeaders && typeof authHeaders === 'object' && !Array.isArray(authHeaders) && 'Authorization' in authHeaders) {
+        headers.Authorization = (authHeaders as Record<string, string>).Authorization;
       }
       
       const response = await fetch(endpoint, {
