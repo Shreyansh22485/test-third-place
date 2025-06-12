@@ -151,9 +151,6 @@ export default function EventPage({ params }: PageProps) {
             }
           },
         },
-        retry: {
-          enabled: false, // Disable retry to prevent multiple bookings
-        },
       });
 
     } catch (error: any) {
@@ -306,16 +303,7 @@ export default function EventPage({ params }: PageProps) {
         {/* Event title */}
         <h1 className="mt-3 text-center text-[20px] font-[500] text-black">
           {event.title}
-        </h1>
-
-        {/* Payment Mode Indicator */}
-        <div className="mt-2 text-center">
-          <span className={`text-xs px-2 py-1 rounded-full ${PaymentUtils.getPaymentModeClass()}`}>
-            {PaymentUtils.getPaymentModeText()}
-          </span>
-        </div>
-
-      {/* Time + Location */}
+        </h1>      {/* Time + Location */}
         <div className="mt-3 overflow-hidden rounded-2xl border bg-white text-[16px] text-black divide-y divide-[#E5E5EA] border-[#E5E5EA]">
           <div className="flex items-center gap-2 px-4 py-2">
             <Calendar className="h-5 w-5 text-black" />

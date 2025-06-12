@@ -58,7 +58,7 @@ function NewsSection() {
           <div className="border-4 border-white rounded-xl overflow-hidden shadow-xl w-full max-w-xl">
             <video
               className="w-full h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] object-cover"
-              src="/Video2(website).mp4"
+              src="https://firebasestorage.googleapis.com/v0/b/thirdplace-3f85e.firebasestorage.app/o/Video1(website).mp4?alt=media&token=1c8758fb-eb82-4798-a411-e32f0e3c0c77"
               poster="/images/mainarea-poster.jpg"
               autoPlay
               loop
