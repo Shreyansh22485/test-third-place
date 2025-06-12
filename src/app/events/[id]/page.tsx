@@ -396,126 +396,161 @@ export default function EventPage({ params }: PageProps) {
   </div>
 </section>
 
-      {/* PAYMENT SUMMARY */}
-              <section className="mt-4 overflow-visible rounded-2xl border bg-white border-[#E5E5EA] relative">
-                <Header label="PAYMENT SUMMARY" />
-                <div className="space-y-1 px-4 py-3 text-[16px] text-black">
-                  {/* 1️⃣ Ticket */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1 relative">
-                      <span>Experience Ticket</span>
-                      <input
-                        type="checkbox"
-                        id="experience-info"
-                        className="peer sr-only"
-                      />
-                      <label
-                        htmlFor="experience-info"
-                        className="cursor-pointer"
-                      >
-                        <Info className="h-[14px] w-[14px] text-gray-500" />
-                      </label>
-                      <div
-                        className="peer-checked:block hidden absolute top-full left-0 z-20 mt-2 w-[280px] max-h-[60vh] overflow-y-auto rounded-2xl bg-[#FAFAFA] p-4 text-sm text-black shadow-lg"
-                      >
-                        <div className="flex justify-between">
-                          <p className="whitespace-pre-line">
-                            This covers the cost of the curated activity - like
-                            salsa, game night or a hands on workshop. Food & drinks
-                            not included.
-                          </p>
-                          <label
-                            htmlFor="experience-info"
-                            className="cursor-pointer pl-2"
-                          >
-                            <XIcon className="h-4 w-4 text-black" />
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <span className="font-[300] -mt-0.5">
-                      ₹{event.experienceTicketPrice}
-                    </span>
-                  </div>
-      
-                  {/* 2️⃣ Curation fee */}
-                  <details className="group">
-                    <summary className="flex cursor-pointer list-none items-start justify-between">
-                      <div className="relative flex items-center gap-1">
-                        <span>Curation fee</span>
-                        <input
-                          type="checkbox"
-                          id="curation-info"
-                          className="peer sr-only"
-                        />
-                        <label
-                          htmlFor="curation-info"
-                          className="cursor-pointer"
-                        >
-                          <Info className="h-[14px] w-[14px] text-gray-500" />
-                        </label>
-                        <span className="text-gray-500 text-[12px]">(inc. of GST)</span>
-                        <div
-                          className="peer-checked:block hidden absolute top-full left-0 z-20 mt-2 w-[280px] max-h-[60vh] overflow-y-auto rounded-2xl bg-[#FAFAFA] p-4 text-sm text-black shadow-lg"
-                        >
-                          <div className="flex justify-between">
-                            <p className="whitespace-pre-line">
-                              This enables us to create a unique experience and match
-                              you with people you&apos;re most likely to vibe with.
-                            </p>
-                            <label
-                              htmlFor="curation-info"
-                              className="cursor-pointer pl-2"
-                            >
-                              <XIcon className="h-4 w-4 text-black" />
-                            </label>
-                          </div>
-                        </div>
-                        <svg
-                          width="18"
-                          height="18"
-                          viewBox="0 0 16 16"
-                          fill="none"
-                          className="inline-block transition-transform group-open:rotate-180"
-                        >
-                          <path
-                            d="M4 6l4 4 4-4"
-                            stroke="#222"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </div>
-                      <div className="text-right leading-[1.1]">
-                        <span className="inline-block rounded-2xl mr-13 bg-green-100 px-[6px] py-[1px] text-[12px] font-medium text-green-600">
-                          50% off
-                        </span>
-                        <span className="block text-xs text-gray-400 -mt-4 line-through font-[300]">
-                          ₹{originalCuration.toLocaleString()}
-                        </span>
-                        <span className="block font-[300]">
-                          ₹{curationFee.toLocaleString()}
-                        </span>
-                      </div>
-                    </summary>
-                    <div className="pl-19 space-y-0.5">
-                      <Line label="Base curation fee" value={baseFee} small />
-                      <Line
-                        label="Discount(- 50%)"
-                        value={` ${discountAmt.toLocaleString()}`}
-                        small
-                        extraClass="text-green-600"
-                      />
-                      <Line label="GST on base fee" value={gstOnCuration} small />
-                    </div>
-                  </details>
-                </div>
-                <hr className="w-full border-gray-300" />
-                <div className="space-y-1 px-4 py-2 text-[16px] text-black">
-                  <Line label="Grand Total" value={grandTotal} extra />
-                </div>
-              </section>
+     {/* PAYMENT SUMMARY */}
+<section className="mt-4 overflow-visible rounded-2xl border bg-white border-[#E5E5EA] relative">
+  <Header label="PAYMENT SUMMARY" />
+
+  <div className="space-y-1 px-4 py-3 text-[16px] text-black">
+
+    {/* 1️⃣ Experience Ticket */}
+    <div className="flex items-center justify-between">
+      <div className="relative">
+        {/* hidden toggle */}
+        <input
+          type="checkbox"
+          id="experience-info"
+          className="peer sr-only"
+        />
+
+        {/* label + icon both inside a <label> so clicking either toggles the checkbox */}
+        <label
+          htmlFor="experience-info"
+          className="flex items-center gap-1 cursor-pointer"
+        >
+          {/* dotted underline */}
+          <span className="border-b border-dotted border-black pb-[2px]">
+            Experience Ticket
+          </span>
+          <Info className="h-[14px] w-[14px] text-gray-500" />
+        </label>
+
+        {/* your overlay */}
+        <div
+          className="peer-checked:block hidden absolute top-full left-0 z-20 mt-2 w-[280px]
+                      max-h-[60vh] overflow-y-auto rounded-2xl bg-[#FAFAFA] p-4 text-sm text-black shadow-lg"
+        >
+          <div className="flex justify-between">
+            <p className="whitespace-pre-line">
+              This covers the cost of the curated activity – like salsa,
+              game night or a hands-on workshop. Food & drinks not included.
+            </p>
+            <label
+              htmlFor="experience-info"
+              className="cursor-pointer pl-2"
+            >
+              <XIcon className="h-4 w-4 text-black" />
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <span className="font-[300] -mt-0.5">
+        ₹{event.experienceTicketPrice}
+      </span>
+    </div>
+
+
+    {/* 2️⃣ Curation Fee */}
+    <details className="group">
+      <summary className="flex cursor-pointer list-none items-start justify-between">
+        <div className="relative flex items-center gap-1">
+          {/* hidden toggle */}
+          <input
+            type="checkbox"
+            id="curation-info"
+            className="peer sr-only"
+          />
+
+          {/* wrap text+icon in label */}
+          <label
+            htmlFor="curation-info"
+
+
+
+
+
+            
+            className="flex items-center gap-1 cursor-pointer"
+          >
+            <span className="border-b border-dotted border-black pb-[2px]">
+              Curation fee
+            </span>
+            <Info className="h-[14px] w-[14px] text-gray-500" />
+          </label>
+
+          <span className="text-gray-500 text-[12px]">(inc. of GST)</span>
+
+          {/* overlay */}
+          <div
+            className="peer-checked:block hidden absolute top-full left-0 z-20 mt-2 w-[280px]
+                        max-h-[60vh] overflow-y-auto rounded-2xl bg-[#FAFAFA] p-4 text-sm text-black shadow-lg"
+          >
+            <div className="flex justify-between">
+              <p className="whitespace-pre-line">
+                This enables us to create a unique experience and match
+                you with people you’re most likely to vibe with.
+              </p>
+              <label
+                htmlFor="curation-info"
+                className="cursor-pointer pl-2"
+              >
+                <XIcon className="h-4 w-4 text-black" />
+              </label>
+            </div>
+          </div>
+
+          {/* dropdown arrow stays the same */}
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 16 16"
+            fill="none"
+            className="inline-block transition-transform group-open:rotate-180"
+          >
+            <path
+              d="M4 6l4 4 4-4"
+              stroke="#222"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+
+        <div className="text-right leading-[1.1]">
+          <span className="inline-block rounded-2xl mr-13 bg-green-100 px-[6px] py-[1px] text-[12px] font-medium text-green-600">
+            50% off
+          </span>
+          <span className="block text-xs text-gray-400 -mt-4 line-through font-[300]">
+            ₹{originalCuration.toLocaleString()}
+          </span>
+          <span className="block font-[300]">
+            ₹{curationFee.toLocaleString()}
+          </span>
+        </div>
+      </summary>
+
+      {/* breakdown lines */}
+      <div className="pl-19 space-y-0.5">
+        <Line label="Base curation fee" value={baseFee} small />
+        <Line
+          label="Discount(- 50%)"
+          value={` ${discountAmt.toLocaleString()}`}
+          small
+          extraClass="text-green-600"
+        />
+        <Line label="GST on base fee" value={gstOnCuration} small />
+      </div>
+    </details>
+
+  </div>
+
+  <hr className="w-full border-gray-300" />
+
+  <div className="space-y-1 px-4 py-2 text-[16px] text-black">
+    <Line label="Grand Total" value={grandTotal} extra />
+  </div>
+</section>
 
 {/* Info Boxes */}
 <section className="mt-4 rounded-2xl border bg-white border-[#E5E5EA]">
