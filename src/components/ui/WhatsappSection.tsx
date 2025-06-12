@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 import { FaWhatsapp } from 'react-icons/fa'
 
@@ -32,14 +33,16 @@ function WhatsappSection() {
         />
       </div>
 
-      <button
-        className="flex items-center  w-[240px] -mt-3 h-[50px] gap-3 bg-green-500 hover:bg-green-600 transition rounded-2xl  px-4.5 shadow-lg text-white text-[16px] tracking-wide"
-        style={{ minWidth: 220 }}
-      >
-        <FaWhatsapp className="text-2xl" />
-        Join the community
-        <span className="ml-2 text-2xl font-light">{'>'}</span>
-      </button>
+   <Link href="https://chat.whatsapp.com/FvtR65ZwPn0IV1Pe8ftJcW" target="_blank" rel="noopener noreferrer">
+  <button
+    className="flex items-center  w-[240px] -mt-3 h-[50px] gap-3 bg-green-500 hover:bg-green-600 transition rounded-2xl  px-4.5 shadow-lg text-white text-[16px] tracking-wide"
+    style={{ minWidth: 220 }}
+  >
+    <FaWhatsapp className="text-2xl" />
+    Join the community
+    <span className="ml-2 text-2xl font-light">{'>'}</span>
+  </button>
+</Link>
     </div>
   )
 }

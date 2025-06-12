@@ -28,7 +28,14 @@ function Header() {
           <Link href="/sign-in" className="hover:text-pink-400 transition-colors font-semibold">Login / Sign up</Link>
           <Link href="/" className="hover:text-pink-400 transition-colors font-semibold">How It Works?</Link>
           <Link href="/dashboard" className="hover:text-pink-400 transition-colors font-semibold">Upcoming events</Link>
-          <Link href="/" className="hover:text-pink-400 transition-colors font-semibold">Become a partner</Link>
+          <a
+            href="https://thirdplace.typeform.com/to/iPAmuKne"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-pink-400 transition-colors font-semibold"
+          >
+            Become a partner
+          </a>
           <Link href="/contact-us" className="hover:text-pink-400 transition-colors font-semibold">Contact us</Link>
         </div>
 
@@ -73,27 +80,47 @@ function Header() {
           <Link href="/sign-in" className="py-2 text-white font-[200px] text-[22px] hover:text-pink-400 w-full text-left ml-5" onClick={() => setMenuOpen(false)}>Login /Sign up</Link>
           <Link href="/howitworks" className="py-2 text-white font-[200px] text-[22px] hover:text-pink-400 w-full text-left ml-5" onClick={() => setMenuOpen(false)}>How It Works?</Link>
           <Link href="/dashboard" className="py-2 text-white font-[200px] text-[22px] hover:text-pink-400 w-full text-left ml-5" onClick={() => setMenuOpen(false)}>Upcoming Events</Link>
-          <Link href="/about" className="py-2 text-white font-[200px] text-[22px] hover:text-pink-400 w-full text-left ml-5" onClick={() => setMenuOpen(false)}>Become a partner</Link>
+          <a
+            href="https://thirdplace.typeform.com/to/iPAmuKne"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="py-2 text-white font-[200px] text-[22px] hover:text-pink-400 w-full text-left ml-5"
+            onClick={() => setMenuOpen(false)}
+          >
+            Become a partner
+          </a>
           <Link href="/contact-us" className="py-2 text-white font-[200px] text-[22px] hover:text-pink-400 w-full text-left ml-5" onClick={() => setMenuOpen(false)}>Contact us</Link>
           <div className="flex space-x-4 justify-center min-w-screen mt-20 mb-2">
             {/* Instagram */}
-            <Image
-              src="/instalogo.png"
-              alt="Instagram"
-              width={42}
-              height={35}
-              className="object-contain brightness-0 invert"
-              priority
-            />
+            <a
+              href="https://www.instagram.com/yourthird_place"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Image
+                src="/instalogo.png"
+                alt="Instagram"
+                width={42}
+                height={35}
+                className="object-contain brightness-0 -mt-7 invert"
+                priority
+              />
+            </a>
             {/* X (Twitter) */}
-            <Image
-              src="/xlogo.png"
-              alt="X"
-              width={60}
-              height={54}
-              className="object-contain brightness-0 invert"
-              priority
-            />
+            <a
+              href="https://x.com/yourthird_place?s=21&t=O3S1XDNlqHREkrhP9CgP8w"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Image
+                src="/xlogo.png"
+                alt="X"
+                width={60}
+                height={54}
+                className="object-contain brightness-0 -mt-9 invert"
+                priority
+              />
+            </a>
           </div>
         </div>
       )}

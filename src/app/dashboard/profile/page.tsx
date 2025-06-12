@@ -146,12 +146,24 @@ function ProfilePage() {
           <Row icon={<PersonalityIcon />} title="Take the personality test" sub="Share more about yourself to refine your curation." arrow />
         </div>
 
-        {/* JOIN THE COMMUNITY */}
-        <SectionTitle className="pl-3">JOIN THE COMMUNITY</SectionTitle>
-        <div className="rounded-2xl border border-[#E5E5EA] overflow-hidden mb-5 bg-white">
-          <Row icon={<FaWhatsapp size={20} />} title="WhatsApp" right="early access 💌" arrow />
-          <Row icon={<FaInstagram size={20} />} title="Instagram" right="catch the vibe 📸" arrow />
-        </div>
+    {/* JOIN THE COMMUNITY */}
+<SectionTitle className="pl-3">JOIN THE COMMUNITY</SectionTitle>
+<div className="rounded-2xl border border-[#E5E5EA] overflow-hidden mb-5 bg-white">
+  <Link
+    href="https://chat.whatsapp.com/FvtR65ZwPn0IV1Pe8ftJcW"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <Row icon={<FaWhatsapp size={20} />} title="WhatsApp" right="early access 💌" arrow />
+  </Link>
+  <Link
+    href="https://www.instagram.com/yourthird_place"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <Row icon={<FaInstagram size={20} />} title="Instagram" right="catch the vibe 📸" arrow />
+  </Link>
+</div>
 
         {/* SUPPORT */}
         <SectionTitle>SUPPORT</SectionTitle>

@@ -24,24 +24,36 @@ function Footer() {
 
 
         {/* Social Icons */}
-        <div className="flex space-x-2 mb-2">
-          <Image
-            src="/instalogo.png"
-            alt="Instagram"
-            width={28}
-            height={25}
-            className="object-contain"
-            priority
-          />
-          <Image
-            src="/xlogo.png"
-            alt="X"
-            width={40}
-            height={40}
-            className="object-contain"
-            priority
-          />
-        </div>
+       <div className="flex space-x-2 mb-2">
+  <a
+    href="https://www.instagram.com/yourthird_place"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <Image
+      src="/instalogo.png"
+      alt="Instagram"
+      width={25}
+      height={25}
+      className="object-contain mt-2"
+      priority
+    />
+  </a>
+  <a
+    href="https://x.com/yourthird_place?s=21&t=O3S1XDNlqHREkrhP9CgP8w"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <Image
+      src="/xlogo.png"
+      alt="X"
+      width={40}
+      height={40}
+      className="object-contain"
+      priority
+    />
+  </a>
+</div>
       </div>
 
       {/* Gray line */}
