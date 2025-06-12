@@ -31,6 +31,18 @@ export default function EventPage({ params }: PageProps) {
   const router = useRouter();
   const { openRazorpay } = useRazorpay();
   const { user } = useUser();
+    const [showInviteModal, setShowInviteModal] = useState(false);
+  const [inviteInput, setInviteInput] = useState("");
+  const [friendPhone, setFriendPhone] = useState("");
+
+  function handleInvite() {
+    if (inviteInput.trim().length === 10) {
+      setFriendPhone(inviteInput.trim());
+      setInviteInput("");
+      setShowInviteModal(false);
+    }
+  }
+
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -196,29 +208,103 @@ export default function EventPage({ params }: PageProps) {
           </button>
         </div>
       </footer>
+      {showInviteModal && (
+  <div className="fixed inset-0 z-40 flex items-center justify-center backdrop-blur-sm bg-black/20">
+    <div className="mx-2 w-full max-w-xs rounded-2xl bg-white p-6 shadow-xl flex flex-col items-center">
+      <h3 className="text-[22px] font-[500] text-center text-black mb-1">
+        {friendPhone ? "Change your friend" : "Invite a friend"}
+      </h3>
+      <p className="text-[15px] font-[300] text-center mb-5">
+        Please enter your friend's phone number
+      </p>
 
-      {/* Main article */}
-      <article className="mx-auto w-full max-w-md px-5 pb-32 pt-4 md:max-w-lg md:px-0">        {/* Header */}
-        <header className="-mx-5 mb-4 flex min-w-screen items-center justify-between border-b border-[#E5E5EA] px-0">
-          <Link href="/dashboard" className="p-1 text-black">
-            <ArrowLeft className="mx-5 h-5 w-5" />
-          </Link>
-          <h2 className="flex-1 -ml-10 mb-3 text-center text-[24px] font-[500] italic tracking-wide text-black">
-            YOUR INVITATION
-          </h2>
-          <span className="h-5 w-5" />
-        </header>{/* Cover photo */}
-        <div className="overflow-hidden rounded-xl border border-gray-300">
+      <div className="flex w-full items-center mb-6 border border-black/50 rounded-xl px-3 py-2 bg-[#fafafa]">
+        <span className="text-gray-700 font-[400] text-[18px] pr-2">+91</span>
+        <input
+          type="text"
+          value={inviteInput}
+          onChange={e => setInviteInput(e.target.value.replace(/\D/, ""))}
+          placeholder={friendPhone ? friendPhone : "33333 33333"}
+          className="w-full border-0 bg-transparent focus:outline-none text-[17px] font-[300] tracking-wide"
+          maxLength={10}
+          inputMode="numeric"
+        />
+      </div>
+
+      <div className="flex w-full gap-2 mt-1">
+        {friendPhone ? (
+          <>
+            <button
+              className="w-1/2 py-2 rounded-2xl border border-black text-black font-[400] bg-white"
+              onClick={() => {
+                setFriendPhone("");
+                setInviteInput("");
+                setShowInviteModal(false);
+              }}
+            >
+              remove friend
+            </button>
+            <button
+              className="w-1/2 py-2 rounded-2xl bg-black text-white font-[400]"
+              onClick={handleInvite}
+            >
+              change friend
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              className="w-1/2 py-2 rounded-2xl border border-black text-black font-[400] bg-white"
+              onClick={() => setShowInviteModal(false)}
+            >
+              cancel
+            </button>
+            <button
+              className="w-1/2 py-2 rounded-2xl bg-black text-white font-[400]"
+              onClick={handleInvite}
+            >
+              invite friend
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  </div>
+)}
+
+
+    {/* ─── Main article ─────────────────────────────────────── */}
+      <article className="mx-auto w-full max-w-md px-5 pb-28 pt-4 md:max-w-lg md:px-0">
+        {/* Header */}
+        <header className="relative -mx-5 -mt-2.5 mb-4 border-b border-[#E5E5EA] px-0 py-2">
+  {/* Back arrow */}
+  <Link
+    href="/dashboard"
+    className="absolute left-5 top-1/2 transform -translate-y-1/2 p-1 text-black"
+  >
+    <ArrowLeft className="h-5 w-5" />
+  </Link>
+
+  {/* Title:  */}
+  <h2 className="text-center text-[24px] font-[400] italic tracking-wide text-black">
+    YOUR INVITATION
+  </h2>
+</header>
+
+        {/* Cover photo */}
+        <div className="overflow-hidden rounded-2xl border border-gray-300">
           <Image
-            src={event.imageUrls[0] || '/placeholder-event.jpg'}
+            src={event.imageUrls[0] || "/placeholder-event.jpg"}
             alt={event.title}
             width={348}
-            height={436}
+            height={391}
             priority
-            className="h-[436px] w-full object-cover"
+            className="h-[391px] w-full object-cover"
           />
-        </div>        {/* Event title */}
-        <h1 className="mt-6 text-center text-lg font-semibold text-black">
+        </div>
+
+        {/* Event title */}
+        <h1 className="mt-3 text-center text-[20px] font-[500] text-black">
           {event.title}
         </h1>
 
@@ -229,221 +315,306 @@ export default function EventPage({ params }: PageProps) {
           </span>
         </div>
 
-        {/* Time + Location */}
-        <div className="mt-3 overflow-hidden rounded-md border bg-white text-sm text-black divide-y divide-gray-300 border-gray-300">
+      {/* Time + Location */}
+        <div className="mt-3 overflow-hidden rounded-2xl border bg-white text-[16px] text-black divide-y divide-[#E5E5EA] border-[#E5E5EA]">
           <div className="flex items-center gap-2 px-4 py-2">
-            <Calendar className="h-4 w-4 text-black" />
+            <Calendar className="h-5 w-5 text-black" />
             <span>
-              {dateLabel} | {timeLabel}
+              {dateLabel} | <span className="uppercase">{timeLabel}</span>
             </span>
-          </div>          <div className="flex items-center gap-2 px-4 py-2">
-            <MapPin className="h-4 w-4 text-black" />
+          </div>
+          <div className="flex items-center gap-2 px-4 py-2">
+            <MapPin className="h-5 w-5 text-black" />
             <span>{event.eventLocation.venueName}</span>
           </div>
         </div>
 
-        {/* Itinerary */}
-        <section className="mt-6 overflow-hidden rounded-md border bg-white border-gray-300">
+      {/* Itinerary */}
+        <section className="mt-4 overflow-hidden font-[300] rounded-2xl border bg-white border-[#E5E5EA]">
           <Header label="ITINERARY" />
-          <p className="px-4 py-3 text-sm leading-relaxed text-black">
+          <p className="px-4 py-3 text-[14px] leading-relaxed text-black">
             {itinerary}
           </p>
         </section>
 
         {/* Bring a Friend */}
-        <section className="mt-6 overflow-hidden rounded-md border bg-white border-gray-300">
-          <div className="flex items-center justify-between px-4 py-2">
-            <h3 className="text-[16px] font-semibold italic tracking-wide text-black">
-              BRING A FRIEND
-            </h3>
-            <button className="flex items-center gap-1 rounded-md bg-gray-900 px-3 py-[3px] text-[14px] font-medium text-white">
-              <TicketPlus className="h-4 w-4" /> Invite a friend
-            </button>
-          </div>
-          <hr className="border-gray-300" />
-          <div className="m-3 flex gap-3 rounded-3xl bg-[#FFF3CD] px-4 py-3 text-[13px] text-black">
-            <Gift className="h-12 w-12 text-gray-800" />
-            <p className="leading-snug">
-              Friends attend in your group. <br />
-              Your friend stays in your group throughout the experience.
-            </p>
-          </div>
-        </section>
+<section className="mt-4 overflow-hidden rounded-2xl border bg-white border-[#E5E5EA]">
+  {/* 1️⃣ Header row */}
+  <div className="flex justify-between items-center px-4 py-2">
+    <h3 className="text-[20px] font-[400] italic tracking-wide text-black">
+      BRING A FRIEND
+    </h3>
 
-{/* PAYMENT SUMMARY */}
-<section className="mt-6 overflow-visible rounded-md border bg-white border-gray-300 relative">
-  <Header label="PAYMENT SUMMARY" />
-  <div className="space-y-1 px-4 py-3 text-[13px] text-black">
-    {/* 1️⃣ Ticket */}
-    <Line label="Experience Ticket" value={event.experienceTicketPrice} />
-
-    {/* 2️⃣ Curation fee (overlay + collapse) */}
-    <details className="group">
-      <summary className="flex cursor-pointer list-none items-start justify-between">
-        {/* LEFT: text + icon + overlay */}
-        <div className="relative flex items-center gap-1">
-          <span className="">
-            Curation fee
-          </span>
-
-          {/* hidden checkbox to drive overlay */}
-          <input
-            type="checkbox"
-            id="curation-info"
-            className="peer sr-only"
-          />
-
-          {/* only this icon toggles overlay */}
-          <label
-            htmlFor="curation-info"
-            className="cursor-pointer"
-          >
-            <Info className="h-[14px] w-[14px] text-gray-500" />
-          </label>
-
-          <span className="text-gray-500">(inc. of GST)</span>
-
-      {/* small overlay box */}
-<div
-  className="peer-checked:block hidden absolute top-full left-0 z-20 mt-2
-             w-[280px] 
-             max-h-[60vh] overflow-y-auto   instead of h-[90px] 
-             rounded-md bg-[#FAFAFA] p-4 text-sm text-black shadow-lg"
->
-  <div className="flex justify-between">
-    <p className="whitespace-pre-line">
-      This enables us to create a unique experience and
-      match you with people you&apos;re most likely to vibe with.
-    </p>
-
-    <label htmlFor="curation-info" className="cursor-pointer pl-2">
-      <XIcon className="h-4 w-4 text-gray-500" />
-    </label>
+    {/* Invite button only if no friendPhone */}
+    {!friendPhone && (
+      <button
+        className="flex items-center gap-1 rounded-2xl bg-gray-900 px-3 py-[3px] text-[14px] font-[400] text-white"
+        onClick={() => setShowInviteModal(true)}
+      >
+        <TicketPlus className="h-4 w-4" />
+        Invite a friend
+      </button>
+    )}
   </div>
-</div>
 
+  {/* 2️⃣ Border */}
+  <hr className="border-[#E5E5EA]" />
 
-          {/* caret, pushed right so it never overlaps */}
-      <svg
-  width="18"
-  height="18"
-  viewBox="0 0 16 16"
-  fill="none"
-  className=" inline-block transition-transform group-open:rotate-180"
->
-  <path
-    d="M4 6l4 4 4-4"
-    stroke="#222"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  />
-</svg>
-        </div>
+  {/* 3️⃣ Friend info block (only when friendPhone exists) */}
+  {friendPhone && (
+    <div className="px-4 py-2 space-y-2">
+      <span className="text-lg font-[500] text-black">
+        +91 {friendPhone}
+      </span>
+      <p className="text-sm text-gray-700 leading-snug">
+        They must join Third Place in order to attend.
+        We’ll text a priority signup link.
+      </p>
+      <button
+        className="inline-block rounded-full bg-black px-4 py-1 text-sm font-[400] text-white"
+        onClick={() => {
+          setInviteInput(friendPhone);
+          setShowInviteModal(true);
+        }}
+      >
+        change/remove your friend
+      </button>
+    </div>
+  )}
 
-        {/* RIGHT: discount badge + prices */}
-        <div className="text-right leading-[1.1]">
-          <span className="inline-block rounded-md bg-green-100 px-[6px] py-[1px] text-[11px] font-medium text-green-600">
-            50% off
-          </span>
-          <span className="block text-xs text-gray-400 line-through">
-            ₹{originalCuration.toLocaleString()}
-          </span>
-          <span className="block font-medium">
-            ₹{curationFee.toLocaleString()}
-          </span>
-        </div>
-      </summary>
-
-      {/* breakdown rows */}
-      <div className="pl-19  space-y-0.5">
-        <Line label="Base curation fee" value={baseFee} small />
-        <Line
-          label="Discount(- 50%)"
-          value={`- ${discountAmt.toLocaleString()}`}
-          small
-          extraClass="text-green-600 italic"
-        />
-        <Line label="GST on base fee" value={gstOnCuration} small />
-      </div>
-    </details>
-
-    <hr className="my-1 border-gray-300" />
-
-    {/* 3️⃣ Grand Total */}
-    <Line label="Grand Total" value={grandTotal} bold large />
+  {/* 4️⃣ Gift info) */}
+  <div className="m-3 flex gap-3 rounded-2xl bg-[#FFF3CD] px-4 ml-3.5 mr-3.5 py-3 text-black">
+    <Gift className="h-16 w-16 text-gray-800" />
+    <div>
+      <p className="leading-snug font-[500] text-[16px]">
+        friends attend in your group
+      </p>
+      <p className="font-[300] text-[14px]">
+        your friend stays in your group throughout the experience.
+      </p>
+    </div>
   </div>
 </section>
 
+      {/* PAYMENT SUMMARY */}
+              <section className="mt-4 overflow-visible rounded-2xl border bg-white border-[#E5E5EA] relative">
+                <Header label="PAYMENT SUMMARY" />
+                <div className="space-y-1 px-4 py-3 text-[16px] text-black">
+                  {/* 1️⃣ Ticket */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1 relative">
+                      <span>Experience Ticket</span>
+                      <input
+                        type="checkbox"
+                        id="experience-info"
+                        className="peer sr-only"
+                      />
+                      <label
+                        htmlFor="experience-info"
+                        className="cursor-pointer"
+                      >
+                        <Info className="h-[14px] w-[14px] text-gray-500" />
+                      </label>
+                      <div
+                        className="peer-checked:block hidden absolute top-full left-0 z-20 mt-2 w-[280px] max-h-[60vh] overflow-y-auto rounded-2xl bg-[#FAFAFA] p-4 text-sm text-black shadow-lg"
+                      >
+                        <div className="flex justify-between">
+                          <p className="whitespace-pre-line">
+                            This covers the cost of the curated activity - like
+                            salsa, game night or a hands on workshop. Food & drinks
+                            not included.
+                          </p>
+                          <label
+                            htmlFor="experience-info"
+                            className="cursor-pointer pl-2"
+                          >
+                            <XIcon className="h-4 w-4 text-black" />
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <span className="font-[300] -mt-0.5">
+                      ₹{event.experienceTicketPrice}
+                    </span>
+                  </div>
+      
+                  {/* 2️⃣ Curation fee */}
+                  <details className="group">
+                    <summary className="flex cursor-pointer list-none items-start justify-between">
+                      <div className="relative flex items-center gap-1">
+                        <span>Curation fee</span>
+                        <input
+                          type="checkbox"
+                          id="curation-info"
+                          className="peer sr-only"
+                        />
+                        <label
+                          htmlFor="curation-info"
+                          className="cursor-pointer"
+                        >
+                          <Info className="h-[14px] w-[14px] text-gray-500" />
+                        </label>
+                        <span className="text-gray-500 text-[12px]">(inc. of GST)</span>
+                        <div
+                          className="peer-checked:block hidden absolute top-full left-0 z-20 mt-2 w-[280px] max-h-[60vh] overflow-y-auto rounded-2xl bg-[#FAFAFA] p-4 text-sm text-black shadow-lg"
+                        >
+                          <div className="flex justify-between">
+                            <p className="whitespace-pre-line">
+                              This enables us to create a unique experience and match
+                              you with people you&apos;re most likely to vibe with.
+                            </p>
+                            <label
+                              htmlFor="curation-info"
+                              className="cursor-pointer pl-2"
+                            >
+                              <XIcon className="h-4 w-4 text-black" />
+                            </label>
+                          </div>
+                        </div>
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 16 16"
+                          fill="none"
+                          className="inline-block transition-transform group-open:rotate-180"
+                        >
+                          <path
+                            d="M4 6l4 4 4-4"
+                            stroke="#222"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </div>
+                      <div className="text-right leading-[1.1]">
+                        <span className="inline-block rounded-2xl mr-13 bg-green-100 px-[6px] py-[1px] text-[12px] font-medium text-green-600">
+                          50% off
+                        </span>
+                        <span className="block text-xs text-gray-400 -mt-4 line-through font-[300]">
+                          ₹{originalCuration.toLocaleString()}
+                        </span>
+                        <span className="block font-[300]">
+                          ₹{curationFee.toLocaleString()}
+                        </span>
+                      </div>
+                    </summary>
+                    <div className="pl-19 space-y-0.5">
+                      <Line label="Base curation fee" value={baseFee} small />
+                      <Line
+                        label="Discount(- 50%)"
+                        value={` ${discountAmt.toLocaleString()}`}
+                        small
+                        extraClass="text-green-600"
+                      />
+                      <Line label="GST on base fee" value={gstOnCuration} small />
+                    </div>
+                  </details>
+                </div>
+                <hr className="w-full border-gray-300" />
+                <div className="space-y-1 px-4 py-2 text-[16px] text-black">
+                  <Line label="Grand Total" value={grandTotal} extra />
+                </div>
+              </section>
 
-        {/* Info Boxes */}
-        <section className="mt-6 overflow-hidden rounded-md border bg-white border-gray-300 text-[13px] text-black">
-          <Box
-            heading="YOU'RE ON THE LIST — ALMOST"
-            text="You'll be notified if you're selected on the day of the experience. If not, you'll get a full refund – no questions asked."
-          />
-          <hr className="border-t border-gray-300 my-2" />
-          <Box
-            heading="EACH MEMBER CAN BRING A FRIEND"
-            text="Simply add them above, before the cutoff time."
-          />
-        </section>
+{/* Info Boxes */}
+<section className="mt-4 rounded-2xl border bg-white border-[#E5E5EA]">
+  <div className="px-4 py-2 space-y-4">
+    {/* 1️⃣ First heading */}
+    <h4 className="text-[20px] italic  font-[400] text-black">
+      YOU'RE ON THE LIST — ALMOST
+    </h4>
+
+    {/* ─── full-width border, no left/right padding ─── */}
+    <hr className="-mx-4 border-t -mt-2 border-[#E5E5EA]" />
+
+    {/* first paragraph */}
+    <p className="text-[16px] -mt-1 font-[300] text-black leading-snug">
+      You’ll be notified if you’re selected on the day of the experience.  
+      If not, you’ll get a full refund – no questions asked.
+    </p>
+
+    {/* 2️⃣ Second heading */}
+    <h4 className="mt-4 text-[18px] italic font-[400] text-black">
+      EACH MEMBER CAN BRING A FRIEND
+    </h4>
+    {/* second paragraph */}
+    <p className="text-[16px] -mt-2 font-[300] mb-2 text-black leading-snug">
+      Simply add them above, before the cutoff time.
+    </p>
+  </div>
+</section>
       </article>
     </div>
   );
 }
 
-/* -------------------- Helpers -------------------- */
-const Header = ({ label }: { label: string }) => (
-  <>
-    <div className="px-4 py-2">
-      <h3 className="text-[16px] font-semibold italic tracking-wide text-black">
-        {label}
-      </h3>
-    </div>
-    <hr className="border-gray-300" />
-    </>
-);
-
-interface LineProps {
-  label: string;
-  value: number | string;
-  bold?: boolean;
-  large?: boolean;
-  small?: boolean;
-  extraClass?: string;
-}
-const Line = ({
-  label,
-  value,
-  bold,
-  large,
-  small,
-  extraClass = "",
-}: LineProps) => (
-  <div className="flex items-center justify-between">
-    <span
-      className={`${small ? "text-[12px]" : ""} ${
-        bold ? "font-medium" : ""
-      } ${extraClass}`}
-    >
-      {label}
-    </span>
-    <span
-      className={`${small ? "text-[12px]" : large ? "text-[15px]" : "text-[13px]"} ${
-        bold || large ? "font-semibold" : ""
-      } ${extraClass}`}
-    >
-      {typeof value === "number" ? `₹${value.toLocaleString()}` : value}
-    </span>
-  </div>
-);
-
-const Box = ({ heading, text }: { heading: string; text: string }) => (
-  <div className="px-4 py-3">
-    <h4 className="text-[16px] font-semibold italic tracking-wide text-black">
-      {heading}
-    </h4>
-    <p className="mt-1 text-sm leading-snug text-black">{text}</p>
-  </div>
-);
+  /* -------------------- Helpers -------------------- */
+      const Header = ({ label }: { label: string }) => (
+        <>
+          <div className="px-4 py-2">
+            <h3 className="text-[20px] font-[400] italic tracking-wide text-black">
+              {label}
+            </h3>
+          </div>
+          <hr className="border-[#E5E5EA]" />
+        </>
+      );
+      
+      interface LineProps {
+        label: string;
+        value: number | string;
+        bold?: boolean;
+        large?: boolean;
+        small?: boolean;
+        extra?: boolean;
+        extraClass?: string;
+        valueClass?: string;
+      }
+      
+      const Line = ({
+        label,
+        value,
+        bold,
+        large,
+        small,
+        extra,
+        valueClass,
+        extraClass = "",
+      }: LineProps) => (
+        <div className="flex items-center justify-between">
+          <span
+            className={`${
+              extra
+                ? "text-[18px] font-[500]"
+                : large
+                ? "text-[16px]"
+                : small
+                ? "text-[14px]"
+                : "text-[16px]"
+            } ${bold ? "font-medium" : ""} ${extraClass}`}
+          >
+            {label}
+          </span>
+          <span
+            className={`${
+              extra
+                ? "text-[18px]"
+                : large
+                ? "text-[16px]"
+                : small
+                ? "text-[14px]"
+                : "text-[16px]"
+            } ${
+              extra
+                ? "font-[500]"
+                : bold || large
+                ? "font-[300]"
+                : ""
+            } ${valueClass ?? ""} ${extraClass}`}
+          >
+            {typeof value === "number" ? `₹${value.toLocaleString()}` : value}
+          </span>
+        </div>
+      );
+      
