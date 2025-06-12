@@ -21,6 +21,7 @@ import { personalityTestService } from "@/services/personalityTest.service";
 import { useRazorpay } from "@/hooks/useRazorpay";
 import PaymentUtils from "@/utils/payment.utils";
 import { useUser } from "@/hooks/useUser";
+import Understand from "../_components/UnderStand";
 
 type PageProps = { params: any };
 
@@ -31,9 +32,11 @@ export default function EventPage({ params }: PageProps) {
   const router = useRouter();
   const { openRazorpay } = useRazorpay();
   const { user } = useUser();
-    const [showInviteModal, setShowInviteModal] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
   const [inviteInput, setInviteInput] = useState("");
   const [friendPhone, setFriendPhone] = useState("");
+  const [showUnderstandModal, setShowUnderstandModal] = useState(false);
+  const [hasSeenUnderstand, setHasSeenUnderstand] = useState(false);
 
   function handleInvite() {
     if (inviteInput.trim().length === 10) {
@@ -60,6 +63,21 @@ export default function EventPage({ params }: PageProps) {
   }, [params]);
 
   if (!event) return <div>Loading...</div>;  const handleContinue = async () => {
+    // If user hasn't seen the UnderStand modal, show it first
+    if (!hasSeenUnderstand) {
+      setShowUnderstandModal(true);
+      return;
+    }
+
+    // If user has seen the modal, proceed with payment
+    await handleProceedWithPayment();
+  };
+
+  const handleUnderstandClose = () => {
+    setShowUnderstandModal(false);
+    setHasSeenUnderstand(true);
+  };
+  const handleProceedWithPayment = async () => {
     try {
       setIsLoading(true);
 
@@ -268,6 +286,11 @@ export default function EventPage({ params }: PageProps) {
     </div>
   </div>
 )}
+
+      {/* UnderStand Modal */}
+      {showUnderstandModal && (
+        <Understand onClose={handleUnderstandClose} />
+      )}
 
 
     {/* ─── Main article ─────────────────────────────────────── */}
