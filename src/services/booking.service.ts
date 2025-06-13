@@ -7,7 +7,7 @@ interface BookedEvent {
   eventId: BackendEvent;
   numberOfSeats: number;
   totalAmount: number;
-  bookingStatus: 'pending_payment' | 'confirmed' | 'cancelled' | 'completed';
+  bookingStatus: 'pending_payment' | 'waitlist' | 'confirmed' | 'cancelled' | 'completed';
   createdAt: string;
   updatedAt: string;
 }
@@ -44,12 +44,24 @@ class BookingService {  /**
       throw new Error(error.response?.data?.error || error.message || 'Failed to fetch bookings');
     }
   }
-
   /**
-   * Get confirmed bookings only (for invites)
+   * Get paid bookings (confirmed + waitlisted) for invites page
    */
   async getConfirmedBookings(): Promise<BookedEvent[]> {
-    return this.getUserBookings(1, 50, 'confirmed');
+    try {
+      // Get all bookings first
+      const allBookings = await this.getUserBookings(1, 50);
+      
+      // Filter for paid bookings (confirmed, waitlist, completed)
+      return allBookings.filter(booking => 
+        booking.bookingStatus === 'confirmed' || 
+        booking.bookingStatus === 'waitlist' || 
+        booking.bookingStatus === 'completed'
+      );
+    } catch (error: any) {
+      console.error('Error fetching paid bookings:', error);
+      throw new Error(error.message || 'Failed to fetch paid bookings');
+    }
   }
   /**
    * Get booking details by ID

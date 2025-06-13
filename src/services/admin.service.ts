@@ -478,7 +478,6 @@ class AdminService {
       throw error;
     }
   }
-
   // Booking Management
   async getAllBookings(page = 1, limit = 10, filters?: any): Promise<any> {
     try {
@@ -503,6 +502,33 @@ class AdminService {
       return await response.json();
     } catch (error) {
       console.error('Error fetching bookings:', error);
+      throw error;
+    }
+  }
+
+  async updateBookingStatus(bookingId: string, status: 'waitlist' | 'confirmed' | 'cancelled'): Promise<any> {
+    try {
+      const headers = await this.getAuthHeaders();
+      const response = await fetch(`${this.baseUrl}/api/admin/bookings/update-status`, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          bookingId,
+          status,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update booking status');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error updating booking status:', error);
       throw error;
     }
   }

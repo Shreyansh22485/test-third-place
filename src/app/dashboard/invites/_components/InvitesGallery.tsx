@@ -13,6 +13,51 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { MapPin, Copy as CopyIcon, CornerUpRight } from "lucide-react";
 
+/* ─── Helper functions ─── */
+// booking status display
+const getBookingStatusDisplay = (status: string) => {
+  switch (status) {
+    case "pending_payment":
+      return { text: "PENDING PAYMENT", bgColor: "bg-yellow-100", textColor: "text-yellow-700", indicator: "🕐" };
+    case "confirmed":
+      return { text: "CONFIRMED", bgColor: "bg-green-100", textColor: "text-green-700", indicator: "✅" };
+    case "cancelled":
+      return { text: "CANCELLED", bgColor: "bg-red-100", textColor: "text-red-700", indicator: "❌" };
+    case "completed":
+      return { text: "COMPLETED", bgColor: "bg-blue-100", textColor: "text-blue-700", indicator: "🎉" };
+    default:
+      return { text: "WAITLISTED", bgColor: "bg-orange-100", textColor: "text-orange-700", indicator: "⏳" };
+  }
+};
+
+// payment status display
+const getPaymentStatusDisplay = (bookingStatus: string, pd: any) => {
+  if (pd) {
+    switch (pd.status) {
+      case "paid":
+        return { text: "SUCCESS", bgColor: "bg-green-100", textColor: "text-green-700" };
+      case "failed":
+        return { text: "FAILED", bgColor: "bg-red-100", textColor: "text-red-700" };
+      case "refunded":
+        return { text: "REFUNDED", bgColor: "bg-red-100", textColor: "text-red-700" };
+      default:
+        return { text: "PENDING", bgColor: "bg-yellow-100", textColor: "text-yellow-700" };
+    }
+  }
+  // fallback based on booking status
+  switch (bookingStatus) {
+    case "pending_payment":
+      return { text: "PENDING", bgColor: "bg-yellow-100", textColor: "text-yellow-700" };
+    case "confirmed":
+    case "waitlist":
+      return { text: "SUCCESS", bgColor: "bg-green-100", textColor: "text-green-700" };
+    case "cancelled":
+      return { text: "CANCELLED", bgColor: "bg-red-100", textColor: "text-red-700" };
+    default:
+      return { text: "PENDING", bgColor: "bg-yellow-100", textColor: "text-yellow-700" };
+  }
+};
+
 /* ─── Booking-details dialog ─── */
 function BookingDetailsDialog({
   open,
@@ -40,7 +85,6 @@ function BookingDetailsDialog({
   }, [open, booking]);
 
   if (!open || !booking) return null;
-
   // date/time labels
   const dt = new Date(booking.eventId.startTime);
   const dateLabel = dt.toLocaleDateString("en-IN", {
@@ -51,49 +95,6 @@ function BookingDetailsDialog({
     hour: "2-digit",
     minute: "2-digit",
   });
-
-  // booking status display
-  const getBookingStatusDisplay = (status: string) => {
-    switch (status) {
-      case "pending_payment":
-        return { text: "PENDING PAYMENT", bgColor: "bg-yellow-100", textColor: "text-yellow-700" };
-      case "confirmed":
-        return { text: "CONFIRMED", bgColor: "bg-green-100", textColor: "text-green-700" };
-      case "cancelled":
-        return { text: "CANCELLED", bgColor: "bg-red-100", textColor: "text-red-700" };
-      case "completed":
-        return { text: "COMPLETED", bgColor: "bg-blue-100", textColor: "text-blue-700" };
-      default:
-        return { text: "WAITLISTED", bgColor: "bg-[#F7E9C0]", textColor: "text-black" };
-    }
-  };
-  // payment status display
-  const getPaymentStatusDisplay = (bookingStatus: string, pd: any) => {
-    if (pd) {
-      switch (pd.status) {
-        case "paid":
-          return { text: "SUCCESS", bgColor: "bg-[#D3F1D5]", textColor: "text-black" };
-        case "failed":
-          return { text: "FAILED", bgColor: "bg-red-100", textColor: "text-red-700" };
-        case "refunded":
-          return { text: "REFUNDED", bgColor: "bg-red-100", textColor: "text-red-700" };
-        default:
-          return { text: "PENDING", bgColor: "bg-yellow-100", textColor: "text-yellow-700" };
-      }
-    }
-    // fallback
-    switch (bookingStatus) {
-      case "pending_payment":
-        return { text: "PENDING", bgColor: "bg-yellow-100", textColor: "text-yellow-700" };
-      case "confirmed":
-      case "completed":
-        return { text: "SUCCESS", bgColor: "bg-[#D3F1D5]", textColor: "text-black" };
-      case "cancelled":
-        return { text: "REFUNDED", bgColor: "bg-red-100", textColor: "text-red-700" };
-      default:
-        return { text: "PENDING", bgColor: "bg-yellow-100", textColor: "text-yellow-700" };
-    }
-  };
 
   const bookingStatusDisplay = getBookingStatusDisplay(booking.bookingStatus);
   const paymentStatusDisplay = getPaymentStatusDisplay(
@@ -238,8 +239,17 @@ function BookingDetailsDialog({
             >
               {booking._id.slice(-8)}
             </span>
+          </div>        </div>
+
+        {/* Waitlist explanation */}
+        {booking.bookingStatus === 'waitlist' && (
+          <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+            <p className="text-sm text-orange-800">
+              <strong>⏳ You're on the waitlist!</strong> Your payment has been processed successfully. 
+              You'll be notified once the organizer confirms your spot.
+            </p>
           </div>
-        </div>
+        )}
 
         <button
           onClick={onClose}
@@ -359,71 +369,87 @@ export default function InvitesGallery() {
       </div>
     );
   }
-
-  const appleCards = displayEvents.map((evt, idx) => (
-    <div
-      key={evt._id}
-      onClickCapture={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        openDialog(evt);
-      }}
-      className="cursor-pointer"
-    >
-      <AppleCard
-        index={idx}
-        enableModal={false}
-        card={{
-          category: evt.event_location,
-          title: evt.event_name,
-          src: evt.cover_photo_link,
-          content: (
-            <div className="mx-auto max-w-3xl font-sans text-base text-neutral-600 dark:text-neutral-400 md:text-xl">
-              <p className="mb-2">{evt.description}</p>
-              <p className="mb-2">{evt.description}</p>
-              <div className="text-sm font-medium text-green-600">
-                ✓ Booking Confirmed – {evt.booking.numberOfSeats} seat(s)
-              </div>
-            </div>
-          ),
+  const appleCards = displayEvents.map((evt, idx) => {
+    const bookingStatusDisplay = getBookingStatusDisplay(evt.booking.bookingStatus);
+    
+    return (
+      <div
+        key={evt._id}
+        onClickCapture={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          openDialog(evt);
         }}
-      />
-    </div>
-  ));
-
-  const mobileCards = displayEvents.map((evt) => (
-    <div
-      key={evt._id}
-      className="snap-center shrink-0 w-[92vw] max-w-[340px] mx-auto h-[52vh] cursor-pointer"
-      onClick={() => openDialog(evt)}
-    >
-      <div className="flex flex-col rounded-xl bg-white" style={{ maxHeight: "100vh" }}>
-        <div className="relative flex-shrink-0 w-[322px] h-[362px] mx-auto overflow-hidden rounded-xl">
-          <Image
-            src={evt.cover_photo_link}
-            alt={evt.event_name}
-            fill
-            className="object-cover rounded-xl transition-transform duration-200 hover:scale-105"
-            priority
-          />
-          <span className="absolute bottom-3 right-3 italic rounded-md bg-black/70 px-2 py-1 text-[14px] font-[400] uppercase text-white backdrop-blur">
-            {new Date(evt.event_date).toLocaleDateString("en-IN", {
-              day: "2-digit",
-              month: "short",
-            })}{" "}
-            |{" "}
-            {new Date(evt.event_date).toLocaleTimeString("en-IN", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </span>
-        </div>
-        <div className="mt-1 flex grow flex-col justify-between px-4 pb-4">
-          <h3 className="text-[22px] font-[500] leading-snug">{evt.event_name}</h3>
+        className="cursor-pointer"
+      >
+        <AppleCard
+          index={idx}
+          enableModal={false}
+          card={{
+            category: evt.event_location,
+            title: evt.event_name,
+            src: evt.cover_photo_link,
+            content: (
+              <div className="mx-auto max-w-3xl font-sans text-base text-neutral-600 dark:text-neutral-400 md:text-xl">
+                <p className="mb-2">{evt.description}</p>
+                <p className="mb-2">{evt.description}</p>
+                <div className={`text-sm font-medium ${bookingStatusDisplay.textColor} flex items-center gap-1`}>
+                  <span>{bookingStatusDisplay.indicator}</span>
+                  {bookingStatusDisplay.text} – {evt.booking.numberOfSeats} seat(s)
+                </div>
+              </div>
+            ),
+          }}
+        />
+      </div>
+    );
+  });
+  const mobileCards = displayEvents.map((evt) => {
+    const bookingStatusDisplay = getBookingStatusDisplay(evt.booking.bookingStatus);
+    
+    return (
+      <div
+        key={evt._id}
+        className="snap-center shrink-0 w-[92vw] max-w-[340px] mx-auto h-[52vh] cursor-pointer"
+        onClick={() => openDialog(evt)}
+      >
+        <div className="flex flex-col rounded-xl bg-white" style={{ maxHeight: "100vh" }}>
+          <div className="relative flex-shrink-0 w-[322px] h-[362px] mx-auto overflow-hidden rounded-xl">
+            <Image
+              src={evt.cover_photo_link}
+              alt={evt.event_name}
+              fill
+              className="object-cover rounded-xl transition-transform duration-200 hover:scale-105"
+              priority
+            />
+            {/* Date/Time badge */}
+            <span className="absolute bottom-3 right-3 italic rounded-md bg-black/70 px-2 py-1 text-[14px] font-[400] uppercase text-white backdrop-blur">
+              {new Date(evt.event_date).toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "short",
+              })}{" "}
+              |{" "}
+              {new Date(evt.event_date).toLocaleTimeString("en-IN", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </span>
+            
+            {/* Booking status indicator */}
+            <div className="absolute top-3 left-3 flex items-center gap-1 rounded-full bg-white/90 backdrop-blur px-2 py-1 text-[12px] font-medium">
+              <span className="text-[14px]">{bookingStatusDisplay.indicator}</span>
+              <span className={`${bookingStatusDisplay.textColor}`}>
+                {bookingStatusDisplay.text}
+              </span>
+            </div>
+          </div>
+          <div className="mt-1 flex grow flex-col justify-between px-4 pb-4">
+            <h3 className="text-[22px] font-[500] leading-snug">{evt.event_name}</h3>
+          </div>
         </div>
       </div>
-    </div>
-  ));
+    );
+  });
 
   return (
     <div className="space-y-5">

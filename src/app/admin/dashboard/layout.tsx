@@ -12,7 +12,8 @@ import {
   Menu, 
   X,
   Settings,
-  Home
+  Home,
+  BookOpen
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -22,11 +23,11 @@ interface AdminLayoutProps {
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
-
   const navigation = [
     { name: 'Dashboard', href: '/admin/dashboard', icon: Home },
     { name: 'Users', href: '/admin/dashboard/users', icon: Users },
     { name: 'Events', href: '/admin/dashboard/events', icon: Calendar },
+    { name: 'Bookings', href: '/admin/dashboard/bookings', icon: BookOpen },
     { name: 'Analytics', href: '/admin/dashboard/analytics', icon: BarChart3 },
   ];
 
