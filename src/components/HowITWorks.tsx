@@ -11,6 +11,14 @@ const dmSans = DM_Sans({
   weight: ['400', '700'],
   display: 'swap',
 });
+
+interface Step {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+}
+
 /* ---------- slide data ---------- */
 const slides = [
   {
@@ -39,7 +47,7 @@ const slides = [
 /* card sizing */
 const CARD_W = 270;
 const CARD_H = 320;
-const clamp = (v, max) => Math.max(0, Math.min(v, max));
+const clamp = (v: number, max: number): number => Math.max(0, Math.min(v, max));
 
 export default function StepCarousel() {
   const [idx, setIdx] = useState(0);
@@ -67,25 +75,27 @@ export default function StepCarousel() {
     rotationAngle: 5,
     touchEventOptions: { passive: false },
   });
-
   /* ---------- wheel ---------- */
-  const onWheel = (e) => {
-    if (lock.current) return;
+  const onWheel = (e: React.WheelEvent) => {    if (lock.current) return;
     if (Math.abs(e.deltaX) < 15 && Math.abs(e.deltaY) < 15) return;
     lock.current = true;
-    e.deltaX > 0 || e.deltaY > 0 ? (setDir(1), next()) : (setDir(-1), prev());
+    if (e.deltaX > 0 || e.deltaY > 0) {
+      setDir(1);
+      next();
+    } else {
+      setDir(-1);
+      prev();
+    }
     setTimeout(() => (lock.current = false), 350);
   };
-
   /* ---------- framer variants ---------- */
   const variants = {
-    enter: (d) => ({ x: d > 0 ? CARD_W : -CARD_W, opacity: 0 }),
+    enter: (d: number) => ({ x: d > 0 ? CARD_W : -CARD_W, opacity: 0 }),
     center: { x: 0, opacity: 1 },
-    exit: (d) => ({ x: d > 0 ? -CARD_W : CARD_W, opacity: 0 }),
+    exit: (d: number) => ({ x: d > 0 ? -CARD_W : CARD_W, opacity: 0 }),
   };
-
   /* ---------- Card ---------- */
-  const Card = ({ step }) => (
+  const Card = ({ step }: { step: Step }) => (
     <div
       className="rounded-2xl shadow-sm flex flex-col items-center px-4 py-5"
       style={{ width: CARD_W, height: CARD_H, backgroundColor: "#FAF0E5" }}

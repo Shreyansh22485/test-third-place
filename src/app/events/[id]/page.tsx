@@ -3,7 +3,7 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -25,9 +25,9 @@ import { usePersonalityTestReturn } from "@/hooks/usePersonalityTestReturn";
 import { EventDetailsSkeleton } from "@/components/ui/skeleton";
 import Understand from "../_components/UnderStand";
 
-type PageProps = { params: any };
+type PageProps = { params: Promise<{ id: string }> };
 
-export default function EventPage({ params }: PageProps) {
+function EventPageContent({ params }: PageProps) {
   const [event, setEvent] = useState<BackendEvent | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [numberOfSeats, setNumberOfSeats] = useState(1);
@@ -669,8 +669,15 @@ export default function EventPage({ params }: PageProps) {
                 ? "font-[300]"
                 : ""
             } ${valueClass ?? ""} ${extraClass}`}
-          >
-            {typeof value === "number" ? `₹${value.toLocaleString()}` : value}
+          >            {typeof value === "number" ? `₹${value.toLocaleString()}` : value}
           </span>
         </div>
       );
+
+export default function EventPage({ params }: PageProps) {
+  return (
+    <Suspense fallback={<EventDetailsSkeleton />}>
+      <EventPageContent params={params} />
+    </Suspense>
+  );
+}

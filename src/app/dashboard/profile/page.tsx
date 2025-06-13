@@ -1,6 +1,6 @@
 "use client";
 
-import React, { JSX } from "react";
+import React, { JSX, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -117,7 +117,7 @@ const Row = ({
 
 /* ────────────────────────────── PAGE ──────────────────────────────── */
 
-function ProfilePage() {
+function ProfilePageContent() {
   const { user, loading, error, logout } = useUser();
   const router = useRouter();
   const [showLogoutModal, setShowLogoutModal] = React.useState(false);
@@ -255,5 +255,13 @@ const SectionTitle = ({ children, className = "", noMargin = false }: { children
     {children}
   </h3>
 );
+
+function ProfilePage() {
+  return (
+    <Suspense fallback={<ProfileSkeleton />}>
+      <ProfilePageContent />
+    </Suspense>
+  );
+}
 
 export default ProfilePage;

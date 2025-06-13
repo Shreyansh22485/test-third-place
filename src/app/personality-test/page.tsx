@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useUser } from '@/hooks/useUser';
 import { personalityTestService } from '@/services/personalityTest.service';
@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { Widget as TypeformWidget } from '@typeform/embed-react';
 import { PersonalityTestSkeleton } from '@/components/ui/skeleton';
 
-export default function PersonalityTestPage() {
+function PersonalityTestContent() {
   const { user, loading, fetchUser } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -116,8 +116,7 @@ export default function PersonalityTestPage() {
           id="XiBDE8Js"
           style={{ width: '100%', height: '100%' }}
           className="w-full h-full"
-          onSubmit={handleTypeformSubmit}
-          transitiveSearchParams={true}
+          onSubmit={handleTypeformSubmit}          transitiveSearchParams={true}
           hidden={{
             first_name: user.firstName,
             last_name: user.lastName,
@@ -130,5 +129,13 @@ export default function PersonalityTestPage() {
         />
       </div>
     </div>
+  );
+}
+
+export default function PersonalityTestPage() {
+  return (
+    <Suspense fallback={<PersonalityTestSkeleton />}>
+      <PersonalityTestContent />
+    </Suspense>
   );
 }

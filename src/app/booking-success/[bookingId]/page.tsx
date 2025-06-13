@@ -7,7 +7,7 @@ import { bookingService, type BookedEvent } from '@/services/booking.service';
 import { BookingSuccessSkeleton } from '@/components/ui/skeleton';
 
 interface PageProps {
-  params: { bookingId: string };
+  params: Promise<{ bookingId: string }>;
 }
 
 export default function BookingSuccessPage({ params }: PageProps) {

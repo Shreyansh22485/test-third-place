@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { adminService } from '@/services/admin.service';
 import { 
@@ -102,7 +102,7 @@ const categories = [
   'other'
 ];
 
-export default function EventsPage() {
+function EventsContent() {
   const searchParams = useSearchParams();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
@@ -601,12 +601,19 @@ export default function EventsPage() {
           onSubmit={handleSubmit}
           loading={formLoading}
           error={formError}
-          validationErrors={validationErrors}
-          onImageChange={handleImageChange}
+          validationErrors={validationErrors}          onImageChange={handleImageChange}
           onRemoveImage={removeImage}
         />
       )}
     </div>
+  );
+}
+
+export default function EventsPage() {
+  return (
+    <Suspense fallback={<div className="p-6">Loading events...</div>}>
+      <EventsContent />
+    </Suspense>
   );
 }
 
