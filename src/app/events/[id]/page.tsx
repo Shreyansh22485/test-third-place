@@ -22,6 +22,7 @@ import { useRazorpay } from "@/hooks/useRazorpay";
 import PaymentUtils from "@/utils/payment.utils";
 import { useUser } from "@/hooks/useUser";
 import { usePersonalityTestReturn } from "@/hooks/usePersonalityTestReturn";
+import { EventDetailsSkeleton } from "@/components/ui/skeleton";
 import Understand from "../_components/UnderStand";
 
 type PageProps = { params: any };
@@ -67,7 +68,7 @@ export default function EventPage({ params }: PageProps) {
     fetchEvent();
   }, [params]);
 
-  if (!event) return <div>Loading...</div>;  const handleContinue = async () => {
+  if (!event) return <EventDetailsSkeleton />;  const handleContinue = async () => {
     // First, check if personality test is completed
     if (!user?.personalityTestCompleted) {
       const currentPath = window.location.pathname;
@@ -88,7 +89,8 @@ export default function EventPage({ params }: PageProps) {
   const handleUnderstandClose = () => {
     setShowUnderstandModal(false);
     setHasSeenUnderstand(true);
-  };  const handleProceedWithPayment = async () => {
+  };
+    const handleProceedWithPayment = async () => {
     try {
       setIsLoading(true);
 

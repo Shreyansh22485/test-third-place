@@ -7,6 +7,7 @@ import { personalityTestService } from '@/services/personalityTest.service';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Widget as TypeformWidget } from '@typeform/embed-react';
+import { PersonalityTestSkeleton } from '@/components/ui/skeleton';
 
 export default function PersonalityTestPage() {
   const { user, loading, fetchUser } = useUser();
@@ -69,16 +70,8 @@ export default function PersonalityTestPage() {
       }
     }, 2000); // Wait 2 seconds for webhook to process
   };
-
   if (loading) {
-    return (
-      <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
+    return <PersonalityTestSkeleton />;
   }
 
   if (!user) {
@@ -104,16 +97,8 @@ export default function PersonalityTestPage() {
 
   const returnTo = searchParams.get('returnTo');
   const backUrl = returnTo ? decodeURIComponent(returnTo) : '/dashboard';
-
   if (!showEmbed) {
-    return (
-      <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading personality test...</p>
-        </div>
-      </div>
-    );
+    return <PersonalityTestSkeleton />;
   }
 
   return (
@@ -138,6 +123,8 @@ export default function PersonalityTestPage() {
             last_name: user.lastName,
             email: user.email || '',
             phone_number: user.phoneNumber,
+            gender: user.gender || '',
+            date_of_birth: user.dateOfBirth ? new Date(user.dateOfBirth).toISOString() : '',
             user_id: user.id
           }}
         />

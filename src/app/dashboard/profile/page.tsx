@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { FaWhatsapp, FaInstagram } from "react-icons/fa";
 import { useUser } from "@/hooks/useUser";
 import { usePersonalityTestReturn } from "@/hooks/usePersonalityTestReturn";
+import { ProfileSkeleton } from "@/components/ui/skeleton";
+import ConfirmationModal from "@/components/ui/confirmation-modal";
 
 /* ───────────────────────────────── ICONS ─────────────────────────────── */
 
@@ -118,16 +120,20 @@ const Row = ({
 function ProfilePage() {
   const { user, loading, error, logout } = useUser();
   const router = useRouter();
+  const [showLogoutModal, setShowLogoutModal] = React.useState(false);
   
   // Handle user data refresh when returning from personality test
   usePersonalityTestReturn();
-  
-  if (loading) return <Loader />;
+    if (loading) return <ProfileSkeleton />;
   if (error) return <ErrorState error={error} />;
   if (!user) return <NoUser />;
-
   const handleLogout = () => {
-    if (confirm("Are you sure you want to logout?")) logout();
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = () => {
+    setShowLogoutModal(false);
+    logout();
   };
   const handlePersonalityTest = () => {
     const currentPath = '/dashboard/profile';
@@ -200,25 +206,27 @@ function ProfilePage() {
         </div>
 
         {/* MANAGE */}
-        <SectionTitle>MANAGE</SectionTitle>
-        <div className="bg-white rounded-2xl border border-[#E5E5EA] overflow-hidden mb-5">
+        <SectionTitle>MANAGE</SectionTitle>        <div className="bg-white rounded-2xl border border-[#E5E5EA] overflow-hidden mb-5">
           <Row icon={<LogoutIcon />} title="Logout" arrow onClick={handleLogout} />
         </div>
       </section>
+
+      {/* Logout Confirmation Modal */}
+      <ConfirmationModal
+        open={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={confirmLogout}
+        title="Logout"
+        message="Are you sure you want to logout? You'll need to sign in again to access your account."
+        confirmText="Logout"
+        cancelText="Cancel"
+        confirmButtonClass="bg-red-600 text-white hover:bg-red-700"
+      />
     </div>
   );
 }
 
 /* ──────────────────────────── SMALL HELPERS ─────────────────────────── */
-
-const Loader = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="text-center">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-2" />
-      <p className="text-gray-600">Loading profile...</p>
-    </div>
-  </div>
-);
 
 const ErrorState = ({ error }: { error: string }) => (
   <div className="min-h-screen flex items-center justify-center">

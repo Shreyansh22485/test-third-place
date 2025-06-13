@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { CheckCircle, ArrowLeft } from 'lucide-react';
 import { bookingService, type BookedEvent } from '@/services/booking.service';
+import { BookingSuccessSkeleton } from '@/components/ui/skeleton';
 
 interface PageProps {
   params: { bookingId: string };
@@ -29,16 +30,8 @@ export default function BookingSuccessPage({ params }: PageProps) {
 
     fetchBooking();
   }, [params]);
-
   if (loading) {
-    return (
-      <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center px-4">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading booking details...</p>
-        </div>
-      </div>
-    );
+    return <BookingSuccessSkeleton />;
   }
 
   if (error || !booking) {

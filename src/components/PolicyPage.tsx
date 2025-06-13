@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { PolicySkeleton } from '@/components/ui/skeleton';
 
 interface PolicyPageProps {
   title: string;
@@ -35,16 +36,8 @@ const PolicyPage: React.FC<PolicyPageProps> = ({ title, filename }) => {
 
     fetchContent();
   }, [filename]);
-
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading {title}...</p>
-        </div>
-      </div>
-    );
+    return <PolicySkeleton />;
   }
 
   return (

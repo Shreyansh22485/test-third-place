@@ -4,6 +4,7 @@ import React, { useState, useMemo, useRef, useEffect } from "react";
 import Image from "next/image";
 import { bookingService, type BookedEvent } from "@/services/booking.service";
 import { paymentService } from "@/services/payment.service";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import {
   Carousel,
@@ -134,14 +135,20 @@ function BookingDetailsDialog({
           ×
         </button>
 
-        <h2 className="mb-2 text-[18px] font-[500]">Booking details</h2>
-
-        {loadingPayment && (
-          <div className="flex items-center justify-center py-4">
-            <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-black" />
-            <span className="ml-2 text-sm text-gray-600">
-              Loading payment details...
-            </span>
+        <h2 className="mb-2 text-[18px] font-[500]">Booking details</h2>        {loadingPayment && (
+          <div className="space-y-3 py-4">
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-16" />
+            </div>
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-4 w-12" />
+            </div>
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-6 w-20 rounded-md" />
+            </div>
           </div>
         )}
 
@@ -305,13 +312,49 @@ export default function InvitesGallery() {
     setSelectedBooking(evt.booking);
     setModalOpen(true);
   };
-
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-black" />
-          <p className="mt-2 text-gray-600">Loading your invites...</p>
+      <div className="min-h-screen bg-[#FAFAFA] px-4 pt-4">
+        {/* Mobile skeleton */}
+        <div className="md:hidden">
+          <div className="snap-center shrink-0 w-[92vw] max-w-[340px] mx-auto h-[52vh]">
+            <div className="flex flex-col rounded-xl bg-white shadow-sm">
+              <Skeleton className="h-[362px] w-[322px] mx-auto rounded-xl" />
+              <div className="p-4">
+                <Skeleton className="h-6 w-3/4 mb-2" />
+                <div className="flex items-center gap-2 mb-2">
+                  <Skeleton className="h-4 w-4 rounded-full" />
+                  <Skeleton className="h-4 w-24" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-4 w-4 rounded-full" />
+                  <Skeleton className="h-4 w-32" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="mt-4 px-4">
+            <Skeleton className="h-2 w-full rounded-full" />
+          </div>
+        </div>
+
+        {/* Desktop skeleton */}
+        <div className="hidden md:block mt-12">
+          <div className="flex gap-6 justify-center">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="relative h-96 w-80 rounded-3xl bg-white shadow-lg overflow-hidden">
+                <Skeleton className="h-60 w-full" />
+                <div className="p-6">
+                  <Skeleton className="h-6 w-3/4 mb-2" />
+                  <Skeleton className="h-4 w-1/2 mb-4" />
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-4 w-4 rounded-full" />
+                    <Skeleton className="h-4 w-24" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
