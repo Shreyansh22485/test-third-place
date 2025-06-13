@@ -21,6 +21,7 @@ import { personalityTestService } from "@/services/personalityTest.service";
 import { useRazorpay } from "@/hooks/useRazorpay";
 import PaymentUtils from "@/utils/payment.utils";
 import { useUser } from "@/hooks/useUser";
+import { usePersonalityTestReturn } from "@/hooks/usePersonalityTestReturn";
 import Understand from "../_components/UnderStand";
 
 type PageProps = { params: any };
@@ -32,6 +33,10 @@ export default function EventPage({ params }: PageProps) {
   const router = useRouter();
   const { openRazorpay } = useRazorpay();
   const { user } = useUser();
+  
+  // Handle user data refresh when returning from personality test
+  usePersonalityTestReturn();
+  
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [inviteInput, setInviteInput] = useState("");
   const [friendPhone, setFriendPhone] = useState("");
@@ -63,21 +68,27 @@ export default function EventPage({ params }: PageProps) {
   }, [params]);
 
   if (!event) return <div>Loading...</div>;  const handleContinue = async () => {
-    // If user hasn't seen the UnderStand modal, show it first
+    // First, check if personality test is completed
+    if (!user?.personalityTestCompleted) {
+      const currentPath = window.location.pathname;
+      router.push(`/personality-test?returnTo=${encodeURIComponent(currentPath)}`);
+      return;
+    }
+
+    // If personality test is completed but user hasn't seen the UnderStand modal, show it first
     if (!hasSeenUnderstand) {
       setShowUnderstandModal(true);
       return;
     }
 
-    // If user has seen the modal, proceed with payment
+    // If user has seen the modal and completed personality test, proceed with payment
     await handleProceedWithPayment();
   };
 
   const handleUnderstandClose = () => {
     setShowUnderstandModal(false);
     setHasSeenUnderstand(true);
-  };
-  const handleProceedWithPayment = async () => {
+  };  const handleProceedWithPayment = async () => {
     try {
       setIsLoading(true);
 
@@ -89,27 +100,20 @@ export default function EventPage({ params }: PageProps) {
         totalAmount: event.experienceTicketPrice + event.price
       });
 
-      // 1. Check if personality test is completed
-      const testStatus = await personalityTestService.getTestStatus();
-      
-      if (!testStatus.personalityTestCompleted) {
-        router.push('/personality-test');
-        return;
-      }
-
-      // 2. Create payment order
-      const orderResponse = await paymentService.createPaymentOrder(event._id, numberOfSeats);
-      
+      // Create payment order
+      const orderResponse = await paymentService.createPaymentOrder(event._id, numberOfSeats);      
       PaymentUtils.logPaymentActivity('ORDER_CREATED', {
         orderId: orderResponse.data.orderId,
         bookingId: orderResponse.data.bookingId,
         amount: orderResponse.data.amount
       });
 
-      // 3. Validate order response
+      // Validate order response
       if (!orderResponse.data.orderId || !orderResponse.data.razorpayKeyId) {
         throw new Error('Invalid order response from server');
-      }      // 4. Open Razorpay checkout
+      }
+
+      // Open Razorpay checkout
       await openRazorpay({
         key: orderResponse.data.razorpayKeyId,
         amount: orderResponse.data.amount * 100, // Backend sends in rupees, Razorpay needs paise
@@ -204,22 +208,28 @@ export default function EventPage({ params }: PageProps) {
     weekday: "short",
     day: "numeric",
     month: "short",
-  });
-  const timeLabel = dateObj.toLocaleTimeString("en-IN", {
+  });  const timeLabel = dateObj.toLocaleTimeString("en-IN", {
     hour: "2-digit",
     minute: "2-digit",
   });
 
+  // Determine the button text based on current state
+  const getButtonText = () => {
+    if (isLoading) return 'Processing...';
+    if (!user?.personalityTestCompleted) return 'Take Personality Test';
+    if (!hasSeenUnderstand) return 'Continue';
+    return 'Proceed to Payment';
+  };
+
   return (
     <div className="bg-[#FAFAFA]">      {/* Sticky footer CTA */}
       <footer className="fixed inset-x-0 bottom-0 z-10 border-t border-gray-300 bg-[#FAFAFA] px-4 py-3 backdrop-blur md:px-0">
-        <div className="mx-auto w-full md:max-w-lg">
-          <button 
+        <div className="mx-auto w-full md:max-w-lg">          <button 
             onClick={handleContinue}
             disabled={isLoading}
             className="w-full rounded-full bg-black py-3 text-sm font-semibold text-white shadow-sm hover:opacity-90 transition disabled:opacity-50"
           >
-            {isLoading ? 'Processing...' : 'Continue'}
+            {getButtonText()}
           </button>
         </div>
       </footer>
@@ -286,11 +296,6 @@ export default function EventPage({ params }: PageProps) {
     </div>
   </div>
 )}
-
-      {/* UnderStand Modal */}
-      {showUnderstandModal && (
-        <Understand onClose={handleUnderstandClose} />
-      )}
 
 
     {/* ─── Main article ─────────────────────────────────────── */}
@@ -589,8 +594,12 @@ export default function EventPage({ params }: PageProps) {
       Simply add them above, before the cutoff time.
     </p>
   </div>
-</section>
-      </article>
+</section>      </article>
+
+      {/* Understand Modal */}
+      {showUnderstandModal && (
+        <Understand onClose={handleUnderstandClose} />
+      )}
     </div>
   );
 }
@@ -663,4 +672,3 @@ export default function EventPage({ params }: PageProps) {
           </span>
         </div>
       );
-      

@@ -1,44 +1,79 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useUser } from '@/hooks/useUser';
 import { personalityTestService } from '@/services/personalityTest.service';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { Widget as TypeformWidget } from '@typeform/embed-react';
 
 export default function PersonalityTestPage() {
-  const { user, loading } = useUser();
+  const { user, loading, fetchUser } = useUser();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [showEmbed, setShowEmbed] = useState(false);
 
   useEffect(() => {
     if (!loading && user) {
-      // If user has already completed the test, redirect to dashboard
+      // If user has already completed the test, redirect back to return URL or dashboard
       if (user.personalityTestCompleted) {
-        router.push('/dashboard');
+        const returnTo = searchParams.get('returnTo');
+        if (returnTo) {
+          router.push(decodeURIComponent(returnTo));
+        } else {
+          router.push('/dashboard');
+        }
         return;
       }
 
-      // Auto-redirect to Typeform
-      const typeformUrl = personalityTestService.generateTypeformUrl({
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email || '',
-        phoneNumber: user.phoneNumber
-      });
-
-      // Redirect to Typeform
-      window.location.href = typeformUrl;
+      // Show the embedded form
+      setShowEmbed(true);
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, searchParams]);  const handleTypeformSubmit = async (payload: { formId: string; responseId: string }) => {
+    console.log('Typeform submitted!', payload);
+    console.log('Response ID:', payload.responseId);
+    
+    // Wait a moment for the webhook to process, then refresh user data
+    setTimeout(async () => {
+      try {
+        console.log('Refreshing user data after test completion...');
+        
+        // Refresh user data to update the cache
+        await fetchUser();
+        
+        console.log('User data refreshed, redirecting...');
+          // Add a small delay to ensure the user data is updated in the UI
+        setTimeout(() => {
+          const returnTo = searchParams.get('returnTo');
+          if (returnTo) {
+            const url = decodeURIComponent(returnTo);
+            const separator = url.includes('?') ? '&' : '?';
+            router.push(`${url}${separator}fromPersonalityTest=true`);
+          } else {
+            router.push('/dashboard?fromPersonalityTest=true');
+          }
+        }, 500);
+      } catch (error) {
+        console.error('Error refreshing user data:', error);        // Redirect anyway if there's an error
+        const returnTo = searchParams.get('returnTo');
+        if (returnTo) {
+          const url = decodeURIComponent(returnTo);
+          const separator = url.includes('?') ? '&' : '?';
+          router.push(`${url}${separator}fromPersonalityTest=true`);
+        } else {
+          router.push('/dashboard?fromPersonalityTest=true');
+        }
+      }
+    }, 2000); // Wait 2 seconds for webhook to process
+  };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading personality test...</p>
+          <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
     );
@@ -65,44 +100,45 @@ export default function PersonalityTestPage() {
     );
   }
 
+  const returnTo = searchParams.get('returnTo');
+  const backUrl = returnTo ? decodeURIComponent(returnTo) : '/dashboard';
+
+  if (!showEmbed) {
+    return (
+      <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading personality test...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       {/* Header */}
-      <header className="flex h-[58px] items-center justify-between border-b border-[#E5E5EA] px-4">
-        <Link href="/dashboard" className="p-1 text-black">
+      <header className="flex h-[58px] items-center justify-between border-b border-[#E5E5EA] px-4 bg-white">
+        <Link href={backUrl} className="p-1 text-black">
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <h1 className="text-xl font-semibold italic tracking-wide">PERSONALITY TEST</h1>
         <span className="h-5 w-5" />
-      </header>
-
-      <div className="flex items-center justify-center px-4 py-12">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6 text-center">
-          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl">🧠</span>
-          </div>
-          
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Redirecting to Personality Test
-          </h2>
-          
-          <p className="text-gray-600 mb-6">
-            We're taking you to our personality test. This helps us match you with the right people and experiences.
-          </p>
-
-          <div className="space-y-3">
-            <div className="animate-pulse bg-gray-100 h-2 rounded-full"></div>
-            <p className="text-sm text-gray-500">
-              If you're not redirected automatically, 
-              <Link 
-                href="/dashboard" 
-                className="text-black underline ml-1"
-              >
-                click here to go back
-              </Link>
-            </p>
-          </div>
-        </div>
+      </header>      {/* Typeform Embed */}
+      <div className="h-[calc(100vh-58px)]">
+        <TypeformWidget
+          id="XiBDE8Js"
+          style={{ width: '100%', height: '100%' }}
+          className="w-full h-full"
+          onSubmit={handleTypeformSubmit}
+          transitiveSearchParams={true}
+          hidden={{
+            first_name: user.firstName,
+            last_name: user.lastName,
+            email: user.email || '',
+            phone_number: user.phoneNumber,
+            user_id: user.id
+          }}
+        />
       </div>
     </div>
   );

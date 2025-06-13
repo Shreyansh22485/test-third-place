@@ -1,54 +1,26 @@
 "use client";
 
 import { X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
-import { personalityTestService } from "@/services/personalityTest.service";
 
 interface TakeTestProps {
   onClose: () => void;
 }
 
 export default function TakeTest({ onClose }: TakeTestProps) {
-  const { user, fetchUser } = useUser();
+  const { user } = useUser();
+  const router = useRouter();
 
-  const handleStartTest = async () => {
+  const handleStartTest = () => {
     if (!user) return;
 
-    // Generate the Typeform URL with user data
-    const typeformUrl = personalityTestService.generateTypeformUrl({
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      phoneNumber: user.phoneNumber
-    });
+    // Get current URL for return redirect
+    const currentUrl = window.location.pathname;    // Navigate to personality test page with return URL
+    router.push(`/personality-test?returnTo=${encodeURIComponent(currentUrl)}`);
+  };
 
-    // Open the test in a new window/tab
-    const testWindow = window.open(typeformUrl, '_blank');
-    
-    // Optional: Listen for test completion
-    // You could implement polling here or use postMessage
-    if (testWindow) {
-      // Simple polling to check if test was completed
-      const pollInterval = setInterval(async () => {
-        try {
-          const completed = await personalityTestService.checkForTestCompletion(user.id);
-          if (completed) {
-            clearInterval(pollInterval);
-            // Refresh user data to update the UI
-            await fetchUser();
-            // Close the test prompt
-            onClose();
-          }
-        } catch (error) {
-          console.error('Error checking test completion:', error);
-        }
-      }, 10000); // Check every 10 seconds
-
-      // Clear interval after 10 minutes to avoid infinite polling
-      setTimeout(() => clearInterval(pollInterval), 600000);
-    }
-  };return (
+return (
     <div 
       className="fixed left-0 right-0 bg-[#F5F5DC] z-40"
       style={{

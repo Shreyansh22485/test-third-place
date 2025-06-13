@@ -47,6 +47,19 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async headers() {
+    return [
+      {
+        source: '/personality-test',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-src 'self' https://*.typeform.com https://typeform.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.typeform.com https://typeform.com; connect-src 'self' https://*.typeform.com https://typeform.com https://api.typeform.com;",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
