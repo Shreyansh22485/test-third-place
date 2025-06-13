@@ -31,7 +31,7 @@ function Page() {
         </div>
 
         {/* Contact Details Section */}
-        <div className="space-y-6">
+        <div className="space-y-6  mr-2 ml-2" >
           {/* Intro */}
           <div className="text-[15px] leading-snug">
             We&apos;re here to listen, not just reply.<br />
