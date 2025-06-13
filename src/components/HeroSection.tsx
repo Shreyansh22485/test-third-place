@@ -20,7 +20,7 @@ function HeroSection({ videoId, activeVideo, setActiveVideo }: Props) {
         <video
           
           src="https://firebasestorage.googleapis.com/v0/b/thirdplace-3f85e.firebasestorage.app/o/Video1(website).mp4?alt=media&token=1c8758fb-eb82-4798-a411-e32f0e3c0c77"
-          poster="/images/mainarea-poster.jpg"
+          poster="/poster_video1.png"
           autoPlay
           loop
           playsInline
@@ -31,7 +31,7 @@ function HeroSection({ videoId, activeVideo, setActiveVideo }: Props) {
           onClick={() => setActiveVideo(isMuted ? videoId : null)}
           className="absolute bottom-4 left-4 bg-black/70 text-white p-3 rounded-full backdrop-blur-lg"
         >
-          {isMuted ? <VolumeX size={28} /> : <Volume2 size={28} />}
+          {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
         </button>
       </div>
 

@@ -13,6 +13,7 @@ import {
   Card as AppleCard,
 } from "@/components/ui/apple-cards-carousel";
 import { Progress } from "@/components/ui/progress";
+import { ArrowRight, CornerUpRightIcon } from "lucide-react";
 
 /* ─── Booking-details dialog ─── */
 function BookingDetailsDialog({
@@ -33,25 +34,25 @@ function BookingDetailsDialog({
         className="fixed inset-0 bg-black/40 backdrop-blur-[2px]"
         onClick={onClose}
       />
-      <div className="relative z-10 w-full max-w-xs rounded-2xl bg-white p-5 shadow-xl border border-gray-200 font-serif">
+      <div className="relative z-10 w-full max-w-xs rounded-2xl bg-white p-5 shadow-xl border border-gray-200">
         <button
           aria-label="Close"
           onClick={onClose}
-          className="absolute top-4 right-4 text-black/70 hover:text-black"
+          className="absolute top-2 right-4 text-black/70 text-3xl hover:text-black"
         >
           ×
         </button>
         <h2 className="mb-2 text-[18px] font-[500]">Booking details</h2>
 
         {/* all ml-2 spans got font-medium text-black for cleaner numerals */}
-        <div className="space-y-1 text-sm">
+        <div className="space-y-1 text-[16px]">
           <div>
             <span className="font-[400] text-gray-600">Event name :</span>
-            <span className="ml-2 font-medium text-black">{eventName}</span>
+            <span className="ml-2 font-[500] text-black">{eventName}</span>
           </div>
           <div>
             <span className="font-[400] text-gray-600">Event date &amp; time :</span>
-            <span className="ml-2 font-medium  text-black uppercase"> {new Date(eventDate).toLocaleDateString("en-IN", {
+            <span className="ml-2 font-[400]  text-black uppercase"> {new Date(eventDate).toLocaleDateString("en-IN", {
               day: "numeric",
               month: "short",
             })}{" "}
@@ -64,19 +65,21 @@ function BookingDetailsDialog({
           </div>
           <div className="flex items-center">
             <span className="font-[400] text-gray-600">Venue location :</span>
-            <span className="ml-2 font-medium text-white px-2 py-[2px] rounded-lg bg-black text-xs">
-              Koramangala
-            </span>
+ <span className="ml-2 inline-flex items-center font-[400] text-white px-2 py-[2px] rounded-lg bg-black text-[16px]">
+  Koramangala
+  <CornerUpRightIcon className="h-4 w-4 ml-3" />
+</span>
+
           </div>
           <div className="flex items-center">
             <span className="font-[400] text-gray-600">Booking status :</span>
-            <span className="ml-2 font-medium text-black px-2 py-[2px] italic rounded-md bg-[#F7E9C0] text-xs">
+            <span className="ml-2 font-[500] text-black px-2 py-[2px] italic rounded-md bg-[#F7E9C0] text-[16px]">
               WAITLISTED
             </span>
           </div>
           <div className="flex items-center">
             <span className="font-[400] text-gray-600">Payment status :</span>
-            <span className="ml-2 font-medium text-black px-2 py-[2px] italic rounded-md bg-[#D3F1D5]  text-xs">
+            <span className="ml-2 font-[500] text-black px-2 py-[2px] italic rounded-md bg-[#D3F1D5]  text-[16px">
               SUCCESS
             </span>
           </div>
@@ -92,9 +95,9 @@ function BookingDetailsDialog({
           </div>
         </div>
 
-        <button
+       <button
           onClick={onClose}
-          className="mt-5 w-full rounded-lg bg-black py-2 text-sm font-medium text-white shadow hover:bg-neutral-900 transition"
+          className="mt-3  self-start w-25 rounded-lg bg-black py-2 text-[16px] font-medium text-white shadow hover:bg-neutral-900 transition"
         >
           Got it
         </button>
