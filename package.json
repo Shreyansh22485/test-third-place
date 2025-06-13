@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "postinstall": "npx lightningcss --version || true"
+    "lint": "next lint"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",
@@ -20,6 +19,7 @@
     "clsx": "^2.1.1",
     "firebase": "^11.8.1",
     "framer-motion": "^12.15.0",
+    "lightningcss": "^1.21.0",
     "lucide-react": "^0.511.0",
     "motion": "^12.15.0",
     "next": "15.3.2",
