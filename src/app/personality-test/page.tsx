@@ -13,11 +13,13 @@ export default function PersonalityTestPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [showEmbed, setShowEmbed] = useState(false);
-
   useEffect(() => {
     if (!loading && user) {
-      // If user has already completed the test, redirect back to return URL or dashboard
-      if (user.personalityTestCompleted) {
+      // Check if this is a retake (if user has completed test but wants to retake)
+      const retake = searchParams.get('retake');
+      
+      // If user has already completed the test and it's not a retake, redirect back
+      if (user.personalityTestCompleted && retake !== 'true') {
         const returnTo = searchParams.get('returnTo');
         if (returnTo) {
           router.push(decodeURIComponent(returnTo));
@@ -27,10 +29,10 @@ export default function PersonalityTestPage() {
         return;
       }
 
-      // Show the embedded form
+      // Show the embedded form (for first time or retake)
       setShowEmbed(true);
     }
-  }, [user, loading, router, searchParams]);  const handleTypeformSubmit = async (payload: { formId: string; responseId: string }) => {
+  }, [user, loading, router, searchParams]);const handleTypeformSubmit = async (payload: { formId: string; responseId: string }) => {
     console.log('Typeform submitted!', payload);
     console.log('Response ID:', payload.responseId);
     

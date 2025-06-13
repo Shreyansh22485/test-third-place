@@ -129,11 +129,11 @@ function ProfilePage() {
   const handleLogout = () => {
     if (confirm("Are you sure you want to logout?")) logout();
   };
-
   const handlePersonalityTest = () => {
     const currentPath = '/dashboard/profile';
     const returnTo = encodeURIComponent(currentPath);
-    router.push(`/personality-test?returnTo=${returnTo}`);
+    // Always allow retaking the test from profile page
+    router.push(`/personality-test?returnTo=${returnTo}&retake=true`);
   };
 
   return (
@@ -155,7 +155,13 @@ function ProfilePage() {
           <SectionTitle noMargin>CURATION PROFILE</SectionTitle>
           <StatusBadge completed={user.personalityTestCompleted} />
         </div>        <div className="rounded-2xl border border-[#E5E5EA] overflow-hidden mb-5 bg-white">
-          <Row icon={<PersonalityIcon />} title="Take the personality test" sub="Share more about yourself to refine your curation." arrow onClick={handlePersonalityTest} />
+          <Row 
+            icon={<PersonalityIcon />} 
+            title={user.personalityTestCompleted ? "Retake personality test" : "Take the personality test"} 
+            sub={user.personalityTestCompleted ? "Update your preferences and refine your curation." : "Share more about yourself to refine your curation."} 
+            arrow 
+            onClick={handlePersonalityTest} 
+          />
         </div>
 
     {/* JOIN THE COMMUNITY */}
