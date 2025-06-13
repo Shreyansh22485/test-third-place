@@ -3,8 +3,10 @@
 import React, { JSX } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { FaWhatsapp, FaInstagram } from "react-icons/fa";
 import { useUser } from "@/hooks/useUser";
+import { usePersonalityTestReturn } from "@/hooks/usePersonalityTestReturn";
 
 /* ───────────────────────────────── ICONS ─────────────────────────────── */
 
@@ -115,12 +117,23 @@ const Row = ({
 
 function ProfilePage() {
   const { user, loading, error, logout } = useUser();
+  const router = useRouter();
+  
+  // Handle user data refresh when returning from personality test
+  usePersonalityTestReturn();
+  
   if (loading) return <Loader />;
   if (error) return <ErrorState error={error} />;
   if (!user) return <NoUser />;
 
   const handleLogout = () => {
     if (confirm("Are you sure you want to logout?")) logout();
+  };
+
+  const handlePersonalityTest = () => {
+    const currentPath = '/dashboard/profile';
+    const returnTo = encodeURIComponent(currentPath);
+    router.push(`/personality-test?returnTo=${returnTo}`);
   };
 
   return (
@@ -141,9 +154,8 @@ function ProfilePage() {
         <div className="flex items-center justify-between -mb-1.25 sm:px-0">
           <SectionTitle noMargin>CURATION PROFILE</SectionTitle>
           <StatusBadge completed={user.personalityTestCompleted} />
-        </div>
-        <div className="rounded-2xl border border-[#E5E5EA] overflow-hidden mb-5 bg-white">
-          <Row icon={<PersonalityIcon />} title="Take the personality test" sub="Share more about yourself to refine your curation." arrow />
+        </div>        <div className="rounded-2xl border border-[#E5E5EA] overflow-hidden mb-5 bg-white">
+          <Row icon={<PersonalityIcon />} title="Take the personality test" sub="Share more about yourself to refine your curation." arrow onClick={handlePersonalityTest} />
         </div>
 
         {/* JOIN THE COMMUNITY */}

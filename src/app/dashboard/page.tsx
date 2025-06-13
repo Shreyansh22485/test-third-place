@@ -5,10 +5,14 @@ import MobileHeader from "./_components/MobileHeader";
 import EventGallery from "./_components/EventGallery";
 import TakeTest from "./_components/TakeTest";
 import { useUser } from "@/hooks/useUser";
+import { usePersonalityTestReturn } from "@/hooks/usePersonalityTestReturn";
 
 export default function Dashboard() {
   const { user } = useUser();
   const [showTakeTest, setShowTakeTest] = useState(true);
+
+  // Handle user data refresh when returning from personality test
+  usePersonalityTestReturn();
 
   // Check if personality test should be shown
   const shouldShowPersonalityTest = user && !user.personalityTestCompleted && showTakeTest;  return (
