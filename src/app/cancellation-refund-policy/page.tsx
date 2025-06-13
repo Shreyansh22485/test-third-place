@@ -1,5 +1,9 @@
-import PolicyPage from '@/components/PolicyPage';
+import React from 'react'
 
-export default function CancellationRefundPolicyPage() {
-  return <PolicyPage title="Cancellation & Refund Policy" filename="cancellation-refund-policy" />;
+function page() {
+  return (
+    <div>page</div>
+  )
 }
+
+export default page
