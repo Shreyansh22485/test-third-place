@@ -1,24 +1,38 @@
 "use client";
 
 import { useState, Suspense } from "react";
+import { useRouter } from "next/navigation";
 import MobileHeader from "./_components/MobileHeader";
 import EventGallery from "./_components/EventGallery";
 import TakeTest from "./_components/TakeTest";
 import { useUser } from "@/hooks/useUser";
 import { usePersonalityTestReturn } from "@/hooks/usePersonalityTestReturn";
 import { DashboardSkeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/components/AuthProvider";
 
 function DashboardContent() {
+  const { user: authUser, loading: authLoading } = useAuth();
   const { user, loading } = useUser();
+  const router = useRouter();
+
+  console.log('Dashboard - authLoading:', authLoading, 'authUser:', authUser?.uid, 'user:', user?.id);
+
   const [showTakeTest, setShowTakeTest] = useState(true);
 
   // Handle user data refresh when returning from personality test
   usePersonalityTestReturn();
 
+  // Redirect to sign-in if not authenticated
+  if (!authLoading && !authUser) {
+    console.log('No auth user, redirecting to sign-in');
+    router.push('/sign-in');
+    return <DashboardSkeleton />;
+  }
+
   // Check if personality test should be shown
   const shouldShowPersonalityTest = user && !user.personalityTestCompleted && showTakeTest;
 
-  if (loading) {
+  if (authLoading || loading) {
     return <DashboardSkeleton />;
   }return (
     <>

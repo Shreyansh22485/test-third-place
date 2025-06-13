@@ -29,7 +29,7 @@ interface FormData {
 
 export default function AuthPage() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, refreshUserState } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -180,7 +180,6 @@ export default function AuthPage() {
       setLoading(false);
     }
   };
-
   const handleSignUp = async () => {
     setLoading(true);
     setError('');
@@ -207,8 +206,12 @@ export default function AuthPage() {
 
       await authService.registerUser(userData);
       
-      // Registration successful, redirect to dashboard
-      router.push('/dashboard');
+      // Refresh auth state to check if user profile now exists
+      await refreshUserState();
+      
+      // Registration successful, redirect to dashboard will happen automatically
+      // when AuthProvider detects the user profile exists
+      console.log('✅ Registration completed successfully');
     } catch (error: any) {
       console.error('Registration error:', error);
       setError(error.message || 'Failed to create account. Please try again.');

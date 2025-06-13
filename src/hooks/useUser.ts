@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import api from '@/lib/api';
 import { authService } from '@/services/auth.service';
+import { useAuth } from '@/components/AuthProvider';
 
 export interface UserProfile {
   id: string;
@@ -37,6 +38,7 @@ export const useUser = (): UseUserReturn => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { user: authUser, loading: authLoading } = useAuth();
   const fetchUser = useCallback(async () => {
     try {
       setLoading(true);
@@ -125,17 +127,44 @@ export const useUser = (): UseUserReturn => {
       setError(null);
       window.location.href = '/auth';
     }
-  }, []);
-
-  useEffect(() => {
-    // Only fetch user if we have a token
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      fetchUser();
-    } else {
-      setLoading(false);
+  }, []);  useEffect(() => {
+    console.log('useUser effect - authLoading:', authLoading, 'authUser:', authUser?.uid);
+    
+    // Don't fetch if auth is still loading
+    if (authLoading) {
+      return;
     }
-  }, [fetchUser]);
+    
+    // Only fetch user if Firebase user is authenticated and we have a token
+    if (authUser) {
+      const token = localStorage.getItem('authToken');
+      console.log('Token from localStorage:', token ? 'exists' : 'missing');
+      
+      if (token) {
+        fetchUser();
+      } else {
+        // Wait a bit for token to be stored, then try again
+        const timeoutId = setTimeout(() => {
+          const token = localStorage.getItem('authToken');
+          if (token) {
+            console.log('Token found after timeout, fetching user');
+            fetchUser();
+          } else {
+            console.log('No token found after timeout');
+            setLoading(false);
+            setError('Authentication token not found');
+          }
+        }, 1000);
+        
+        return () => clearTimeout(timeoutId);
+      }
+    } else {
+      // No Firebase user, don't fetch
+      console.log('No Firebase user authenticated');
+      setLoading(false);
+      setUser(null);
+    }
+  }, [fetchUser, authUser, authLoading]);
 
   return {
     user,
