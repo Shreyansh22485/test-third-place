@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   /* —──────── Experiments —──────── */
   experimental: {
    
+    // Disable Lightning CSS so the missing binary no longer breaks the build
     optimizeCss: false,
   },
 
@@ -19,6 +20,9 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'images.unsplash.com',   pathname: '/**' },
       { protocol: 'https', hostname: 'unsplash.com',          pathname: '/**' },
       { protocol: 'https', hostname: 'picsum.photos',         pathname: '/**' },
+      { protocol: 'https', hostname: 'images.unsplash.com',   pathname: '/' },
+      { protocol: 'https', hostname: 'unsplash.com',          pathname: '/' },
+      { protocol: 'https', hostname: 'picsum.photos',         pathname: '/' },
       { protocol: 'https', hostname: 'via.placeholder.com',   pathname: '/**' },
       { protocol: 'https', hostname: 'firebasestorage.googleapis.com', pathname: '/**' },
       { protocol: 'https', hostname: 'lh3.googleusercontent.com',       pathname: '/**' },
