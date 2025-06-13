@@ -6,10 +6,11 @@ import { useSwipeable } from "react-swipeable";
 import Image from "next/image";
 import { DM_Sans } from "next/font/google";
 import Link from "next/link";
+
 const dmSans = DM_Sans({
-  subsets: ['latin'],
-  weight: ['400', '700'],
-  display: 'swap',
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  display: "swap",
 });
 
 interface Step {
@@ -20,7 +21,7 @@ interface Step {
 }
 
 /* ---------- slide data ---------- */
-const slides = [
+const slides: Step[] = [
   {
     id: 1,
     title: "TELL US ABOUT YOU",
@@ -39,44 +40,38 @@ const slides = [
     id: 3,
     title: "SHOW UP & LET THE MAGIC HAPPEN",
     description:
-      "Join curated experiences, meet real people, and spark something real—right here, in real life. ✨",
+      "Join curated experiences, meet real people, and spark something real—right here, in real life. ✨",
     image: "/step3-ezgif.com-crop.gif",
   },
 ];
 
-/* card sizing */
+/* ---------- sizing ---------- */
 const CARD_W = 270;
 const CARD_H = 320;
-const clamp = (v: number, max: number): number => Math.max(0, Math.min(v, max));
+
+/* ---------- helper ---------- */
+const clamp = (v: number, max: number) => Math.max(0, Math.min(v, max));
 
 export default function StepCarousel() {
-  const [idx, setIdx] = useState(0);
-  const [dir, setDir] = useState(0); // -1 = back, 1 = next
-  const lock = useRef(false);
+  const [idx, setIdx] = useState(0);     // current slide index
+  const [dir, setDir] = useState(0);     // -1 = back, 1 = next
+  const lock = useRef(false);            // wheel debounce
 
-  /* ---------- slide helpers ---------- */
-  const next = () => setIdx((i) => clamp(i + 1, slides.length - 1));
-  const prev = () => setIdx((i) => clamp(i - 1, slides.length - 1));
+  const next = () => setIdx(i => clamp(i + 1, slides.length - 1));
+  const prev = () => setIdx(i => clamp(i - 1, slides.length - 1));
 
   /* ---------- swipe ---------- */
   const swipeHandlers = useSwipeable({
-    onSwipedLeft: () => {
-      setDir(1);
-      next();
-    },
-    onSwipedRight: () => {
-      setDir(-1);
-      prev();
-    },
+    onSwipedLeft : () => { setDir( 1); next(); },
+    onSwipedRight: () => { setDir(-1); prev(); },
     trackMouse: true,
-    trackTouch: true,
-    delta: 5,
+    delta: 10,
     preventScrollOnSwipe: true,
-    rotationAngle: 5,
-    touchEventOptions: { passive: false },
   });
+
   /* ---------- wheel ---------- */
-  const onWheel = (e: React.WheelEvent) => {    if (lock.current) return;
+  const onWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (lock.current) return;
     if (Math.abs(e.deltaX) < 15 && Math.abs(e.deltaY) < 15) return;
     lock.current = true;
     if (e.deltaX > 0 || e.deltaY > 0) {
@@ -88,30 +83,33 @@ export default function StepCarousel() {
     }
     setTimeout(() => (lock.current = false), 350);
   };
+
   /* ---------- framer variants ---------- */
   const variants = {
-    enter: (d: number) => ({ x: d > 0 ? CARD_W : -CARD_W, opacity: 0 }),
-    center: { x: 0, opacity: 1 },
-    exit: (d: number) => ({ x: d > 0 ? -CARD_W : CARD_W, opacity: 0 }),
+    enter : (d: number) => ({ x: d > 0 ?  CARD_W : -CARD_W, opacity: 0 }),
+    center:               { x: 0,                          opacity: 1 },
+    exit  : (d: number) => ({ x: d > 0 ? -CARD_W :  CARD_W, opacity: 0 }),
   };
+
   /* ---------- Card ---------- */
   const Card = ({ step }: { step: Step }) => (
     <div
-      className="rounded-2xl shadow-sm flex flex-col items-center px-4 py-5"
-      style={{ width: CARD_W, height: CARD_H, backgroundColor: "#FAF0E5" }}
+      className="rounded-2xl shadow-sm flex flex-col items-center px-4 py-5 bg-[#FAF0E5]"
+      style={{ width: CARD_W, height: CARD_H }}
       {...swipeHandlers}
     >
-     <div className={`w-6 h-6 flex items-center justify-center rounded-full bg-black text-white text-[16px] py-3.5 px-3.5 mb-3 select-none ${dmSans.className}`}>
-
+      <div
+        className={`w-6 h-6 flex items-center justify-center rounded-full bg-black text-white text-[16px] mb-3 select-none ${dmSans.className}`}
+      >
         {step.id}
       </div>
-      <h3 className="text-center text-[18px] font-medium leading-tight mb-1 select-none">
+      <h3 className="text-center text-[18px] font-medium mb-1 select-none">
         {step.title}
       </h3>
       <p className="text-center text-[14px] leading-relaxed mb-3 select-none">
         {step.description}
       </p>
-      <div className="relative flex-1 w-full pointer-events-none -mb-12" >
+      <div className="relative flex-1 w-full pointer-events-none -mb-12">
         <Image
           src={step.image}
           alt={`Step ${step.id}`}
@@ -127,6 +125,7 @@ export default function StepCarousel() {
   /* ---------- progress ---------- */
   const pct = ((idx + 1) / slides.length) * 100;
 
+  /* ---------- render ---------- */
   return (
     <div
       className="flex flex-col items-center w-full bg-white space-y-4 select-none"
@@ -142,13 +141,16 @@ export default function StepCarousel() {
         Real connection in 3 easy steps
       </h2>
 
-      {/* Progress Bar */}
+      {/* Progress bar */}
       <div className="w-[240px] h-px bg-[#E5E5E5] rounded-full overflow-hidden">
         <div className="h-full bg-black transition-all" style={{ width: `${pct}%` }} />
       </div>
 
-      {/* Slide Frame */}
-      <div className="relative overflow-hidden" style={{ width: CARD_W, height: CARD_H }}>
+      {/* Slide frame */}
+      <div
+        className="relative overflow-hidden"
+        style={{ width: CARD_W, height: CARD_H }}
+      >
         <AnimatePresence custom={dir} initial={false} mode="popLayout">
           <motion.div
             key={slides[idx].id}
