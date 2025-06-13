@@ -3,6 +3,7 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   /* —──────── Experiments —──────── */
   experimental: {
+   
     // Disable Lightning CSS so the missing binary no longer breaks the build
     optimizeCss: false,
   },
@@ -16,6 +17,9 @@ const nextConfig: NextConfig = {
   /* —──────── Remote images whitelist —──────── */
   images: {
     remotePatterns: [
+      { protocol: 'https', hostname: 'images.unsplash.com',   pathname: '/**' },
+      { protocol: 'https', hostname: 'unsplash.com',          pathname: '/**' },
+      { protocol: 'https', hostname: 'picsum.photos',         pathname: '/**' },
       { protocol: 'https', hostname: 'images.unsplash.com',   pathname: '/' },
       { protocol: 'https', hostname: 'unsplash.com',          pathname: '/' },
       { protocol: 'https', hostname: 'picsum.photos',         pathname: '/' },

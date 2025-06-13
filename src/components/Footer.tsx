@@ -78,7 +78,7 @@ function Footer() {
         <a href="/privacy-policy" className="hover:underline text-[14px] sm:text-sm">
           Privacy policy
         </a>
-        <a href="/terms-and-conditions" className="hover:underline text-[14px] sm:text-sm">
+        <a href="/terms-conditions" className="hover:underline text-[14px] sm:text-sm">
           Terms & conditions
         </a>
       </div>

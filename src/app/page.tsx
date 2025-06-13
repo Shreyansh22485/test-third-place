@@ -37,9 +37,12 @@ export default function Home() {
         activeVideo={activeVideo}
         setActiveVideo={setActiveVideo}
       />
-
-      <StepCarousel />
-      <PickVibe />
+<section id="how-it-works" className="scroll-mt-24">
+  <StepCarousel />
+</section>
+     <section id="pick-vibe" className="scroll-mt-24">
+  <PickVibe />
+</section>
       <FindTribe />
       <WhatsappSection />
       <Footer />
