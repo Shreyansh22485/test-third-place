@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Image from "next/image";
 import Link from "next/link";
+import AuthLink from "./AuthLink";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -23,9 +24,8 @@ function Header() {
         </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center gap-6 text-sm font-medium">
-          <Link href="/about-us" className="hover:text-pink-400 transition-colors font-semibold">About Us</Link>
-          <Link href="/sign-in" className="hover:text-pink-400 transition-colors font-semibold">Login / Sign up</Link>
+        <div className="hidden lg:flex items-center gap-6 text-sm font-medium">          <Link href="/about-us" className="hover:text-pink-400 transition-colors font-semibold">About Us</Link>
+          <AuthLink className="hover:text-pink-400 transition-colors font-semibold cursor-pointer">Login / Sign up</AuthLink>
           <Link href="/how-it-works" className="hover:text-pink-400 transition-colors font-semibold">How It Works?</Link>
           <Link href="/dashboard" className="hover:text-pink-400 transition-colors font-semibold">Upcoming events</Link>
           <a
@@ -75,9 +75,9 @@ function Header() {
         <div className="fixed inset-0 bg-black bg-opacity-95 flex flex-col pt-[72px] z-40 lg:hidden border-t-4 border-black shadow-lg h-screen w-full">
           {/* The pt-[72px] pushes the content below the fixed header (adjust if your header height changes) */}
 
-          {/* Navigation Links */}
+          {/* Navigation Links */}          
           <Link href="/about-us" className="py-2 text-white font-[200px] text-[22px] hover:text-pink-400 w-full text-left ml-5 mt-8" onClick={() => setMenuOpen(false)}>About Us</Link>
-          <Link href="/sign-in" className="py-2 text-white font-[200px] text-[22px] hover:text-pink-400 w-full text-left ml-5" onClick={() => setMenuOpen(false)}>Login /Sign up</Link>
+          <AuthLink className="py-2 text-white font-[200px] text-[22px] hover:text-pink-400 w-full text-left ml-5 cursor-pointer" onClick={() => setMenuOpen(false)}>Login /Sign up</AuthLink>
           <Link href="/how-it-works" className="py-2 text-white font-[200px] text-[22px] hover:text-pink-400 w-full text-left ml-5" onClick={() => setMenuOpen(false)}>How It Works?</Link>
           <Link href="/dashboard" className="py-2 text-white font-[200px] text-[22px] hover:text-pink-400 w-full text-left ml-5" onClick={() => setMenuOpen(false)}>Upcoming Events</Link>
           <a

@@ -85,7 +85,7 @@ function PersonalityTestContent() {
             You need to be signed in to take the personality test.
           </p>
           <Link
-            href="/sign-in"
+            href="/auth"
             className="block w-full bg-black text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-800 transition"
           >
             Sign In

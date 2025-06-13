@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
+import AuthLink from './AuthLink';
 
 function PickVibe() {
   return (
@@ -26,13 +26,11 @@ function PickVibe() {
         />
       </div>
            <div className="flex mt-8 mb-5 justify-center items-center  bg-white">
-    <div className="border w-[170px] h-[40px]  bg-black rounded-xl px-6 py-1.5 flex items-center justify-center">
-   <Link
-  href="/sign-up"
-  className="text-white text-[18px] tracking-wide"
+    <div className="border w-[170px] h-[40px]  bg-black rounded-xl px-6 py-1.5 flex items-center justify-center">   <AuthLink
+  className="text-white text-[18px] tracking-wide cursor-pointer"
 >
   SIGN UP NOW!
-</Link>
+</AuthLink>
     </div>
   </div>
     

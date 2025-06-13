@@ -168,12 +168,12 @@ export default function StepCarousel() {
       </div>
 
       {/* CTA */}
-      <Link
-        href="/sign-up"
-        className="w-[210px] mb-14 mt-4 bg-black h-[40px] text-white rounded-xl py-1.5 text-[18px] hover:bg-gray-800 transition-colors flex items-center justify-center"
-      >
-        START YOUR JOURNEY
-      </Link>
+    <Link
+  href="/auth"
+  className="w-[210px] mb-14 mt-4 bg-black h-[40px] text-white rounded-xl py-1.5 text-[18px] hover:bg-gray-800 transition-colors flex items-center justify-center"
+>
+  START YOUR JOURNEY
+</Link>
     </div>
   );
 }

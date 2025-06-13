@@ -105,8 +105,7 @@ export const useUser = (): UseUserReturn => {
       setError(errorMessage);
       throw new Error(errorMessage);
     }
-  };
-  const logout = useCallback(async () => {
+  };  const logout = useCallback(async () => {
     try {
       // Sign out from Firebase Auth
       await authService.signOut();
@@ -115,8 +114,8 @@ export const useUser = (): UseUserReturn => {
       setUser(null);
       setError(null);
       
-      // Redirect to sign-in page
-      window.location.href = '/sign-in';
+      // Redirect to auth page
+      window.location.href = '/auth';
     } catch (error: any) {
       console.error('Error during logout:', error);
       
@@ -124,7 +123,7 @@ export const useUser = (): UseUserReturn => {
       localStorage.removeItem('authToken');
       setUser(null);
       setError(null);
-      window.location.href = '/sign-in';
+      window.location.href = '/auth';
     }
   }, []);
 

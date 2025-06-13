@@ -11,7 +11,7 @@ interface ProtectedRouteProps {
 
 export default function ProtectedRoute({ 
   children, 
-  redirectTo = '/sign-in' 
+  redirectTo = '/auth' 
 }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -29,18 +29,16 @@ export default function ProtectedRoute({
       console.log('🛡️ ProtectedRoute: Still loading auth state...');
       return;
     }
-    
-    // If no user is authenticated, redirect to sign-in
+      // If no user is authenticated, redirect to auth
     if (!user) {
-      console.log('🛡️ ProtectedRoute: No user found, redirecting to sign-in');
-      router.push(redirectTo);
+      console.log('🛡️ ProtectedRoute: No user found, redirecting to auth page');
+      router.replace(redirectTo);
       return;
     }
-    
-    // If user is authenticated but on auth pages, redirect to dashboard
-    if (user && (pathname === '/sign-in' || pathname === '/sign-up')) {
+      // If user is authenticated but on auth pages, redirect to dashboard
+    if (user && (pathname === '/auth' || pathname === '/sign-in' || pathname === '/sign-up')) {
       console.log('🛡️ ProtectedRoute: User authenticated but on auth page, redirecting to dashboard');
-      router.push('/dashboard');
+      router.replace('/dashboard');
       return;
     }
     
