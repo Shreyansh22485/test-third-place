@@ -162,6 +162,29 @@ export class AuthService {
       throw new Error(error.message || 'Failed to register user');
     }
   }
+  // Check if a user exists by phone number
+  async checkUserExists(phoneNumber: string): Promise<boolean> {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/check-user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phoneNumber }),
+      });
+
+      if (!response.ok) {
+        return false;
+      }
+
+      const result = await response.json();
+      return result.exists;
+    } catch (error) {
+      console.error('Error checking user existence:', error);
+      return false;
+    }
+  }
+
   // Clean up resources
   cleanup(): void {
     if (this.recaptchaVerifier) {

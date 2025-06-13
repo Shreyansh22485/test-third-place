@@ -243,7 +243,7 @@ const NoUser = () => (
   <div className="min-h-screen flex items-center justify-center">
     <div className="text-center">
       <p className="text-gray-600 mb-4">No user profile found</p>
-      <Link href="/sign-in" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+      <Link href="/auth" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
         Sign In
       </Link>
     </div>
