@@ -26,7 +26,7 @@ function Header() {
         <div className="hidden lg:flex items-center gap-6 text-sm font-medium">
           <Link href="/about-us" className="hover:text-pink-400 transition-colors font-semibold">About Us</Link>
           <Link href="/sign-in" className="hover:text-pink-400 transition-colors font-semibold">Login / Sign up</Link>
-          <Link href="/" className="hover:text-pink-400 transition-colors font-semibold">How It Works?</Link>
+          <Link href="/how-it-works" className="hover:text-pink-400 transition-colors font-semibold">How It Works?</Link>
           <Link href="/dashboard" className="hover:text-pink-400 transition-colors font-semibold">Upcoming events</Link>
           <a
             href="https://thirdplace.typeform.com/to/iPAmuKne"
@@ -78,7 +78,7 @@ function Header() {
           {/* Navigation Links */}
           <Link href="/about-us" className="py-2 text-white font-[200px] text-[22px] hover:text-pink-400 w-full text-left ml-5 mt-8" onClick={() => setMenuOpen(false)}>About Us</Link>
           <Link href="/sign-in" className="py-2 text-white font-[200px] text-[22px] hover:text-pink-400 w-full text-left ml-5" onClick={() => setMenuOpen(false)}>Login /Sign up</Link>
-          <Link href="/howitworks" className="py-2 text-white font-[200px] text-[22px] hover:text-pink-400 w-full text-left ml-5" onClick={() => setMenuOpen(false)}>How It Works?</Link>
+          <Link href="/how-it-works" className="py-2 text-white font-[200px] text-[22px] hover:text-pink-400 w-full text-left ml-5" onClick={() => setMenuOpen(false)}>How It Works?</Link>
           <Link href="/dashboard" className="py-2 text-white font-[200px] text-[22px] hover:text-pink-400 w-full text-left ml-5" onClick={() => setMenuOpen(false)}>Upcoming Events</Link>
           <a
             href="https://thirdplace.typeform.com/to/iPAmuKne"

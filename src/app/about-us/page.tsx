@@ -21,7 +21,7 @@ function Page() {
           </div>
           {/* Center: Italic Contact Us */}
           <div className="flex-1 flex justify-center">
-            <span className="italic font-semibold text-lg sm:text-xl">Contact Us</span>
+            <span className="italic font-semibold text-lg sm:text-xl">About us</span>
           </div>
           {/* Right: Blank for symmetry */}
           <div className="w-10" />
