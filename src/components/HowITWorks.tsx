@@ -13,8 +13,15 @@ const dmSans = DM_Sans({
   display: "swap",
 });
 
+interface Step {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+}
+
 /* ---------- slide data ---------- */
-const slides = [
+const slides: Step[] = [
   {
     id: 1,
     title: "TELL US ABOUT YOU",
@@ -41,22 +48,21 @@ const slides = [
 /* ---------- sizing ---------- */
 const CARD_W = 270;
 const CARD_H = 320;
-const PEEK   = 40; // slice of the neighbour you want to see
 
-/* ---------- helpers ---------- */
+/* ---------- helper ---------- */
 const clamp = (v: number, max: number) => Math.max(0, Math.min(v, max));
 
 export default function StepCarousel() {
-  const [idx, setIdx] = useState(0);
-  const [dir, setDir] = useState(0);          // -1 back, 1 next
-  const lock        = useRef(false);
+  const [idx, setIdx] = useState(0);     // current slide index
+  const [dir, setDir] = useState(0);     // -1 = back, 1 = next
+  const lock = useRef(false);            // wheel debounce
 
   const next = () => setIdx(i => clamp(i + 1, slides.length - 1));
   const prev = () => setIdx(i => clamp(i - 1, slides.length - 1));
 
   /* ---------- swipe ---------- */
   const swipeHandlers = useSwipeable({
-    onSwipedLeft:  () => { setDir( 1); next(); },
+    onSwipedLeft : () => { setDir( 1); next(); },
     onSwipedRight: () => { setDir(-1); prev(); },
     trackMouse: true,
     delta: 10,
@@ -64,23 +70,29 @@ export default function StepCarousel() {
   });
 
   /* ---------- wheel ---------- */
-  const onWheel = (e: React.WheelEvent) => {
+  const onWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     if (lock.current) return;
     if (Math.abs(e.deltaX) < 15 && Math.abs(e.deltaY) < 15) return;
     lock.current = true;
-    e.deltaX > 0 || e.deltaY > 0 ? (setDir(1), next()) : (setDir(-1), prev());
+    if (e.deltaX > 0 || e.deltaY > 0) {
+      setDir(1);
+      next();
+    } else {
+      setDir(-1);
+      prev();
+    }
     setTimeout(() => (lock.current = false), 350);
   };
 
   /* ---------- framer variants ---------- */
   const variants = {
-    enter : (d: number) => ({ x: d > 0 ? CARD_W : -CARD_W, opacity: 0 }),
-    center:              { x: 0,                              opacity: 1 },
+    enter : (d: number) => ({ x: d > 0 ?  CARD_W : -CARD_W, opacity: 0 }),
+    center:               { x: 0,                          opacity: 1 },
     exit  : (d: number) => ({ x: d > 0 ? -CARD_W :  CARD_W, opacity: 0 }),
   };
 
-  /* ---------- card ---------- */
-  const Card = ({ step }: { step: (typeof slides)[0] }) => (
+  /* ---------- Card ---------- */
+  const Card = ({ step }: { step: Step }) => (
     <div
       className="rounded-2xl shadow-sm flex flex-col items-center px-4 py-5 bg-[#FAF0E5]"
       style={{ width: CARD_W, height: CARD_H }}
@@ -113,6 +125,7 @@ export default function StepCarousel() {
   /* ---------- progress ---------- */
   const pct = ((idx + 1) / slides.length) * 100;
 
+  /* ---------- render ---------- */
   return (
     <div
       className="flex flex-col items-center w-full bg-white space-y-4 select-none"
@@ -130,31 +143,14 @@ export default function StepCarousel() {
 
       {/* Progress bar */}
       <div className="w-[240px] h-px bg-[#E5E5E5] rounded-full overflow-hidden">
-        <div
-          className="h-full bg-black transition-all"
-          style={{ width: `${pct}%` }}
-        />
+        <div className="h-full bg-black transition-all" style={{ width: `${pct}%` }} />
       </div>
 
-      {/* -------- Carousel frame (same size) -------- */}
+      {/* Slide frame */}
       <div
         className="relative overflow-hidden"
         style={{ width: CARD_W, height: CARD_H }}
       >
-        {/* Left neighbour peek */}
-        {idx > 0 && (
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              transform: `translateX(-${CARD_W - PEEK}px)`,
-              zIndex: 0,
-            }}
-          >
-            <Card step={slides[idx - 1]} />
-          </div>
-        )}
-
-        {/* Current card with animation */}
         <AnimatePresence custom={dir} initial={false} mode="popLayout">
           <motion.div
             key={slides[idx].id}
@@ -164,24 +160,11 @@ export default function StepCarousel() {
             animate="center"
             exit="exit"
             transition={{ type: "spring", stiffness: 260, damping: 28 }}
-            className="absolute inset-0 flex items-center justify-center z-10"
+            className="absolute inset-0 flex items-center justify-center"
           >
             <Card step={slides[idx]} />
           </motion.div>
         </AnimatePresence>
-
-        {/* Right neighbour peek */}
-        {idx < slides.length - 1 && (
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              transform: `translateX(${CARD_W - PEEK}px)`,
-              zIndex: 0,
-            }}
-          >
-            <Card step={slides[idx + 1]} />
-          </div>
-        )}
       </div>
 
       {/* CTA */}

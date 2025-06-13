@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import MobileHeader from "./_components/MobileHeader";
 import EventGallery from "./_components/EventGallery";
 import TakeTest from "./_components/TakeTest";
@@ -8,7 +8,7 @@ import { useUser } from "@/hooks/useUser";
 import { usePersonalityTestReturn } from "@/hooks/usePersonalityTestReturn";
 import { DashboardSkeleton } from "@/components/ui/skeleton";
 
-export default function Dashboard() {
+function DashboardContent() {
   const { user, loading } = useUser();
   const [showTakeTest, setShowTakeTest] = useState(true);
 
@@ -34,11 +34,18 @@ export default function Dashboard() {
           <EventGallery /> 
         </div>
       </div>
-      
-      {/* Fixed Personality Test Component - Only show if test not completed */}
+        {/* Fixed Personality Test Component - Only show if test not completed */}
       {shouldShowPersonalityTest && (
         <TakeTest onClose={() => setShowTakeTest(false)} />
       )}
     </>
+  );
+}
+
+export default function Dashboard() {
+  return (
+    <Suspense fallback={<DashboardSkeleton />}>
+      <DashboardContent />
+    </Suspense>
   );
 }
