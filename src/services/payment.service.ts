@@ -132,24 +132,6 @@ class PaymentService {
       throw new Error(error.response?.data?.error || error.message || 'Failed to get payment status');
     }
   }
-  /**
-   * Get payment details for a booking
-   */
-  async getPaymentByBookingId(bookingId: string) {
-    try {
-      const response = await api.get(`/payment/status/${bookingId}`);
-
-      if (response.data.success) {
-        return response.data.data.payment;
-      } else {
-        throw new Error(response.data.error || 'Failed to get payment details');
-      }
-    } catch (error: any) {
-      console.error('Error getting payment details:', error);
-      // Return null if payment not found, don't throw error
-      return null;
-    }
-  }
 }
 
 export const paymentService = new PaymentService();

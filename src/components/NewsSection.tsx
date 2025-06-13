@@ -69,7 +69,7 @@ function NewsSection({ videoId, activeVideo, setActiveVideo }: Props) {
       onClick={() => setActiveVideo(isMuted ? videoId : null)}
       className="absolute bottom-4 left-4 bg-black/70 text-white p-3 rounded-full backdrop-blur-lg"
     >
-      {isMuted ? <VolumeX size={28} /> : <Volume2 size={28} />}
+      {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
     </button>
   </div>
 </div>
