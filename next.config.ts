@@ -1,57 +1,32 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  /* —──────── Experiments —──────── */
+  experimental: {
+    // Disable Lightning CSS so the missing binary no longer breaks the build
+    optimizeCss: false,
+  },
+
+  /* —──────── Linting —──────── */
   eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
+    // Allow production builds to finish even if ESLint errors exist
     ignoreDuringBuilds: true,
   },
+
+  /* —──────── Remote images whitelist —──────── */
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'unsplash.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'picsum.photos',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'via.placeholder.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'firebasestorage.googleapis.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'lh3.googleusercontent.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-        port: '',
-        pathname: '/**',
-      },
+      { protocol: 'https', hostname: 'images.unsplash.com',   pathname: '/' },
+      { protocol: 'https', hostname: 'unsplash.com',          pathname: '/' },
+      { protocol: 'https', hostname: 'picsum.photos',         pathname: '/' },
+      { protocol: 'https', hostname: 'via.placeholder.com',   pathname: '/' },
+      { protocol: 'https', hostname: 'firebasestorage.googleapis.com', pathname: '/' },
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com',       pathname: '/' },
+      { protocol: 'https', hostname: 'res.cloudinary.com',    pathname: '/' },
     ],
   },
+
+  /* —──────── Security headers —──────── */
   async headers() {
     return [
       {
@@ -59,7 +34,10 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "frame-src 'self' https://*.typeform.com https://typeform.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.typeform.com https://typeform.com; connect-src 'self' https://*.typeform.com https://typeform.com https://api.typeform.com;",
+            value:
+              "frame-src 'self' https://*.typeform.com https://typeform.com; " +
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.typeform.com https://typeform.com; " +
+              "connect-src 'self' https://*.typeform.com https://typeform.com https://api.typeform.com;",
           },
         ],
       },
