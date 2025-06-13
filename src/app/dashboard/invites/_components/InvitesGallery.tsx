@@ -5,9 +5,7 @@ import {
   useMemo,
   useRef,
   useEffect,
-  UIEvent,
 } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { bookingService, type BookedEvent } from "@/services/booking.service";
 import {
@@ -26,7 +24,7 @@ function BookingDetailsDialog({
   open: boolean;
   onClose: () => void;
   eventName: string;
-  eventDate: string;
+  eventDate: any;
 }) {
   if (!open) return null;
   return (
@@ -44,42 +42,56 @@ function BookingDetailsDialog({
           ×
         </button>
         <h2 className="mb-2 text-[18px] font-[500]">Booking details</h2>
+
+        {/* all ml-2 spans got font-medium text-black for cleaner numerals */}
         <div className="space-y-1 text-sm">
           <div>
             <span className="font-[400] text-gray-600">Event name :</span>
-            <span className="ml-2">{eventName}</span>
+            <span className="ml-2 font-medium text-black">{eventName}</span>
           </div>
           <div>
-            <span className="font-[400]  text-gray-600 upp">Event date &amp; time :</span>
-            <span className="ml-2  uppercase">{eventDate}</span>
+            <span className="font-[400] text-gray-600">Event date &amp; time :</span>
+            <span className="ml-2 font-medium  text-black uppercase"> {new Date(eventDate).toLocaleDateString("en-IN", {
+              day: "numeric",
+              month: "short",
+            })}{" "}
+            |{" "}
+            {new Date(eventDate).toLocaleTimeString("en-IN", {
+              
+              hour: "2-digit",
+              minute: "2-digit",
+            })}</span>
           </div>
           <div className="flex items-center">
             <span className="font-[400] text-gray-600">Venue location :</span>
-            <span className="ml-2 px-2 py-[2px] rounded-lg bg-black text-white border text-xs font-[500">
+            <span className="ml-2 font-medium text-white px-2 py-[2px] rounded-lg bg-black text-xs">
               Koramangala
             </span>
           </div>
           <div className="flex items-center">
             <span className="font-[400] text-gray-600">Booking status :</span>
-            <span className="ml-2 px-2 py-[2px] italic rounded-md bg-[#F7E9C0] text-[#8E713B] text-xs font-semibold">
+            <span className="ml-2 font-medium text-black px-2 py-[2px] italic rounded-md bg-[#F7E9C0] text-xs">
               WAITLISTED
             </span>
           </div>
           <div className="flex items-center">
             <span className="font-[400] text-gray-600">Payment status :</span>
-            <span className="ml-2 px-2 py-[2px] italic rounded-md bg-[#D3F1D5] text-[#296143] text-xs font-[500]">
+            <span className="ml-2 font-medium text-black px-2 py-[2px] italic rounded-md bg-[#D3F1D5]  text-xs">
               SUCCESS
             </span>
           </div>
           <div>
             <span className="font-[400] text-gray-600">Amount paid :</span>
-            <span className="ml-2">₹12</span>
+            <span className="ml-2 font-medium text-black">₹12</span>
           </div>
           <div className="flex items-center">
             <span className="font-[400] text-gray-600">Transaction id :</span>
-            <span className="ml-2 truncate max-w-[110px]">pay_QRkYtEdG0b...</span>
+            <span className="ml-2 font-medium text-black truncate max-w-[110px]">
+              pay_QRkYtEdG0b...
+            </span>
           </div>
         </div>
+
         <button
           onClick={onClose}
           className="mt-5 w-full rounded-lg bg-black py-2 text-sm font-medium text-white shadow hover:bg-neutral-900 transition"
@@ -91,15 +103,19 @@ function BookingDetailsDialog({
   );
 }
 
+
 /* ─── Main component ─── */
 export default function InvitesGallery() {
   const [bookedEvents, setBookedEvents] = useState<BookedEvent[]>([]);
   const [loading, setLoading] = useState(true);
+
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [progressVal, setProgressVal] = useState(0);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState({ name: "", date: "" });
 
+  /* Fetch bookings */
   useEffect(() => {
     (async () => {
       try {
@@ -113,6 +129,7 @@ export default function InvitesGallery() {
     })();
   }, []);
 
+  /* Normalised events */
   const displayEvents = useMemo(
     () =>
       bookedEvents.map((b) => ({
@@ -127,16 +144,31 @@ export default function InvitesGallery() {
     [bookedEvents]
   );
 
-  const openDialog = (evt: { event_name: string; event_date: Date | string }) => {
+  /* Update progress bar on scroll */
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || displayEvents.length <= 1) return;
+
+    const onScroll = () => {
+      const card = el.querySelector("div > div");
+      const w = card?.clientWidth ?? 1;
+      const idx = Math.min(
+        Math.round(el.scrollLeft / (w + 20)),
+        displayEvents.length - 1
+      );
+      setProgressVal(((idx + 1) / displayEvents.length) * 100);
+    };
+
+    el.addEventListener("scroll", onScroll, { passive: true });
+    onScroll(); // initial
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [displayEvents.length]);
+
+  /* Open dialog */
+  const openDialog = (evt: { event_name: string; event_date: any }) => {
     setSelectedEvent({
       name: evt.event_name,
-      date: new Date(evt.event_date).toLocaleString("en-IN", {
-        day: "numeric",
-        month: "short",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      }),
+      date: evt.event_date,
     });
     setModalOpen(true);
   };
@@ -145,14 +177,14 @@ export default function InvitesGallery() {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-black"></div>
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-black" />
           <p className="mt-2 text-gray-600">Loading your invites...</p>
         </div>
       </div>
     );
   }
 
-  /* desktop carousel items */
+  /* Desktop cards */
   const appleCards = displayEvents.map((evt, idx) => (
     <div
       key={evt._id}
@@ -183,17 +215,14 @@ export default function InvitesGallery() {
     </div>
   ));
 
-  /* mobile cards inlined — identical to MobileEventCard UI */
+  /* Mobile cards */
   const mobileCards = displayEvents.map((evt) => (
     <div
       key={evt._id}
       className="snap-center shrink-0 w-[92vw] max-w-[340px] mx-auto h-[52vh] cursor-pointer"
       onClick={() => openDialog(evt)}
     >
-      <div
-        className="flex flex-col rounded-xl bg-white"
-        style={{ maxHeight: "100vh" }}
-      >
+      <div className="flex flex-col rounded-xl bg-white" style={{ maxHeight: "100vh" }}>
         <div className="relative flex-shrink-0 w-[322px] h-[362px] mx-auto overflow-hidden rounded-xl">
           <Image
             src={evt.cover_photo_link}
@@ -215,46 +244,20 @@ export default function InvitesGallery() {
           </span>
         </div>
         <div className="mt-1 flex grow flex-col justify-between px-4 pb-4">
-          <h3 className="text-[22px] font-[500] leading-snug">
-            {evt.event_name}
-          </h3>
-          <p className="-mt-2 text-[16px] font-[300] text-black">
-            {evt.event_location}
-          </p>
+          <h3 className="text-[22px] font-[500] leading-snug">{evt.event_name}</h3>
         </div>
       </div>
     </div>
   ));
 
-  const activeIdx = (() => {
-    if (!scrollRef.current) return 0;
-    const el = scrollRef.current;
-    const card = el.querySelector("div > div");
-    const w = card?.clientWidth || 1;
-    return Math.min(Math.round(el.scrollLeft / (w + 20)), displayEvents.length - 1);
-  })();
-  const progressVal = displayEvents.length
-    ? ((activeIdx + 1) / displayEvents.length) * 100
-    : 0;
-
   return (
-    <div className="space-y-5 pl-1 md:space-y-0">
-      {/* header + progress */}
-      <div className="inline-block min-w-full rounded-xl p-3 pl-1 md:p-2">
-        <p className="text-center text-[18px] -mt-1">
-          {displayEvents.length
-            ? `You have ${displayEvents.length} confirmed booking${
-                displayEvents.length > 1 ? "s" : ""
-              } –`
-            : "No confirmed bookings yet –"}
-        </p>
-        <p className="text-center text-[18px] -mt-1">
-          {displayEvents.length
-            ? "ready for amazing experiences!"
-            : "curated experiences await you."}
-        </p>
-        {displayEvents.length > 1 && ( // only show slider when 2+ events
-          <div className="md:hidden mt-2 -mb-5">
+    <div className="space-y-5">
+      {/* Header */}
+      <div className="text-center rounded-xl p-3 md:p-2">
+        <p className="font-[500] text-[18px]" >A few special evenings are waiting –</p>
+        <p className="font-[500] text-[18px]">curated just for you</p>
+        {displayEvents.length > 1 && (
+          <div className="md:hidden mt-2 -mb-2">
             <Progress
               value={progressVal}
               className="h-px w-[348px] bg-[#BDBDBD] [&>div]:bg-[#000]"
@@ -263,36 +266,18 @@ export default function InvitesGallery() {
         )}
       </div>
 
-      {displayEvents.length === 0 ? (
-        <div className="py-12 text-center">
-          <p className="mb-4 text-gray-500">No confirmed bookings yet</p>
-          <Link
-            href="/dashboard"
-            className="inline-block rounded-full bg-black px-6 py-2 text-white transition hover:bg-gray-800"
-          >
-            Explore Events
-          </Link>
-        </div>
-      ) : (
-        <>
-          {/* mobile: conditional slider vs single */}
-          {displayEvents.length > 1 ? (
-            <div
-              ref={scrollRef}
-              className="md:hidden flex space-x-5 overflow-x-auto px-4.5 -mx-4 pb-16 snap-x snap-mandatory scroll-smooth scrollbar-hide"
-            >
-              {mobileCards}
-            </div>
-          ) : (
-            <div className="md:hidden">{mobileCards[0]}</div>
-          )}
+      {/* Mobile slider */}
+      <div
+        ref={scrollRef}
+        className="md:hidden flex space-x-5 overflow-x-auto px-4.5 -mx-4 pb-16 snap-x snap-mandatory scroll-smooth scrollbar-hide"
+      >
+        {mobileCards}
+      </div>
 
-          {/* desktop carousel */}
-          <div className="hidden w-full -mt-12 md:block">
-            <Carousel items={appleCards} />
-          </div>
-        </>
-      )}
+      {/* Desktop carousel */}
+      <div className="hidden md:block -mt-12">
+        <Carousel items={appleCards} />
+      </div>
 
       <BookingDetailsDialog
         open={modalOpen}
