@@ -4,7 +4,7 @@ import React, { useState, useMemo, useRef, useEffect } from "react";
 import Image from "next/image";
 import { bookingService, type BookedEvent } from "@/services/booking.service";
 import { paymentService } from "@/services/payment.service";
-import { paymentService } from "@/services/payment.service";
+
 import {
   Carousel,
   Card as AppleCard,
@@ -17,7 +17,7 @@ function BookingDetailsDialog({
   open,
   onClose,
   booking,
-  booking,
+
 }: {
   open: boolean;
   onClose: () => void;
@@ -235,7 +235,6 @@ function BookingDetailsDialog({
         </div>
 
         <button
-        <button
           onClick={onClose}
           className="mt-3 self-start w-25 rounded-lg bg-black py-2 text-[16px] font-medium text-white shadow hover:bg-neutral-900 transition"
         >
@@ -256,7 +255,7 @@ export default function InvitesGallery() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<BookedEvent | null>(null);
-  const [selectedBooking, setSelectedBooking] = useState<BookedEvent | null>(null);
+
 
   useEffect(() => {
     (async () => {
@@ -411,7 +410,7 @@ export default function InvitesGallery() {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         booking={selectedBooking}
-        booking={selectedBooking}
+
       />
     </div>
   );
