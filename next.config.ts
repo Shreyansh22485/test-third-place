@@ -3,7 +3,7 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   /* —──────── Experiments —──────── */
   experimental: {
-    // Disable Lightning CSS so the missing binary no longer breaks the build
+   
     optimizeCss: false,
   },
 
