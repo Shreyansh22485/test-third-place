@@ -89,8 +89,7 @@ function EventPageContent({ params }: PageProps) {
   const handleUnderstandClose = () => {
     setShowUnderstandModal(false);
     setHasSeenUnderstand(true);
-  };
-    const handleProceedWithPayment = async () => {
+  };  const handleProceedWithPayment = async () => {
     try {
       setIsLoading(true);
 
@@ -108,74 +107,25 @@ function EventPageContent({ params }: PageProps) {
         orderId: orderResponse.data.orderId,
         bookingId: orderResponse.data.bookingId,
         amount: orderResponse.data.amount
-      });
-
-      // Validate order response
+      });      // Validate order response
       if (!orderResponse.data.orderId || !orderResponse.data.razorpayKeyId) {
         throw new Error('Invalid order response from server');
-      }
-
-      // Open Razorpay checkout
-      await openRazorpay({
-        key: orderResponse.data.razorpayKeyId,
-        amount: orderResponse.data.amount * 100, // Backend sends in rupees, Razorpay needs paise
+      }      // Immediately redirect to booking success page with payment details
+      // The booking success page will show "Processing Payment" and handle Razorpay
+      const paymentParams = new URLSearchParams({
+        orderId: orderResponse.data.orderId,
+        razorpayKey: orderResponse.data.razorpayKeyId,
+        amount: orderResponse.data.amount.toString(),
         currency: orderResponse.data.currency || 'INR',
-        name: 'The Third Place',
-        description: `Booking for ${orderResponse.data.event.name}`,
-        order_id: orderResponse.data.orderId,
-        handler: async (response: any) => {
-          try {
-            console.log('Payment success:', response);
-            
-            // Verify payment
-            await paymentService.verifyPayment({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              bookingId: orderResponse.data.bookingId,
-            });
-
-            // Redirect to success page
-            router.push(`/booking-success/${orderResponse.data.bookingId}`);
-          } catch (error) {
-            console.error('Payment verification failed:', error);
-            
-            // Cancel the booking on verification failure
-            await paymentService.cancelBooking(orderResponse.data.bookingId);
-            
-            alert('Payment verification failed. Your booking has been cancelled. Please try again.');
-          }
-        },
-        prefill: {
-          name: user ? `${user.firstName} ${user.lastName}` : '',
-          email: user?.email || '',
-          contact: user?.phoneNumber || '',
-        },
-        theme: {
-          color: '#000000',
-        },
-        modal: {
-          ondismiss: async () => {
-            try {
-              console.log('Payment cancelled by user');
-              
-              // Cancel the booking when payment is dismissed
-              await paymentService.cancelBooking(orderResponse.data.bookingId);
-              
-              // Also call the failure handler
-              await paymentService.handlePaymentFailure({
-                razorpay_order_id: orderResponse.data.orderId,
-                bookingId: orderResponse.data.bookingId,
-                error: { code: 'USER_CANCELLED', description: 'Payment cancelled by user' }
-              });
-              
-              console.log('Booking cancelled due to payment dismissal');
-            } catch (error) {
-              console.error('Error handling payment cancellation:', error);
-            }
-          },
-        },
+        eventName: orderResponse.data.event.name,
+        eventId: event._id,
+        userName: user ? `${user.firstName} ${user.lastName}` : '',
+        userEmail: user?.email || '',
+        userContact: user?.phoneNumber || '',
       });
+      
+      const successUrl = `/booking-success/${orderResponse.data.bookingId}?${paymentParams.toString()}`;
+      console.log('🔗 Redirecting to booking success page for payment processing:', successUrl);      router.push(successUrl);
 
     } catch (error: any) {
       console.error('Payment process failed:', error);

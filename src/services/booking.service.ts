@@ -8,6 +8,7 @@ interface BookedEvent {
   numberOfSeats: number;
   totalAmount: number;
   bookingStatus: 'pending_payment' | 'waitlist' | 'confirmed' | 'cancelled' | 'completed';
+  paymentStatus?: 'created' | 'paid' | 'failed';
   createdAt: string;
   updatedAt: string;
 }
