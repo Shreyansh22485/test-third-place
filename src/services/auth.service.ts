@@ -111,11 +111,12 @@ export class AuthService {
       }
     }
   }
+
   // Register user with backend after successful phone verification
   async registerUser(userData: {
     phoneNumber: string;
     firstName: string;
-    lastName: string;
+    lastName?: string;
     email?: string;
     gender?: string;
     dateOfBirth?: string;

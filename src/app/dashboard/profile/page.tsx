@@ -152,7 +152,7 @@ function ProfilePageContent() {
         {/* BASIC INFO */}
         <SectionTitle>BASIC INFO</SectionTitle>
         <div className="rounded-2xl border border-[#E5E5EA] overflow-hidden mb-5 bg-white">
-          <Row icon={<UserIcon />} title="Name" right={`${user.firstName} ${user.lastName}`}  />
+          <Row icon={<UserIcon />} title="Name" right={`${user.firstName}`}  />
           <Row icon={<PhoneIcon />} title="Phone number" right={user.phoneNumber}  />
         </div>
 

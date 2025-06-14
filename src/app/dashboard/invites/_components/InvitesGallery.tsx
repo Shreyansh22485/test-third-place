@@ -179,12 +179,12 @@ function BookingDetailsDialog({
             </span>
           </div>
 
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <span className="font-[400] text-gray-600">Number of seats :</span>
             <span className="ml-2 font-medium text-black">
               {booking.numberOfSeats}
             </span>
-          </div>
+          </div> */}
 
           <div className="flex items-center">
             <span className="font-[400] text-gray-600">Booking status :</span>

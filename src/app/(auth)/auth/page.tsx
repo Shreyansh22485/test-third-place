@@ -182,15 +182,16 @@ export default function AuthPage() {
   };
   const handleSignUp = async () => {
     setLoading(true);
-    setError('');
-
-    try {
+    setError('');    try {
       const userData = {
         phoneNumber: `${formData.countryCode}${formData.phoneNumber}`,
         firstName: formData.firstName.trim(),
-        lastName: formData.lastName.trim(),
-        gender: formData.gender,
-        dateOfBirth: formData.dateOfBirth,
+        // Only include lastName if it's not empty
+        ...(formData.lastName.trim() && { lastName: formData.lastName.trim() }),
+        // Only include gender if it's not empty
+        ...(formData.gender && { gender: formData.gender }),
+        // Only include dateOfBirth if it's not empty
+        ...(formData.dateOfBirth && { dateOfBirth: formData.dateOfBirth }),
         // Only include email if it's not empty
         ...(formData.email.trim() && { email: formData.email.toLowerCase().trim() }),
         // Only include address if any field is not empty
@@ -258,35 +259,24 @@ export default function AuthPage() {
       }
     }
   };
-
   const handleBasicInfoSubmit = () => {
     // Validation for basic info
     if (!formData.firstName.trim()) {
       setError('First name is required');
       return;
     }
-    if (!formData.lastName.trim()) {
-      setError('Last name is required');
-      return;
-    }
-    if (!formData.gender) {
-      setError('Please select your gender');
-      return;
-    }
-    if (!formData.dateOfBirth) {
-      setError('Please select your date of birth');
-      return;
-    }
-
-    // Check age (must be at least 18)
-    const birthDate = new Date(formData.dateOfBirth);
-    const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
     
-    if (age < 18 || (age === 18 && monthDiff < 0) || (age === 18 && monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      setError('You must be at least 18 years old to sign up');
-      return;
+    // Check age only if date of birth is provided
+    if (formData.dateOfBirth) {
+      const birthDate = new Date(formData.dateOfBirth);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      
+      if (age < 18 || (age === 18 && monthDiff < 0) || (age === 18 && monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        setError('You must be at least 18 years old to sign up');
+        return;
+      }
     }
 
     // All validation passed, proceed with signup
@@ -465,9 +455,9 @@ export default function AuthPage() {
           />
         </div>
 
-        <div>
-          <label className="block text-xl text-gray-700 mb-1 font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}>
-            Last name*
+        <div> 
+                   <label className="block text-xl text-gray-700 mb-1 font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}>
+            Last name 
           </label>
           <input
             type="text"
@@ -500,7 +490,7 @@ export default function AuthPage() {
 
           <div>
             <label className="block text-xl text-gray-700 mb-1 font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}>
-              Date of birth*
+              Date of birth
             </label>
             <input
               type="date"
@@ -519,7 +509,7 @@ export default function AuthPage() {
 
         <button
           onClick={handleNext}
-          disabled={!formData.firstName || !formData.lastName || !formData.gender || !formData.dateOfBirth || loading}
+          disabled={!formData.firstName || !formData.gender  || loading}
           className="w-full bg-black text-white py-3 rounded-lg text-xl font-medium disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-800 transition-colors font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 500 }}
         >
           {loading ? 'Creating Account...' : 'Sign up'}

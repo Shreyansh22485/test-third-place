@@ -218,7 +218,7 @@ function EventPageContent({ params }: PageProps) {
   // Determine the button text based on current state
   const getButtonText = () => {
     if (isLoading) return 'Processing...';
-    if (!user?.personalityTestCompleted) return 'Take Personality Test';
+    if (!user?.personalityTestCompleted) return 'Continue';
     if (!hasSeenUnderstand) return 'Continue';
     return 'Proceed to Payment';
   };
