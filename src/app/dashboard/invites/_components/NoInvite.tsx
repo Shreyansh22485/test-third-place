@@ -26,7 +26,7 @@ export default function NoInvites() {
         <Link href={'/dashboard'}>
          <button
           type="button"
-          className="mt-4  cursor-pointer w-[210px] rounded-full bg-black px-8 py-3 text-[16px] italic text-white transition hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-black/40"
+          className="mt-4  cursor-pointer w-[210px] rounded-full bg-black px-8 py-3 text-[20px] italic text-white transition hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-black/40"
         >
        CURATE MY NIGHT
         </button></Link>

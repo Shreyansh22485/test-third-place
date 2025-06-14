@@ -20,13 +20,13 @@ const getBookingStatusDisplay = (status: string) => {
     case "pending_payment":
       return { text: "PENDING PAYMENT", bgColor: "bg-yellow-100", textColor: "text-yellow-700", indicator: "🕐" };
     case "confirmed":
-      return { text: "CONFIRMED", bgColor: "bg-green-100", textColor: "text-green-700", indicator: "✅" };
+      return { text: "CONFIRMED", bgColor: "bg-[#C8E6C9]", textColor: "text-[#1B5E20]", indicator: "✅" };
     case "cancelled":
-      return { text: "CANCELLED", bgColor: "bg-red-100", textColor: "text-red-700", indicator: "❌" };
+      return { text: "REFUNDED", bgColor: "bg-[#FFCDD2]", textColor: "text-[#B71C1C]", indicator: "❌" };
     case "completed":
       return { text: "COMPLETED", bgColor: "bg-blue-100", textColor: "text-blue-700", indicator: "🎉" };
     default:
-      return { text: "WAITLISTED", bgColor: "bg-orange-100", textColor: "text-orange-700", indicator: "⏳" };
+      return { text: "WAITLISTED", bgColor: "bg-[#FFF3CD]", textColor: "text-[#7C4D00]", indicator: "⏳" };
   }
 };
 
@@ -57,6 +57,18 @@ const getPaymentStatusDisplay = (bookingStatus: string, pd: any) => {
       return { text: "PENDING", bgColor: "bg-yellow-100", textColor: "text-yellow-700" };
   }
 };
+// ✱✱✱ paste this directly below getPaymentStatusDisplay ✱✱✱
+const getBookingCopy = (status: string) => {
+  switch (status) {
+    case "confirmed":
+      return "You’re all set — just show up and let the magic happen.";
+    case "refunded":
+      return "Not this time — but your next special evening is just around the corner.";
+    default:
+      return "You're on the list! We're curating your special evening, confirmed on the day of the event.";
+  }
+};
+
 
 /* ─── Booking-details dialog ─── */
 function BookingDetailsDialog({
@@ -172,24 +184,21 @@ function BookingDetailsDialog({
 
           <div className="flex items-center">
             <span className="font-[400] text-gray-600">Venue location :</span>
+            <a href={booking.eventId.eventLocation?.address}>
             <span className="ml-2 inline-flex items-center font-[400] text-white px-2 py-[2px] rounded-lg bg-black text-xs">
               
               {booking.eventId.eventLocation?.venueName || "Location TBD"}
               <CornerUpRight className="h-4 w-4 ml-1" />
             </span>
+            </a>
           </div>
 
-          {/* <div className="flex items-center">
-            <span className="font-[400] text-gray-600">Number of seats :</span>
-            <span className="ml-2 font-medium text-black">
-              {booking.numberOfSeats}
-            </span>
-          </div> */}
+
 
           <div className="flex items-center">
             <span className="font-[400] text-gray-600">Booking status :</span>
             <span
-              className={`ml-2 font-medium px-2 py-[2px] italic rounded-md text-xs ${bookingStatusDisplay.bgColor} ${bookingStatusDisplay.textColor}`}
+              className={`ml-2 italic uppercase  font-medium px-2 py-[2px]  rounded-md text-xs ${bookingStatusDisplay.bgColor} ${bookingStatusDisplay.textColor}`}
             >
               {bookingStatusDisplay.text}
             </span>
@@ -241,16 +250,6 @@ function BookingDetailsDialog({
             </span>
           </div>        </div>
 
-        {/* Waitlist explanation */}
-        {booking.bookingStatus === 'waitlist' && (
-          <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-            <p className="text-sm text-orange-800">
-              <strong>⏳ You're on the waitlist!</strong> Your payment has been processed successfully. 
-              You'll be notified once the organizer confirms your spot.
-            </p>
-          </div>
-        )}
-
         <button
           onClick={onClose}
           className="mt-3 self-start w-25 rounded-lg bg-black py-2 text-[16px] font-medium text-white shadow hover:bg-neutral-900 transition"
@@ -301,22 +300,32 @@ export default function InvitesGallery() {
     [bookedEvents]
   );
 
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el || displayEvents.length <= 1) return;
-    const onScroll = () => {
-      const card = el.querySelector("div > div");
-      const w = card?.clientWidth ?? 1;
-      const idx = Math.min(
-        Math.round(el.scrollLeft / (w + 20)),
-        displayEvents.length - 1
-      );
-      setProgressVal(((idx + 1) / displayEvents.length) * 100);
-    };
-    el.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => el.removeEventListener("scroll", onScroll);
-  }, [displayEvents.length]);
+useEffect(() => {
+  const el = scrollRef.current;
+  if (!el) return;
+
+  const updateProgress = () => {
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+
+    // If there is only ONE card (no horizontal scroll possible) → 100 %
+    if (scrollWidth <= clientWidth) {
+      setProgressVal(100);
+      return;
+    }
+
+    // Otherwise: proportion of the scrollable track we’ve travelled
+    const pct = (scrollLeft / (scrollWidth - clientWidth)) * 100;
+    setProgressVal(pct);
+  };
+
+  el.addEventListener("scroll", updateProgress, { passive: true });
+
+  // Initialise immediately after render
+  updateProgress();
+
+  return () => el.removeEventListener("scroll", updateProgress);
+}, [displayEvents.length]);
+
   /* Open dialog */
   const openDialog = (evt: any) => {
     setSelectedBooking(evt.booking);
@@ -390,15 +399,23 @@ export default function InvitesGallery() {
             title: evt.event_name,
             src: evt.cover_photo_link,
             content: (
-              <div className="mx-auto max-w-3xl font-sans text-base text-neutral-600 dark:text-neutral-400 md:text-xl">
-                <p className="mb-2">{evt.description}</p>
-                <p className="mb-2">{evt.description}</p>
-                <div className={`text-sm font-medium ${bookingStatusDisplay.textColor} flex items-center gap-1`}>
-                  <span>{bookingStatusDisplay.indicator}</span>
-                  {bookingStatusDisplay.text} – {evt.booking.numberOfSeats} seat(s)
-                </div>
-              </div>
-            ),
+  <div className="mx-auto max-w-3xl font-sans text-base text-neutral-600 dark:text-neutral-400 md:text-xl">
+    {/* description once */}
+    <p className="mb-2">{evt.description}</p>
+
+    {/* status pill */}
+    <div className="mb-2">
+      <span
+        className={`italic uppercase text-xs font-medium px-3 py-[2px] rounded-full ${bookingStatusDisplay.bgColor} ${bookingStatusDisplay.textColor}`}
+      >
+        {bookingStatusDisplay.text}
+      </span>
+    </div>
+
+    {/* line of copy */}
+    <p>{getBookingCopy(evt.booking.bookingStatus)}</p>
+  </div>
+),
           }}
         />
       </div>
@@ -413,8 +430,8 @@ export default function InvitesGallery() {
         className="snap-center shrink-0 w-[92vw] max-w-[340px] mx-auto h-[52vh] cursor-pointer"
         onClick={() => openDialog(evt)}
       >
-        <div className="flex flex-col rounded-xl bg-white" style={{ maxHeight: "100vh" }}>
-          <div className="relative flex-shrink-0 w-[322px] h-[362px] mx-auto overflow-hidden rounded-xl">
+        <div className="flex flex-col  rounded-xl bg-white" style={{ maxHeight: "100vh" }}>
+          <div className="relative flex-shrink-0 w-[322px] ml-4 h-[362px] mx-auto overflow-hidden rounded-xl">
             <Image
               src={evt.cover_photo_link}
               alt={evt.event_name}
@@ -435,45 +452,48 @@ export default function InvitesGallery() {
               })}
             </span>
             
-            {/* Booking status indicator */}
-            <div className="absolute top-3 left-3 flex items-center gap-1 rounded-full bg-white/90 backdrop-blur px-2 py-1 text-[12px] font-medium">
-              <span className="text-[14px]">{bookingStatusDisplay.indicator}</span>
-              <span className={`${bookingStatusDisplay.textColor}`}>
-                {bookingStatusDisplay.text}
-              </span>
-            </div>
+           
           </div>
-          <div className="mt-1 flex grow flex-col justify-between px-4 pb-4">
+          <div className="mt-1 mr-2 flex grow flex-col justify-between px-4 pb-4">
             <h3 className="text-[22px] font-[500] leading-snug">{evt.event_name}</h3>
           </div>
+          <span
+  className={`italic uppercase text-[16px] font-[400] px-2  -mt-3 ml-3 w-[102px] rounded-2xl  ${bookingStatusDisplay.bgColor} ${bookingStatusDisplay.textColor}`}
+>
+  {bookingStatusDisplay.text}
+</span>
+          <p className="mt-1 ml-4 text-[16px]">
+  {getBookingCopy(evt.booking.bookingStatus)}
+</p>
+
         </div>
       </div>
     );
   });
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 ">
       <div className="text-center rounded-xl p-3 md:p-2">
-        <p className="font-[500] text-[18px]">A few special evenings are waiting –</p>
-        <p className="font-[500] text-[18px]">curated just for you</p>
-        {displayEvents.length > 1 && (
-          <div className="md:hidden mt-2  -mb-2">
+        <p className="text-[16px]">A few special evenings are curated just for you.</p>
+        <p className=" text-[16px]"></p>
+       
+          <div className="md:hidden mt-2 ml-1.5 mr-4 -mb-2">
             <Progress
               value={progressVal}
-              className="h-px w-[348px] bg-[#BDBDBD] [&>div]:bg-[#000]"
+              className="h-px w-[322px] bg-[#BDBDBD] [&>div]:bg-[#000]"
             />
           </div>
-        )}
+     
       </div>
 
       <div
         ref={scrollRef}
-        className="md:hidden flex space-x-5  overflow-x-auto px-4.5 -mx-4 pb-16 snap-x snap-mandatory scroll-smooth scrollbar-hide"
+        className="md:hidden flex space-x-5  -mt-2 overflow-x-auto px-4.5 -ml-4 pb-30 snap-x snap-mandatory scroll-smooth scrollbar-hide"
       >
         {mobileCards}
       </div>
 
-      <div className="hidden md:block -mt-12">
+      <div className="hidden md:block ">
         <Carousel items={appleCards} />
       </div>      <BookingDetailsDialog
         open={modalOpen}

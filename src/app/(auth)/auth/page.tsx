@@ -400,7 +400,7 @@ export default function AuthPage() {
         <div className="text-left">
           <p className="font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300, fontSize: '12px', lineHeight: '18px' }}>
             By clicking Continue I agree to Third Place&apos;s{' '}
-            <Link href="/terms-of-service" className="underline">
+            <Link href="/terms-conditions" className="underline">
               Terms & Conditions
             </Link>{' '}
             &{' '}
