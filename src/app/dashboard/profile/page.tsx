@@ -9,6 +9,7 @@ import { useUser } from "@/hooks/useUser";
 import { usePersonalityTestReturn } from "@/hooks/usePersonalityTestReturn";
 import { ProfileSkeleton } from "@/components/ui/skeleton";
 import ConfirmationModal from "@/components/ui/confirmation-modal";
+import { LucidePhone } from "lucide-react";
 
 /* ───────────────────────────────── ICONS ─────────────────────────────── */
 
@@ -25,7 +26,7 @@ const ChevronRight = ({ size = 22 }: { size?: number }) => ( // ← all arrows 2
 );
 
 const UserIcon = () => <Image src="/User.svg" alt="User" width={20} height={20} className="object-contain" />;
-const PhoneIcon = () => <Image src="/phone.svg" alt="Phone" width={20} height={20} className="object-contain" />;
+const PhoneIcon = () => <LucidePhone size={20} className="text-black" />;
 const PersonalityIcon = () => (
   <Image src="/question_5156781.svg" alt="Personality Test" width={30} height={30} className="object-contain" />
 );
