@@ -20,7 +20,7 @@ const getBookingStatusDisplay = (status: string) => {
     case "pending_payment":
       return { text: "PENDING PAYMENT", bgColor: "bg-yellow-100", textColor: "text-yellow-700", indicator: "🕐" };
     case "confirmed":
-      return { text: "CONFIRMED", bgColor: "bg-[#1B5E20]", textColor: "text-[#1B5E20]", indicator: "✅" };
+      return { text: "CONFIRMED", bgColor: "bg-[#C8E6C9]", textColor: "text-[#1B5E20]", indicator: "✅" };
     case "cancelled":
       return { text: "REFUNDED", bgColor: "bg-[#FFCDD2]", textColor: "text-[#B71C1C]", indicator: "❌" };
     case "completed":
@@ -184,11 +184,13 @@ function BookingDetailsDialog({
 
           <div className="flex items-center">
             <span className="font-[400] text-gray-600">Venue location :</span>
+            <a href={booking.eventId.eventLocation?.address}>
             <span className="ml-2 inline-flex items-center font-[400] text-white px-2 py-[2px] rounded-lg bg-black text-xs">
               
               {booking.eventId.eventLocation?.venueName || "Location TBD"}
               <CornerUpRight className="h-4 w-4 ml-1" />
             </span>
+            </a>
           </div>
 
           
@@ -429,7 +431,7 @@ useEffect(() => {
         onClick={() => openDialog(evt)}
       >
         <div className="flex flex-col  rounded-xl bg-white" style={{ maxHeight: "100vh" }}>
-          <div className="relative flex-shrink-0 w-[322px] h-[362px] mx-auto overflow-hidden rounded-xl">
+          <div className="relative flex-shrink-0 w-[322px] ml-4 h-[362px] mx-auto overflow-hidden rounded-xl">
             <Image
               src={evt.cover_photo_link}
               alt={evt.event_name}
@@ -452,15 +454,15 @@ useEffect(() => {
             
            
           </div>
-          <div className="mt-1 flex grow flex-col justify-between px-4 pb-4">
+          <div className="mt-1 mr-2 flex grow flex-col justify-between px-4 pb-4">
             <h3 className="text-[22px] font-[500] leading-snug">{evt.event_name}</h3>
           </div>
           <span
-  className={`italic uppercase text-[16px] font-[400] px-2  -mt-3 ml-2 w-[102px] rounded-2xl  ${bookingStatusDisplay.bgColor} ${bookingStatusDisplay.textColor}`}
+  className={`italic uppercase text-[16px] font-[400] px-2  -mt-3 ml-3 w-[102px] rounded-2xl  ${bookingStatusDisplay.bgColor} ${bookingStatusDisplay.textColor}`}
 >
   {bookingStatusDisplay.text}
 </span>
-          <p className="mt-1 ml-2 text-[16px]">
+          <p className="mt-1 ml-4 text-[16px]">
   {getBookingCopy(evt.booking.bookingStatus)}
 </p>
 
@@ -470,12 +472,12 @@ useEffect(() => {
   });
 
   return (
-    <div className="space-y-5 mt-2">
+    <div className="space-y-5 ">
       <div className="text-center rounded-xl p-3 md:p-2">
         <p className="text-[16px]">A few special evenings are curated just for you.</p>
         <p className=" text-[16px]"></p>
        
-          <div className="md:hidden mt-4 ml-1.5 mr-4 -mb-2">
+          <div className="md:hidden mt-2 ml-1.5 mr-4 -mb-2">
             <Progress
               value={progressVal}
               className="h-px w-[322px] bg-[#BDBDBD] [&>div]:bg-[#000]"

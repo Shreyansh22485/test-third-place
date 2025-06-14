@@ -22,7 +22,7 @@ export default function TakeTest({ onClose }: TakeTestProps) {
 
 return (
     <div 
-      className="fixed left-0 right-0 bg-[#F5F5DC] z-40"
+      className="fixed left-0 -mb-4 right-0 bg-[#FFF3CD] z-30"
       style={{
         borderRadius: '24px 24px 0 0',
         bottom: window.innerWidth < 768 ? '73px' : '0px', // Above mobile nav on mobile, at bottom on desktop
@@ -31,21 +31,21 @@ return (
       {/* Close button with background circle */}
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors shadow-sm z-10"
+        className="absolute top-0  mr-2 -mt-2 text-white right-0 w-4 h-4 bg-[#B56E33] rounded-full flex items-center justify-center"
         aria-label="Close"
       >
-        <X size={16} />
+        <X size={12} />
       </button>
 
-      <div className="max-w-6xl mx-auto px-4 py-4 sm:py-6">        {/* Content layout - horizontal alignment */}
-        <div className="flex items-center justify-between gap-2">
+      <div className="max-w-6xl mx-auto px-3 -mb-1.5 h-[65px] rounded-2xl border border-[#B56E33] py-1 ">        {/* Content layout - horizontal alignment */}
+        <div className="flex items-center  justify-between">
           {/* Left side - Icon and text */}
-          <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+          <div className="flex items-center gap-2  sm:gap-3 flex-1 ">
             <div className="flex-shrink-0">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center shadow-sm">
+              <div className="w-8 h-8  rounded-full flex items-center justify-center">
                 <svg
-                  width="18"
-                  height="18"
+                  width="25"
+                  height="25"
                   viewBox="0 0 24 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -69,14 +69,14 @@ return (
               </div>
             </div>
 
-            <div className="flex-1 min-w-0 pr-2">
+            <div className="flex-1 min-w-0 -ml-1 pr-2">
               {/* Title */}
               <h3 
-                className="text-gray-900 mb-1 truncate"
+                className="text-gray-900  truncate"
                 style={{
                   fontFamily: 'Crimson Pro, serif',
-                  fontWeight: 500,
-                  fontSize: '18px',
+                  fontWeight: 400,
+                  fontSize: '16px',
                   lineHeight: '100%',
                   letterSpacing: '0%',
                 }}
@@ -90,7 +90,7 @@ return (
                 style={{
                   fontFamily: 'Crimson Pro, serif',
                   fontWeight: 300,
-                  fontSize: '14px',
+                  fontSize: '12px',
                   lineHeight: '20px',
                   letterSpacing: '0%',
                 }}
@@ -101,23 +101,27 @@ return (
           </div>
 
           {/* Right side - Button */}
-          <div className="flex-shrink-0">
-            <button
-              onClick={handleStartTest}
-              className="px-4 sm:px-6 py-2 text-white rounded-lg hover:opacity-90 transition-opacity active:scale-95 transform duration-150 whitespace-nowrap text-sm sm:text-base"
-              style={{
-                fontFamily: 'Crimson Pro, serif',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '28px',
-                letterSpacing: '0%',
-                textAlign: 'center',
-                backgroundColor: '#B56E33',
-              }}
-            >
-              Start the test
-            </button>
-          </div>
+         <div className="flex-shrink-0">
+  <button
+    onClick={handleStartTest}
+    className="px-3 mr-1 my-1.5 y-4 text-white rounded-2xl"
+    style={{
+      width: '115px',          // ← desired width
+      height: '35px',          // ← desired height
+      fontFamily: 'Crimson Pro, serif',
+      fontWeight: 300,
+      fontSize: '16px',
+      lineHeight: '20px',
+      letterSpacing: '0%',
+      textAlign: 'center',
+      backgroundColor: '#B56E33',
+      
+    }}
+  >
+    Start the test
+  </button>
+</div>
+
         </div>
       </div>
     </div>

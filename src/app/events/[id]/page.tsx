@@ -220,7 +220,7 @@ function EventPageContent({ params }: PageProps) {
     if (isLoading) return 'Processing...';
     if (!user?.personalityTestCompleted) return 'Take Personality Test';
     if (!hasSeenUnderstand) return 'Continue';
-    return 'Proceed to Payment';
+    return 'Proceed to payment';
   };
 
   return (
@@ -229,7 +229,7 @@ function EventPageContent({ params }: PageProps) {
         <div className="mx-auto w-full md:max-w-lg">          <button 
             onClick={handleContinue}
             disabled={isLoading}
-            className="w-full rounded-full bg-black py-3 text-sm font-semibold text-white shadow-sm hover:opacity-90 transition disabled:opacity-50"
+            className="w-full rounded-full bg-black py-3 text-[16px] font-[500] text-white shadow-sm hover:opacity-90 transition disabled:opacity-50"
           >
             {getButtonText()}
           </button>
@@ -366,7 +366,7 @@ function EventPageContent({ params }: PageProps) {
     {/* Invite button only if no friendPhone */}
     {!friendPhone && (
       <button
-        className="flex items-center gap-1 rounded-2xl bg-gray-900 px-3 py-[3px] text-[14px] font-[400] text-white"
+        className="flex items-center gap-1 rounded-2xl bg-gray-900 px-3 py-[3px] text-[16px] font-[400] text-white"
         onClick={() => setShowInviteModal(true)}
       >
         <TicketPlus className="h-4 w-4" />
@@ -436,7 +436,7 @@ function EventPageContent({ params }: PageProps) {
           className="flex items-center gap-1 cursor-pointer"
         >
           {/* dotted underline */}
-          <span className="border-b border-dotted border-black pb-[2px]">
+          <span className="border-b border-dotted  border-gray-500 ">
             Experience Ticket
           </span>
           <Info className="h-[14px] w-[14px] text-gray-500" />
@@ -490,7 +490,7 @@ function EventPageContent({ params }: PageProps) {
             
             className="flex items-center gap-1 cursor-pointer"
           >
-            <span className="border-b border-dotted border-black pb-[2px]">
+            <span className="border-b border-dotted border-gray-500">
               Curation fee
             </span>
             <Info className="h-[14px] w-[14px] text-gray-500" />
