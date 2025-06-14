@@ -82,12 +82,12 @@ function Header() {
           {/* The pt-[72px] pushes the content below the fixed header (adjust if your header height changes) */}
 
           {/* Navigation Links */}          
-          <Link href="/about-us" className="py-2 text-white font-[200px] text-[22px] hover:text-pink-400 w-full text-left ml-5 mt-8" onClick={() => setMenuOpen(false)}>About Us</Link>
+          <Link href="/about-us" className="py-2 text-white font-[200px] text-[22px] hover:text-pink-400 w-full text-left ml-5 mt-8" onClick={() => setMenuOpen(false)}>About us</Link>
           <AuthLink className="py-2 text-white font-[200px] text-[22px] hover:text-pink-400 w-full text-left ml-5 cursor-pointer" onClick={() => setMenuOpen(false)}>Login /Sign up</AuthLink>
 <a href="#how-it-works"
    className="py-2 text-white text-[22px] hover:text-pink-400 ml-5"
    onClick={() => setMenuOpen(false)}>
-  How it Works?
+  How it works?
 </a>
         <a                                   // plain anchor is simplest in SPA
   href="#pick-vibe"

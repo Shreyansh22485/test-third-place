@@ -23,42 +23,47 @@ export default function NewsSection({ videoId, activeVideo, setActiveVideo }: Pr
     <div className={`bg-black w-full py-10 px-2 sm:px-4 md:px-6 lg:px-8 ${dmSans.className}`}>
       <div className="flex flex-col-reverse lg:flex-row items-center max-w-6xl mx-auto gap-8 font-sans">
         {/* Left text block */}
-        <div className="w-full lg:w-1/2 flex flex-col justify-center">
-          <div className="relative flex mr-6 ml-6 gap-3 md:gap-6 items-start">
-            <div className="absolute left-0 top-0 h-full w-1 bg-white" />
-            <div className="pl-3 sm:pl-5 md:pl-8 w-full">
-              {/* BREAKING NEWS + SOURCE ROW */}
-              <div className="flex items-center flex-nowrap mb-4 md:mb-6 gap-2">
-                <div className="bg-white text-black font-bold font-sans text-[14px] h-[21px] px-2 whitespace-nowrap shadow-md">
-                  BREAKING NEWS
-                </div>
-                <span className="text-[10px] text-gray-400 whitespace-nowrap">
-                  Source:{' '}
-                  <a
-                    href="https://www.instagram.com/reel/DFtbvs5JReH/?igsh=aXptNnF1aGU2dXM5"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline"
-                  >
-                    @christianb.23
-                  </a>
-                </span>
-              </div>
-
-              {/* HEADLINE */}
-              <h3 className="font-bold uppercase font-sans mr-6 tracking-tight leading-snug text-left w-full text-white mt-2">
-                <span className="block whitespace-normal md:whitespace-nowrap" style={{ fontSize: '15px' }}>
-                  OUR GENERATION IS SO DISCONNECTED
-                </span>
-                <span className="block whitespace-normal md:whitespace-nowrap" style={{ fontSize: '16px' }}>
-                  BECAUSE WE LACK THIRD PLACES.
-                </span>
-              </h3>
-
-            
-            </div>
-          </div>
+      <div className="w-full lg:w-1/2 flex flex-col justify-center">
+  <div className="relative flex mr-6 ml-6 gap-3 md:gap-6 items-start">
+    <div className="absolute left-0 top-0 h-full w-1 bg-white" />
+    <div className="pl-3 sm:pl-5 md:pl-8 w-full">
+      {/* BREAKING NEWS + SOURCE ROW */}
+      <div className="flex items-center justify-between w-full mb-4 md:mb-6">
+        <div className="bg-white text-black font-bold font-sans text-[14px] h-[21px] px-2 whitespace-nowrap shadow-md">
+          BREAKING NEWS
         </div>
+        <span className="text-[10px] text-gray-400 whitespace-nowrap">
+          Source:{' '}
+          <a
+            href="https://www.instagram.com/reel/DFtbvs5JReH/?igsh=aXptNnF1aGU2dXM5"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline"
+          >
+            @christianb.23
+          </a>
+        </span>
+      </div>
+
+      {/* HEADLINE */}
+      <h3 className="font-bold uppercase font-sans mr-6 tracking-tight leading-snug text-left w-full text-white mt-2">
+        <span
+          className="block whitespace-normal md:whitespace-nowrap"
+          style={{ fontSize: '15px' }}
+        >
+          OUR GENERATION IS SO DISCONNECTED
+        </span>
+        <span
+          className="block whitespace-normal md:whitespace-nowrap"
+          style={{ fontSize: '16px' }}
+        >
+          BECAUSE WE LACK THIRD PLACES.
+        </span>
+      </h3>
+    </div>
+  </div>
+</div>
+
 
         {/* Right video block */}
         <div className="w-full lg:w-1/2 flex justify-center">
@@ -74,7 +79,7 @@ export default function NewsSection({ videoId, activeVideo, setActiveVideo }: Pr
             />
             <button
               onClick={() => setActiveVideo(isMuted ? videoId : null)}
-              className="absolute bottom-4 left-4 bg-black/70 text-white pl-2 h-7 w-10 rounded-3xl backdrop-blur-lg flex items-center justify-center"
+              className="absolute bottom-4 left-4 bg-black/70 text-white h-7 w-10 rounded-3xl backdrop-blur-lg flex items-center justify-center"
             >
               {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
             </button>

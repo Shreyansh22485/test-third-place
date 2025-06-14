@@ -179,12 +179,7 @@ function BookingDetailsDialog({
             </span>
           </div>
 
-          <div className="flex items-center">
-            <span className="font-[400] text-gray-600">Number of seats :</span>
-            <span className="ml-2 font-medium text-black">
-              {booking.numberOfSeats}
-            </span>
-          </div>
+          
 
           <div className="flex items-center">
             <span className="font-[400] text-gray-600">Booking status :</span>
@@ -241,16 +236,6 @@ function BookingDetailsDialog({
             </span>
           </div>        </div>
 
-        {/* Waitlist explanation */}
-        {booking.bookingStatus === 'waitlist' && (
-          <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-            <p className="text-sm text-orange-800">
-              <strong>⏳ You're on the waitlist!</strong> Your payment has been processed successfully. 
-              You'll be notified once the organizer confirms your spot.
-            </p>
-          </div>
-        )}
-
         <button
           onClick={onClose}
           className="mt-3 self-start w-25 rounded-lg bg-black py-2 text-[16px] font-medium text-white shadow hover:bg-neutral-900 transition"
@@ -301,22 +286,32 @@ export default function InvitesGallery() {
     [bookedEvents]
   );
 
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el || displayEvents.length <= 1) return;
-    const onScroll = () => {
-      const card = el.querySelector("div > div");
-      const w = card?.clientWidth ?? 1;
-      const idx = Math.min(
-        Math.round(el.scrollLeft / (w + 20)),
-        displayEvents.length - 1
-      );
-      setProgressVal(((idx + 1) / displayEvents.length) * 100);
-    };
-    el.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => el.removeEventListener("scroll", onScroll);
-  }, [displayEvents.length]);
+useEffect(() => {
+  const el = scrollRef.current;
+  if (!el) return;
+
+  const updateProgress = () => {
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+
+    // If there is only ONE card (no horizontal scroll possible) → 100 %
+    if (scrollWidth <= clientWidth) {
+      setProgressVal(100);
+      return;
+    }
+
+    // Otherwise: proportion of the scrollable track we’ve travelled
+    const pct = (scrollLeft / (scrollWidth - clientWidth)) * 100;
+    setProgressVal(pct);
+  };
+
+  el.addEventListener("scroll", updateProgress, { passive: true });
+
+  // Initialise immediately after render
+  updateProgress();
+
+  return () => el.removeEventListener("scroll", updateProgress);
+}, [displayEvents.length]);
+
   /* Open dialog */
   const openDialog = (evt: any) => {
     setSelectedBooking(evt.booking);
@@ -435,13 +430,7 @@ export default function InvitesGallery() {
               })}
             </span>
             
-            {/* Booking status indicator */}
-            <div className="absolute top-3 left-3 flex items-center gap-1 rounded-full bg-white/90 backdrop-blur px-2 py-1 text-[12px] font-medium">
-              <span className="text-[14px]">{bookingStatusDisplay.indicator}</span>
-              <span className={`${bookingStatusDisplay.textColor}`}>
-                {bookingStatusDisplay.text}
-              </span>
-            </div>
+           
           </div>
           <div className="mt-1 flex grow flex-col justify-between px-4 pb-4">
             <h3 className="text-[22px] font-[500] leading-snug">{evt.event_name}</h3>
@@ -456,14 +445,14 @@ export default function InvitesGallery() {
       <div className="text-center rounded-xl p-3 md:p-2">
         <p className="font-[500] text-[18px]">A few special evenings are waiting –</p>
         <p className="font-[500] text-[18px]">curated just for you</p>
-        {displayEvents.length > 1 && (
+       
           <div className="md:hidden mt-2  -mb-2">
             <Progress
               value={progressVal}
               className="h-px w-[348px] bg-[#BDBDBD] [&>div]:bg-[#000]"
             />
           </div>
-        )}
+     
       </div>
 
       <div
