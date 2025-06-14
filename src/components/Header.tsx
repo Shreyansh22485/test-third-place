@@ -87,7 +87,7 @@ function Header() {
 <a href="#how-it-works"
    className="py-2 text-white text-[22px] hover:text-pink-400 ml-5"
    onClick={() => setMenuOpen(false)}>
-  How It Works?
+  How it Works?
 </a>
         <a                                   // plain anchor is simplest in SPA
   href="#pick-vibe"

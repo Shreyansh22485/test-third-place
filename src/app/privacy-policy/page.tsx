@@ -4,12 +4,12 @@ import Link from "next/link";
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="bg-white min-h-screen text-black flex justify-center px-2">
+    <div className="bg-white min-h-screen text-black flex justify-center ml-2 mr-2">
       <div className="max-w-xl w-full pt-4 pb-10 space-y-8">
         {/* ───────── Header row ───────── */}
-        <div className="flex items-center justify-between pb-2 border-b border-black/20">
+        <div className="flex items-center justify-between pb-2 -mr-2 -ml-2 border-b border-black/20">
           {/* Back arrow */}
-          <Link href="/" className="w-10 flex justify-start" aria-label="Back">
+          <Link href="/" className="w-10 flex justify-start ml-2 mr-2" aria-label="Back">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -28,7 +28,7 @@ export default function PrivacyPolicyPage() {
 
           {/* Page title */}
           <div className="flex-1 flex justify-center">
-            <span className="font-medium text-[20px]">Privacy Policy</span>
+            <span className="font-medium text-[24px]">PRIVACY POLICY</span>
           </div>
 
           {/* Empty spacer for symmetry */}
@@ -37,7 +37,7 @@ export default function PrivacyPolicyPage() {
 
         {/* ───────── Body copy ───────── */}
         <section className="space-y-4 ml-2 mr-2 leading-relaxed">
-          <p className="font-semibold">Last Updated: 09/05/2025</p>
+          <p className="font-[400]">Last Updated: 09/05/2025</p>
 
           <p>
             Welcome to this website <strong>www.yourthirdplace.in</strong>{" "}
@@ -46,7 +46,7 @@ export default function PrivacyPolicyPage() {
 
           <p>
             <strong>Third Place</strong> is a platform designed to create Third
-            Places—social environments beyond home and work—where individuals
+            Places—social environments beyond home and work <br/> —where individuals
             can connect through curated, in-person experiences. Using AI-driven
             matching and psychological profiling, the platform organizes group
             activities tailored to user interests, fostering genuine social

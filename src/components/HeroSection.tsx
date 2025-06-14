@@ -27,12 +27,12 @@ function HeroSection({ videoId, activeVideo, setActiveVideo }: Props) {
           muted={isMuted}
         />
         {/* Mute / un-mute button - now left side, bigger */}
-        <button
-          onClick={() => setActiveVideo(isMuted ? videoId : null)}
-          className="absolute bottom-4 left-4 bg-black/70 text-white p-3 rounded-full backdrop-blur-lg"
-        >
-          {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-        </button>
+         <button
+              onClick={() => setActiveVideo(isMuted ? videoId : null)}
+              className="absolute bottom-4 left-4 bg-black/70 text-white  pl-2 h-7 w-10 rounded-3xl backdrop-blur-lg"
+            >
+              {isMuted ? <VolumeX size={20}  /> : <Volume2 size={20} />}
+            </button>
       </div>
 
       {/* -------- Existing content below stays exactly the same -------- */}

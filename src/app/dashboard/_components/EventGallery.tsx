@@ -111,7 +111,7 @@ export default function EventGallery() {
           <Listbox value={selectedEventId} onChange={setSelectedEventId}>
             <div className="relative">
               <Listbox.Button
-                className="relative w-60 -mt-1 pr-10 text-[18px] rounded-2xl bg-gray-100 h-[35px]
+                className="relative w-60 -mt-2 pr-10 text-[18px] rounded-2xl bg-gray-100 h-[32px]
                   px-3 py-2 text-sm outline-none min-w-full appearance-none
                   focus:ring-2 focus:ring-gray-300 focus:border-gray-300
                   transition flex items-center"

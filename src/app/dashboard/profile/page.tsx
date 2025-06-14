@@ -24,13 +24,13 @@ const ChevronRight = ({ size = 22 }: { size?: number }) => ( // ← all arrows 2
   </svg>
 );
 
-const UserIcon = () => <Image src="/User.png" alt="User" width={20} height={20} className="object-contain" />;
-const PhoneIcon = () => <Image src="/phone.png" alt="Phone" width={20} height={20} className="object-contain" />;
+const UserIcon = () => <Image src="/User.svg" alt="User" width={20} height={20} className="object-contain" />;
+const PhoneIcon = () => <Image src="/phone.svg" alt="Phone" width={20} height={20} className="object-contain" />;
 const PersonalityIcon = () => (
-  <Image src="/question_5156781.png" alt="Personality Test" width={30} height={30} className="object-contain" />
+  <Image src="/question_5156781.svg" alt="Personality Test" width={30} height={30} className="object-contain" />
 );
-const ChatIcon = () => <Image src="/007-writing 1.png" alt="Text Us" width={20} height={20} className="object-contain" />;
-const MailIcon = () => <Image src="/ic-email-message 1.png" alt="Email" width={20} height={20} className="object-contain" />;
+const ChatIcon = () => <Image src="/007-writing 1.svg" alt="Text Us" width={20} height={20} className="object-contain" />;
+const MailIcon = () => <Image src="/ic-email-message 1.svg" alt="Email" width={20} height={20} className="object-contain" />;
 
 /* ───────────────────────────── NEW ICONS FOR ABOUT/MANAGE ───────────────────────────── */
 
@@ -61,7 +61,7 @@ const LogoutIcon = () => (
 const StatusBadge = ({ completed }: { completed: boolean }) => (
   <div className="flex items-center justify-center h-[50px]">
     <span
-      className={`inline-flex items-center justify-center text-[16px] tracking-wider uppercase italic w-[100px] h-[27px] font-[400] rounded-2xl ${
+      className={`inline-flex items-center justify-center text-[16px] tracking-wider uppercase italic w-[106px] h-[27px] font-[400] rounded-2xl ${
         completed ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700"
       }`}
     >
@@ -189,12 +189,22 @@ function ProfilePageContent() {
   </Link>
 </div>
 
-        {/* SUPPORT */}
-        <SectionTitle>SUPPORT</SectionTitle>
-        <div className="bg-white rounded-2xl border border-[#E5E5EA] overflow-hidden mb-6">
-          <Row icon={<ChatIcon />} title="Text us" right="+91-6364124613" arrow />
-          <Row icon={<MailIcon />} title="Email us" right="hello@yourthirdplace.in" arrow />
-        </div>
+       {/* SUPPORT */}
+<SectionTitle>SUPPORT</SectionTitle>
+<div className="bg-white rounded-2xl border border-[#E5E5EA] overflow-hidden mb-6">
+  <a href="tel:+916364124613" className="block">
+    <Row icon={<ChatIcon />} title="Text us" right="+91-6364124613" arrow />
+  </a>
+  <a
+    href="https://mail.google.com/mail/?view=cm&fs=1&to=hello@yourthirdplace.in"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="block"
+  >
+    <Row icon={<MailIcon />} title="Email us" right="hello@yourthirdplace.in" arrow />
+  </a>
+</div>
+
 
         {/* ABOUT */}
         <SectionTitle>ABOUT</SectionTitle>

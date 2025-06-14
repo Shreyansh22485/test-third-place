@@ -24,37 +24,57 @@ function NewsSection({ videoId, activeVideo, setActiveVideo }: Props) {
       <div className="flex flex-col-reverse font-sans lg:flex-row items-center max-w-6xl mx-auto gap-8">
 
         {/* -------- Left text block unchanged -------- */}
-        <div className="w-full lg:w-1/2 flex flex-col justify-center">
-          <div className="relative flex gap-3 md:gap-6 items-start">
-            <div className="absolute left-0 top-0 h-full w-1 bg-white rounded-full" />
-            <div className="pl-3 sm:pl-5 md:pl-8 w-full">
-              <div className="bg-white text-black font-bold h-[20px] font-sans text-[14px] px-3  rounded text-xs sm:text-sm md:text-base w-fit mb-3 md:mb-4 shadow-md">
-                BREAKING NEWS
-              </div>
-              <h3 className="font-bold uppercase font-sans tracking-tight leading-snug text-left w-full text-white">
-                <span
-                  className="block whitespace-nowrap text-[clamp(0.9rem,5.4vw,2.25rem)]"
-                  style={{ fontSize: 'clamp(0.9rem, 5.4vw, 2.25rem)' }}
-                >
-                  OUR GENERATION IS SO DEPRESSED
-                </span>
-                <span
-                  className="block whitespace-nowrap text-[clamp(0.9rem,5.4vw,2.25rem)]"
-                  style={{ fontSize: 'clamp(0.9rem, 5.4vw, 2.25rem)' }}
-                >
-                  BECAUSE WE LACK THIRD PLACES
-                </span>
-              </h3>
-              <p className="hidden md:block text-gray-300 mt-4 text-base lg:text-lg leading-relaxed text-left">
-                The decline of informal gathering spots has a profound impact on our well-being. Rediscover the power of community and shared experiences.
-              </p>
-            </div>
-          </div>
+     <div className="w-full lg:w-1/2 flex flex-col justify-center">
+  <div className="relative flex mr-6 ml-6 gap-3 md:gap-6 items-start">
+    <div className="absolute left-0 top-0 h-full w-1 bg-white " />
+    <div className="pl-3 sm:pl-5 md:pl-8 w-full">
+      {/* BREAKING NEWS + SOURCE ROW */}
+      <div className="flex items-center mb-3 md:mb-4 gap-2">
+        <div className="bg-white text-black font-bold h-[21px] py-0.65 font-sans text-[14px] px-3 w-fit shadow-md">
+          BREAKING NEWS
         </div>
+        <span className="text-[10px] ml-15 text-gray-400">
+          Source:{' '}
+          <a
+            href="https://www.instagram.com/reel/DFtbvs5JReH/?igsh=aXptNnF1aGU2dXM5"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline"
+          >
+            @christianb.23
+          </a>
+        </span>
+      </div>
+
+      {/* HEADLINE */}
+      <h3 className="font-bold uppercase font-sans mr-6 tracking-tight leading-snug text-left w-full text-white">
+        <span
+          className="block whitespace-nowrap"
+          style={{ fontSize: '17px' }}
+        >
+          OUR GENERATION IS SO DISCONNECTED
+        </span>
+        <span
+          className="block whitespace-nowrap"
+          style={{ fontSize: '17px' }}
+        >
+          BECAUSE WE LACK THIRD PLACES.
+        </span>
+      </h3>
+
+      {/* DESCRIPTION */}
+      <p className="hidden md:block text-gray-300 mt-4 text-base lg:text-lg leading-relaxed text-left">
+        The decline of informal gathering spots has a profound impact on our
+        well-being. Rediscover the power of community and shared experiences.
+      </p>
+    </div>
+  </div>
+</div>
+
 
       {/* -------- Right video block -------- */}
 <div className="w-full lg:w-1/2 flex justify-center">
-  <div className="relative border-4 border-white rounded-xl overflow-hidden shadow-xl w-full max-w-xl">
+  <div className="relative  mr-6 ml-6 border-white border-[2px]  rounded-xl overflow-hidden shadow-xl w-full max-w-xl">
     <video
      
       src="https://firebasestorage.googleapis.com/v0/b/thirdplace-3f85e.firebasestorage.app/o/Video2(website).mp4?alt=media&token=6a2d9ae3-5dc8-4690-af05-57481e85c610"
@@ -67,9 +87,9 @@ function NewsSection({ videoId, activeVideo, setActiveVideo }: Props) {
     />
     <button
       onClick={() => setActiveVideo(isMuted ? videoId : null)}
-      className="absolute bottom-4 left-4 bg-black/70 text-white p-3 rounded-full backdrop-blur-lg"
+      className="absolute bottom-4 left-4 bg-black/70 text-white  pl-2 h-7 w-10 rounded-3xl backdrop-blur-lg"
     >
-      {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+      {isMuted ? <VolumeX size={20}  /> : <Volume2 size={20} />}
     </button>
   </div>
 </div>

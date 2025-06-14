@@ -2,29 +2,20 @@
 
 import Link from "next/link";
 
-/**
- * Route suggestion: app/terms-and-conditions/page.tsx
- * Drop this file into your App-Router project.  
- * – Back arrow → “/”  
- * – Title 20 px / 500, thin divider  
- * – Body copy wrapped in ml-2 mr-2 padding  
- * – **Every word below is exactly as you supplied** (no edits).
- */
-
 export default function TermsAndConditionsPage() {
   return (
     <div className="bg-white min-h-screen text-black flex justify-center px-2">
       <div className="max-w-xl w-full pt-4 pb-10 space-y-8">
         {/* ───────── Header row ───────── */}
-        <div className="flex items-center justify-between pb-2 border-b border-black/20">
-          <Link href="/" aria-label="Back" className="w-10 flex justify-start">
+        <div className="flex items-center justify-between pb-2 border-b -mr-2 -ml-2 border-black/20">
+          <Link href="/" aria-label="Back" className="w-10 px-2 flex justify-start">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               strokeWidth={2}
               stroke="currentColor"
               fill="none"
-              className="w-6 h-6 text-black hover:text-pink-400"
+              className="w-6 h-6 text-black"
             >
               <path
                 strokeLinecap="round"
@@ -35,8 +26,8 @@ export default function TermsAndConditionsPage() {
           </Link>
 
           <div className="flex-1 flex justify-center">
-            <span className="font-medium text-[20px]">
-              Terms &amp; Conditions
+            <span className="font-medium text-[24px]">
+             TERMS & CONDITIONS
             </span>
           </div>
 
@@ -66,7 +57,7 @@ export default function TermsAndConditionsPage() {
 
           <p>{`We are committed to safeguarding your personal information. For details on what data we collect, how it is used, and your rights, please see our Privacy Policy. By using the Website, you consent to the collection and use of your information as described therein.`}</p>
 
-          <pre className="whitespace-pre-wrap leading-relaxed ">{`
+          <p className="whitespace-pre-wrap leading-relaxed ">{`
 2. THE PROVISIONS GOVERNING YOUR USE OF THE WEBSITE
 A) Terms of Use
 The Website www.yourthirdplace.in is the official platform of Third Place. The Website is hosted in India and is governed by the laws of the Republic of India. Your access to and use of the Website is subject to these Terms of Use and the Privacy Policy, along with all applicable laws and regulations.
@@ -190,7 +181,7 @@ In case any dispute or difference arises between the Parties as to any term and/
 
 11. MISCELLANEOUS
 Capitalized terms used herein but not defined shall have the same meaning as ascribed to it under the Disclaimer or Privacy Policy.
-          `}</pre>
+          `}</p>
         </section>
       </div>
     </div>

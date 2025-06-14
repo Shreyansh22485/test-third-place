@@ -4,7 +4,7 @@ import React from "react";
 function MobileHeader() {
   return (
     <header
-      className="w-full flex items-center justify-between mt-1 -ml-1 pr-1 "
+      className="w-full flex items-center justify-between  -ml-1 pr-1 "
       style={{
         height: "56px", // Custom height
         minHeight: "56px",
