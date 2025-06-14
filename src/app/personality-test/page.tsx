@@ -104,13 +104,14 @@ function PersonalityTestContent() {
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       {/* Header */}
-      <header className="flex h-[58px] items-center justify-between border-b border-[#E5E5EA] px-4 bg-white">
+      {/* <header className="flex h-[58px] items-center justify-between border-b border-[#E5E5EA] px-4 bg-white">
         <Link href={backUrl} className="p-1 text-black">
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <h1 className="text-xl font-semibold italic tracking-wide">PERSONALITY TEST</h1>
         <span className="h-5 w-5" />
-      </header>      {/* Typeform Embed */}
+      </header> */}
+      {/* Typeform Embed */}
       <div className="h-[calc(100vh-58px)]">
         <TypeformWidget
           id="XiBDE8Js"
@@ -119,7 +120,7 @@ function PersonalityTestContent() {
           onSubmit={handleTypeformSubmit}          transitiveSearchParams={true}
           hidden={{
             first_name: user.firstName,
-            last_name: user.lastName,
+            last_name: user.lastName ? user.lastName : '',
             email: user.email || '',
             phone_number: user.phoneNumber,
             gender: user.gender || '',

@@ -116,8 +116,8 @@ export const useUser = (): UseUserReturn => {
       setUser(null);
       setError(null);
       
-      // Redirect to auth page
-      window.location.href = '/auth';
+      // Redirect to Landing page
+      window.location.href = '/';
     } catch (error: any) {
       console.error('Error during logout:', error);
       

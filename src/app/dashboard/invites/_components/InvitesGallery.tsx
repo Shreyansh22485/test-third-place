@@ -193,7 +193,7 @@ function BookingDetailsDialog({
             </a>
           </div>
 
-          
+
 
           <div className="flex items-center">
             <span className="font-[400] text-gray-600">Booking status :</span>

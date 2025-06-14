@@ -126,9 +126,10 @@ function ProfilePageContent() {
       <section className="mx-auto mt-3 w-full max-w-md px-4 sm:px-0">
         {/* BASIC INFO */}
         <SectionTitle>BASIC INFO</SectionTitle>
-        <div className="rounded-2xl border border-[#E5E5EA] divide-y divide-[#E5E5EA] overflow-hidden mb-5 bg-white">
-          <Row icon={<UserIcon />}  title="Name"         right={`${user.firstName} ${user.lastName}`} />
-          <Row icon={<PhoneIcon />} title="Phone number" right={user.phoneNumber} />
+
+        <div className="rounded-2xl border border-[#E5E5EA] overflow-hidden mb-5 bg-white">
+          <Row icon={<UserIcon />} title="Name" right={`${user.firstName}`}  />
+          <Row icon={<PhoneIcon />} title="Phone number" right={user.phoneNumber}  />
         </div>
 
         {/* CURATION PROFILE */}
