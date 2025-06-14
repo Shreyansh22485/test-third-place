@@ -42,10 +42,10 @@ function Sidebar() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex flex-col gap-2">
+        <nav className="flex flex-col  gap-2">
           {menu.map(({ name, icon: Icon, path: p }) => (
             <Link key={p} href={p} className={itemClass(path === p)}>
-              <Icon size={20} />
+             <span className=""> <Icon size={20} /> </span>
               <span className="text-sm font-medium">{name}</span>
             </Link>
           ))}
@@ -61,7 +61,7 @@ function Sidebar() {
               <li key={p} className="w-full">
                 <Link
                   href={p}
-                  className="flex flex-col items-center py-2"
+                  className="flex flex-col  items-center py-2"
                 >
                   <Icon
                     size={24}
@@ -69,7 +69,7 @@ function Sidebar() {
                     className={active ? "black" : "stroke-gray-500"}
                   />
                   <span
-                    className={`mt-1 text-xs font-medium ${
+                    className={`text-xs font-medium ${
                       active ? "text-black" : "text-gray-500"
                     }`}
                   >

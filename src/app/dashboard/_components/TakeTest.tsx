@@ -22,7 +22,7 @@ export default function TakeTest({ onClose }: TakeTestProps) {
 
 return (
     <div 
-      className="fixed left-0 -mb-4 right-0 bg-[#FFF3CD] z-30"
+      className="fixed left-0 -mb-5.5 right-0 bg-[#FFF3CD] z-30"
       style={{
         borderRadius: '24px 24px 0 0',
         bottom: window.innerWidth < 768 ? '73px' : '0px', // Above mobile nav on mobile, at bottom on desktop
