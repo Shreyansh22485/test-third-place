@@ -230,8 +230,12 @@ export default function AuthPage() {
   };
   const handleSignUp = async () => {
     setLoading(true);
-    setError('');    try {      const userData = {
-        phoneNumber: `${formData.countryCode}${formData.phoneNumber}`,
+    setError('');    try {
+      // Clean phone number by removing spaces
+      const cleanPhoneNumber = formData.phoneNumber.replace(/\s/g, '');
+      
+      const userData = {
+        phoneNumber: `${formData.countryCode}${cleanPhoneNumber}`,
         firstName: formData.firstName.trim(),
         // Only include gender if it's not empty
         ...(formData.gender && { gender: formData.gender }),
