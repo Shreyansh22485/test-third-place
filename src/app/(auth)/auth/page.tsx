@@ -10,6 +10,18 @@ import { ConfirmationResult } from 'firebase/auth';
 import { useAuth } from '@/components/AuthProvider';
 import { auth } from '@/lib/firebase';
 
+// Simple spinner component
+const Spinner = ({ size = 16 }: { size?: number }) => (
+  <div 
+    className="animate-spin rounded-full border-2 border-transparent border-t-current"
+    style={{ 
+      width: size, 
+      height: size,
+      borderTopColor: 'currentColor'
+    }}
+  />
+);
+
 interface FormData {
   phoneNumber: string;
   countryCode: string;
@@ -30,12 +42,13 @@ interface FormData {
 export default function AuthPage() {
   const router = useRouter();
   const { user, loading: authLoading, refreshUserState } = useAuth();
-  const [currentStep, setCurrentStep] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+  const [currentStep, setCurrentStep] = useState(1);  const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [error, setError] = useState('');const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [isExistingUser, setIsExistingUser] = useState<boolean | null>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [resendTimer, setResendTimer] = useState(0);
+  const [canResend, setCanResend] = useState(true);
 
   const [formData, setFormData] = useState<FormData>({
     phoneNumber: '',
@@ -73,7 +86,6 @@ export default function AuthPage() {
       router.replace('/dashboard');
     }
   }, [user, authLoading, isExistingUser, router]);
-
   // Initialize reCAPTCHA when component mounts
   useEffect(() => {
     authService.initializeRecaptcha();
@@ -83,7 +95,37 @@ export default function AuthPage() {
     };
   }, []);
 
+  // Timer effect for OTP resend
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer(prev => {
+          if (prev <= 1) {
+            setCanResend(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [resendTimer]);
   const handleInputChange = (field: keyof FormData | string, value: string) => {
+    // Format phone number with space
+    if (field === 'phoneNumber') {
+      // Remove all non-digits
+      const digits = value.replace(/\D/g, '');
+      // Limit to 10 digits
+      const limitedDigits = digits.slice(0, 10);
+      // Format as "33333 33333"
+      const formatted = limitedDigits.replace(/(\d{5})(\d{5})/, '$1 $2');
+      setFormData(prev => ({ ...prev, [field]: formatted }));
+      return;
+    }
+    
     if (field.startsWith('address.')) {
       const addressField = field.split('.')[1];
       setFormData(prev => ({ 
@@ -95,21 +137,22 @@ export default function AuthPage() {
     }
     if (error) setError(''); // Clear error when user types
   };
-
   // Validation helper functions
   const validatePhoneNumber = (phone: string) => {
+    // Remove spaces and validate
+    const cleanPhone = phone.replace(/\s/g, '');
     const phoneRegex = /^[6-9]\d{9}$/; // Indian mobile number format
-    return phoneRegex.test(phone);
+    return phoneRegex.test(cleanPhone);
   };
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
-
   const checkUserExists = async (phoneNumber: string) => {
     try {
-      const fullPhoneNumber = `${formData.countryCode}${phoneNumber}`;
+      const cleanPhone = phoneNumber.replace(/\s/g, '');
+      const fullPhoneNumber = `${formData.countryCode}${cleanPhone}`;
       const exists = await authService.checkUserExists(fullPhoneNumber);
       setIsExistingUser(exists);
       return exists;
@@ -119,7 +162,6 @@ export default function AuthPage() {
       return false;
     }
   };
-
   const handleSendOTP = async () => {
     if (!formData.phoneNumber || !validatePhoneNumber(formData.phoneNumber)) {
       setError('Please enter a valid 10-digit mobile number');
@@ -133,12 +175,18 @@ export default function AuthPage() {
       // First check if user exists
       await checkUserExists(formData.phoneNumber);
       
-      const fullPhoneNumber = `${formData.countryCode}${formData.phoneNumber}`;
+      // Remove spaces from phone number for backend
+      const cleanPhoneNumber = formData.phoneNumber.replace(/\s/g, '');
+      const fullPhoneNumber = `${formData.countryCode}${cleanPhoneNumber}`;
       console.log('Sending OTP to:', fullPhoneNumber);
       
       const confirmation = await authService.sendOTP(fullPhoneNumber);
       setConfirmationResult(confirmation);
       setCurrentStep(2);
+      
+      // Start the resend timer
+      setResendTimer(30);
+      setCanResend(false);
     } catch (error: any) {
       console.error('Error sending OTP:', error);
       setError(error.message || 'Failed to send OTP. Please try again.');
@@ -182,12 +230,9 @@ export default function AuthPage() {
   };
   const handleSignUp = async () => {
     setLoading(true);
-    setError('');    try {
-      const userData = {
+    setError('');    try {      const userData = {
         phoneNumber: `${formData.countryCode}${formData.phoneNumber}`,
         firstName: formData.firstName.trim(),
-        // Only include lastName if it's not empty
-        ...(formData.lastName.trim() && { lastName: formData.lastName.trim() }),
         // Only include gender if it's not empty
         ...(formData.gender && { gender: formData.gender }),
         // Only include dateOfBirth if it's not empty
@@ -219,22 +264,28 @@ export default function AuthPage() {
     }
     
     setLoading(false);
-  };
-
-  const handleResendOTP = async () => {
-    setLoading(true);
+  };  const handleResendOTP = async () => {
+    if (!canResend) return;
+    
+    setResendLoading(true);
     setError('');
     
     try {
-      const fullPhoneNumber = `${formData.countryCode}${formData.phoneNumber}`;
+      // Remove spaces from phone number for backend
+      const cleanPhoneNumber = formData.phoneNumber.replace(/\s/g, '');
+      const fullPhoneNumber = `${formData.countryCode}${cleanPhoneNumber}`;
       const confirmation = await authService.sendOTP(fullPhoneNumber);
       setConfirmationResult(confirmation);
       setError('');
+      
+      // Start the resend timer
+      setResendTimer(30);
+      setCanResend(false);
     } catch (error: any) {
       console.error('Error resending OTP:', error);
       setError(error.message || 'Failed to resend OTP. Please try again.');
     } finally {
-      setLoading(false);
+      setResendLoading(false);
     }
   };
 
@@ -311,38 +362,36 @@ export default function AuthPage() {
           <div className="bg-red-50 border border-red-200 rounded-lg p-3">
             <p className="text-red-700 text-sm">{error}</p>
           </div>
-        )}
-        
-        <div className="flex space-x-2">
-          <div className="relative">
-            <select 
-              value={formData.countryCode}
-              onChange={(e) => handleInputChange('countryCode', e.target.value)}
-              disabled={loading}
-              className="appearance-none border border-gray-300 rounded-lg px-3 py-3 pr-8 text-xl font-light focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent font-[family-name:var(--font-crimson-pro)] disabled:bg-gray-100 disabled:cursor-not-allowed" style={{ fontWeight: 300 }}
-            >
-              <option value="+91">+91</option>
-              <option value="+1">+1</option>
-              <option value="+44">+44</option>
-            </select>
-            <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+        )}        <div className="flex justify-center">
+          <div className="border border-gray-300 rounded-lg px-4 py-3 bg-white max-w-sm w-full focus-within:ring-2 focus-within:ring-black focus-within:border-transparent transition-all">
+            <div className="flex items-center justify-center w-full gap-3">
+              <select 
+                value={formData.countryCode}
+                onChange={(e) => handleInputChange('countryCode', e.target.value)}
+                disabled={loading}
+                className="appearance-none bg-transparent border-none outline-none text-xl font-light font-[family-name:var(--font-crimson-pro)] disabled:cursor-not-allowed text-right" style={{ fontWeight: 300, width: '60px' }}
+              >
+                <option value="+91">+91</option>
+                <option value="+1">+1</option>
+                <option value="+44">+44</option>
+              </select>
+              <span className="text-gray-300 text-xl">|</span>
+              <input
+                type="tel"
+                placeholder="33333 33333"
+                value={formData.phoneNumber}
+                onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+                disabled={loading}
+                className="bg-transparent border-none outline-none text-xl font-light font-[family-name:var(--font-crimson-pro)] disabled:cursor-not-allowed text-left" style={{ fontWeight: 300, width: '140px' }}
+              />
+            </div>
           </div>
-          
-          <input
-            type="tel"
-            placeholder="1234567890"
-            value={formData.phoneNumber}
-            onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
-            disabled={loading}
-            className="flex-1 border border-gray-300 rounded-lg px-3 py-3 text-xl font-light focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent font-[family-name:var(--font-crimson-pro)] disabled:bg-gray-100 disabled:cursor-not-allowed" style={{ fontWeight: 300 }}
-          />
-        </div>
-
-        <button
+        </div><button
           onClick={handleNext}
           disabled={!formData.phoneNumber || loading}
-          className="w-full bg-black text-white py-3 rounded-lg text-xl font-medium disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-800 transition-colors font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 500 }}
+          className="w-full bg-black text-white py-3 rounded-lg text-xl font-medium disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-800 transition-colors font-[family-name:var(--font-crimson-pro)] flex items-center justify-center gap-2" style={{ fontWeight: 500 }}
         >
+          {loading && <Spinner size={20} />}
           {loading ? 'Sending OTP...' : 'Continue'}
         </button>
 
@@ -381,64 +430,53 @@ export default function AuthPage() {
           <div className="bg-red-50 border border-red-200 rounded-lg p-3">
             <p className="text-red-700 text-sm">{error}</p>
           </div>
-        )}
+        )}        <div className="flex justify-center">
           <input
-          type="tel"
-          placeholder="Enter OTP"
-          value={formData.otp}
-          onChange={(e) => handleInputChange('otp', e.target.value)}
-          disabled={loading}
-          maxLength={6}
-          className="w-full border border-gray-300 rounded-lg px-3 py-3 text-xl font-light focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent font-[family-name:var(--font-crimson-pro)] disabled:bg-gray-100 disabled:cursor-not-allowed" style={{ fontWeight: 300 }}
-        />
-      </div>
-
-      <button
+            type="tel"
+            placeholder="Enter OTP"
+            value={formData.otp}
+            onChange={(e) => handleInputChange('otp', e.target.value)}
+            disabled={loading}
+            maxLength={6}
+            className="w-full max-w-sm border border-gray-300 rounded-lg px-3 py-3 text-xl font-light focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent font-[family-name:var(--font-crimson-pro)] disabled:bg-gray-100 disabled:cursor-not-allowed text-center" style={{ fontWeight: 300 }}
+          />
+        </div>
+      </div>      <button
         onClick={handleNext}
         disabled={!formData.otp || loading}
-        className="w-full bg-black text-white py-3 rounded-lg text-xl font-medium disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-800 transition-colors font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 500 }}
+        className="w-full bg-black text-white py-3 rounded-lg text-xl font-medium disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-800 transition-colors font-[family-name:var(--font-crimson-pro)] flex items-center justify-center gap-2" style={{ fontWeight: 500 }}
       >
+        {loading && <Spinner size={20} />}
         {loading ? 'Verifying...' : 'Verify'}
       </button>
 
       <div className="text-left">
-        <p className="font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300, fontSize: '12px', lineHeight: '18px' }}>
-          By clicking Continue I agree to Third Place&apos;s{' '}
-          <Link href="/terms-of-service" className="underline">
-            Terms & Conditions
-          </Link>{' '}
-          &{' '}
-          <Link href="/privacy-policy" className="underline">
-            Privacy Policy
-          </Link>
-        </p>
-      </div>
-
-      <div className="text-left">
         <p className="text-xl text-gray-600 font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}>
           Didn&apos;t receive the OTP?{' '}
-          <button 
-            onClick={handleResendOTP}
-            disabled={loading}
-            className="text-black underline font-medium disabled:text-gray-400 disabled:cursor-not-allowed" 
-            style={{ fontWeight: 500 }}
-          >
-            {loading ? 'Resending...' : 'Resend OTP'}
-          </button>
+          {!canResend ? (
+            <span className="text-gray-600 font-medium" style={{ fontWeight: 500 }}>
+              Retry in 0:{resendTimer.toString().padStart(2, '0')}s?
+            </span>
+          ) : (            <button 
+              onClick={handleResendOTP}
+              disabled={resendLoading}
+              className="text-blue-600 underline font-medium disabled:text-gray-400 disabled:cursor-not-allowed inline-flex items-center gap-1" 
+              style={{ fontWeight: 500 }}
+            >
+              {resendLoading && <Spinner size={16} />}
+              {resendLoading ? 'Retrying...' : 'Retry Now'}
+            </button>
+          )}
         </p>
       </div>
     </div>
   );
-
   const renderBasicInfoStep = () => (
     <div className="space-y-6">
       <div className="text-left">
         <h1 className="text-xl font-medium text-gray-900 font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 500 }}>
           BASIC INFO
         </h1>
-        <p className="text-xl font-light font-[family-name:var(--font-crimson-pro)] mt-2" style={{ fontWeight: 300 }}>
-          Tell us a bit about yourself to complete your profile
-        </p>
       </div>
 
       <div className="space-y-4">
@@ -453,17 +491,15 @@ export default function AuthPage() {
             onChange={(e) => handleInputChange('firstName', e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-3 py-3 text-xl font-light focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}
           />
-        </div>
-
-        <div> 
-                   <label className="block text-xl text-gray-700 mb-1 font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}>
-            Last name 
+        </div>        <div> 
+          <label className="block text-xl text-gray-700 mb-1 font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}>
+            Email
           </label>
           <input
-            type="text"
-            placeholder="Enter your last name"
-            value={formData.lastName}
-            onChange={(e) => handleInputChange('lastName', e.target.value)}
+            type="email"
+            placeholder="Enter your email address"
+            value={formData.email}
+            onChange={(e) => handleInputChange('email', e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-3 py-3 text-xl font-light focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}
           />
         </div>
@@ -505,13 +541,12 @@ export default function AuthPage() {
           <div className="bg-red-50 border border-red-200 rounded-lg p-3">
             <p className="text-red-600 text-sm">{error}</p>
           </div>
-        )}
-
-        <button
+        )}        <button
           onClick={handleNext}
-          disabled={!formData.firstName || !formData.gender || !formData.dateOfBirth  || loading}
-          className="w-full bg-black text-white py-3 rounded-lg text-xl font-medium disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-800 transition-colors font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 500 }}
+          disabled={!formData.firstName || !formData.gender || loading}
+          className="w-full bg-black text-white py-3 rounded-lg text-xl font-medium disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-800 transition-colors font-[family-name:var(--font-crimson-pro)] flex items-center justify-center gap-2" style={{ fontWeight: 500 }}
         >
+          {loading && <Spinner size={20} />}
           {loading ? 'Creating Account...' : 'Sign up'}
         </button>
       </div>
@@ -521,7 +556,7 @@ export default function AuthPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200">
+      <div className="flex items-center justify-between px-4 border-b border-gray-200">
         <button 
           onClick={currentStep > 1 ? handleBack : () => window.history.back()}
           className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -544,7 +579,7 @@ export default function AuthPage() {
       </div>
 
       {/* Content */}
-      <div className="px-6 py-8 max-w-md mx-auto">
+      <div className="px-6  max-w-md mx-auto">
         {renderProgressBar()}
         
         {currentStep === 1 && renderPhoneStep()}
