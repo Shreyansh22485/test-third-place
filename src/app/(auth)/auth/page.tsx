@@ -112,17 +112,15 @@ export default function AuthPage() {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [resendTimer]);
-  const handleInputChange = (field: keyof FormData | string, value: string) => {
-    // Format phone number with space
+  }, [resendTimer]);  const handleInputChange = (field: keyof FormData | string, value: string) => {
+    // Handle phone number input - remove spaces and non-digits
     if (field === 'phoneNumber') {
-      // Remove all non-digits
+      // Remove all non-digits (including spaces)
       const digits = value.replace(/\D/g, '');
       // Limit to 10 digits
       const limitedDigits = digits.slice(0, 10);
-      // Format as "33333 33333"
-      const formatted = limitedDigits.replace(/(\d{5})(\d{5})/, '$1 $2');
-      setFormData(prev => ({ ...prev, [field]: formatted }));
+      // Store without formatting (no spaces)
+      setFormData(prev => ({ ...prev, [field]: limitedDigits }));
       return;
     }
     
