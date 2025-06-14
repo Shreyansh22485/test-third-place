@@ -475,10 +475,10 @@ useEffect(() => {
         <p className="text-[16px]">A few special evenings are waiting –</p>
         <p className=" text-[16px]">curated just for you</p>
        
-          <div className="md:hidden mt-2 ml-4 -mb-2">
+          <div className="md:hidden mt-2 ml-4 mr-2 -mb-2">
             <Progress
               value={progressVal}
-              className="h-px w-[348px] bg-[#BDBDBD] [&>div]:bg-[#000]"
+              className="h-px w-[340px] bg-[#BDBDBD] [&>div]:bg-[#000]"
             />
           </div>
      
@@ -486,12 +486,12 @@ useEffect(() => {
 
       <div
         ref={scrollRef}
-        className="md:hidden flex space-x-5  -mt-2 overflow-x-auto px-4.5 -ml-4 pb-16 snap-x snap-mandatory scroll-smooth scrollbar-hide"
+        className="md:hidden flex space-x-5  -mt-2 overflow-x-auto px-4.5 -ml-4 pb-30 snap-x snap-mandatory scroll-smooth scrollbar-hide"
       >
         {mobileCards}
       </div>
 
-      <div className="hidden md:block -mt-12">
+      <div className="hidden md:block ">
         <Carousel items={appleCards} />
       </div>      <BookingDetailsDialog
         open={modalOpen}
