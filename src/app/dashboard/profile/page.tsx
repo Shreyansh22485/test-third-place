@@ -118,12 +118,12 @@ function ProfilePageContent() {
   };
 
   return (
-    <div className="min-h-screen pl-1 bg-[#FAFAFA] pr-1 pb-10 md:pb-16">
-      <header className="h-[58px] border-b border-[#E5E5EA] bg-[#FAFAFA] flex items-center justify-center italic font-[500] text-gray-700">
+    <div className="min-h-screen pl-1 bg-[#FAFAFA] pr-1 pb-10  md:pb-16">
+      <header className="h-[58px] border-b border-[#E5E5EA] bg-[#FAFAFA] flex items-center justify-center italic font-[500] text-black">
         <span className="text-2xl">PROFILE</span>
       </header>
 
-      <section className="mx-auto mt-6 w-full max-w-md px-4 sm:px-0">
+      <section className="mx-auto mt-3 w-full max-w-md px-4 sm:px-0">
         {/* BASIC INFO */}
         <SectionTitle>BASIC INFO</SectionTitle>
         <div className="rounded-2xl border border-[#E5E5EA] divide-y divide-[#E5E5EA] overflow-hidden mb-5 bg-white">

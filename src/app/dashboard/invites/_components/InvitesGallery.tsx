@@ -428,7 +428,7 @@ useEffect(() => {
         className="snap-center shrink-0 w-[92vw] max-w-[340px] mx-auto h-[52vh] cursor-pointer"
         onClick={() => openDialog(evt)}
       >
-        <div className="flex flex-col rounded-xl bg-white" style={{ maxHeight: "100vh" }}>
+        <div className="flex flex-col  rounded-xl bg-white" style={{ maxHeight: "100vh" }}>
           <div className="relative flex-shrink-0 w-[322px] h-[362px] mx-auto overflow-hidden rounded-xl">
             <Image
               src={evt.cover_photo_link}
@@ -456,11 +456,11 @@ useEffect(() => {
             <h3 className="text-[22px] font-[500] leading-snug">{evt.event_name}</h3>
           </div>
           <span
-  className={`italic uppercase text-[16px] font-[400] px-2  py-[2px] ml-2 w-[102px] rounded-2xl  ${bookingStatusDisplay.bgColor} ${bookingStatusDisplay.textColor}`}
+  className={`italic uppercase text-[16px] font-[400] px-2  -mt-2 ml-2 w-[102px] rounded-2xl  ${bookingStatusDisplay.bgColor} ${bookingStatusDisplay.textColor}`}
 >
   {bookingStatusDisplay.text}
 </span>
-          <p className="mt-1 ml-2 text-[18px]">
+          <p className="mt-1 ml-2 text-[16px]">
   {getBookingCopy(evt.booking.bookingStatus)}
 </p>
 
@@ -472,10 +472,10 @@ useEffect(() => {
   return (
     <div className="space-y-5">
       <div className="text-center rounded-xl p-3 md:p-2">
-        <p className="font-[500] text-[18px]">A few special evenings are waiting –</p>
-        <p className="font-[500] text-[18px]">curated just for you</p>
+        <p className="text-[16px]">A few special evenings are waiting –</p>
+        <p className=" text-[16px]">curated just for you</p>
        
-          <div className="md:hidden mt-2  -mb-2">
+          <div className="md:hidden mt-2 ml-4 -mb-2">
             <Progress
               value={progressVal}
               className="h-px w-[348px] bg-[#BDBDBD] [&>div]:bg-[#000]"
@@ -486,7 +486,7 @@ useEffect(() => {
 
       <div
         ref={scrollRef}
-        className="md:hidden flex space-x-5  overflow-x-auto px-4.5 -mx-4 pb-16 snap-x snap-mandatory scroll-smooth scrollbar-hide"
+        className="md:hidden flex space-x-5  -mt-2 overflow-x-auto px-4.5 -ml-4 pb-16 snap-x snap-mandatory scroll-smooth scrollbar-hide"
       >
         {mobileCards}
       </div>

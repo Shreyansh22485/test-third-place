@@ -69,7 +69,7 @@ export default function NewsSection({ videoId, activeVideo, setActiveVideo }: Pr
         <div className="w-full lg:w-1/2 flex justify-center">
           <div className="relative mr-6 ml-6 border-white border-[2px] rounded-xl overflow-hidden shadow-xl w-full max-w-xl">
             <video
-              src="https://firebasestorage.googleapis.com/v0/b/thirdplace-3f85e.firebasestorage.app/o/Video2(website).mp4?alt=media&token=6a2d9ae3-5dc8-4690-af05-57481e85c610"
+              src="https://res.cloudinary.com/dfm1bqcnz/video/upload/v1749925012/lem6stjjtzd0bptsyb8v.mp4"
               poster="/poster_video2.png"
               autoPlay
               loop

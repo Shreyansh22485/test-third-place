@@ -14,12 +14,12 @@ function HeroSection({ videoId, activeVideo, setActiveVideo }: Props) {
   const isMuted = activeVideo !== videoId;
 
   return (
-    <section className="w-full mt-10 flex flex-col items-center justify-start bg-black">
+    <section className="w-full mt-14 flex flex-col items-center justify-start bg-black">
       {/* Video wrapper */}
       <div className="relative w-full">
         <video
           
-          src="https://firebasestorage.googleapis.com/v0/b/thirdplace-3f85e.firebasestorage.app/o/Video1(website).mp4?alt=media&token=1c8758fb-eb82-4798-a411-e32f0e3c0c77"
+          src="https://res.cloudinary.com/dfm1bqcnz/video/upload/v1749924972/nd1lstcb1wc5ra3tutru.mp4"
           poster="/poster_video1.png"
           autoPlay
           loop
