@@ -20,13 +20,13 @@ const getBookingStatusDisplay = (status: string) => {
     case "pending_payment":
       return { text: "PENDING PAYMENT", bgColor: "bg-yellow-100", textColor: "text-yellow-700", indicator: "🕐" };
     case "confirmed":
-      return { text: "CONFIRMED", bgColor: "bg-green-100", textColor: "text-green-700", indicator: "✅" };
+      return { text: "CONFIRMED", bgColor: "bg-[#1B5E20]", textColor: "text-[#1B5E20]", indicator: "✅" };
     case "cancelled":
-      return { text: "CANCELLED", bgColor: "bg-red-100", textColor: "text-red-700", indicator: "❌" };
+      return { text: "REFUNDED", bgColor: "bg-[#FFCDD2]", textColor: "text-[#B71C1C]", indicator: "❌" };
     case "completed":
       return { text: "COMPLETED", bgColor: "bg-blue-100", textColor: "text-blue-700", indicator: "🎉" };
     default:
-      return { text: "WAITLISTED", bgColor: "bg-orange-100", textColor: "text-orange-700", indicator: "⏳" };
+      return { text: "WAITLISTED", bgColor: "bg-[#FFF3CD]", textColor: "text-[#7C4D00]", indicator: "⏳" };
   }
 };
 
@@ -57,6 +57,18 @@ const getPaymentStatusDisplay = (bookingStatus: string, pd: any) => {
       return { text: "PENDING", bgColor: "bg-yellow-100", textColor: "text-yellow-700" };
   }
 };
+// ✱✱✱ paste this directly below getPaymentStatusDisplay ✱✱✱
+const getBookingCopy = (status: string) => {
+  switch (status) {
+    case "confirmed":
+      return "You’re all set — just show up and let the magic happen.";
+    case "refunded":
+      return "Not this time — but your next special evening is just around the corner.";
+    default:
+      return "You're on the list! We're curating your special evening, confirmed on the day of the event.";
+  }
+};
+
 
 /* ─── Booking-details dialog ─── */
 function BookingDetailsDialog({
@@ -184,7 +196,7 @@ function BookingDetailsDialog({
           <div className="flex items-center">
             <span className="font-[400] text-gray-600">Booking status :</span>
             <span
-              className={`ml-2 font-medium px-2 py-[2px] italic rounded-md text-xs ${bookingStatusDisplay.bgColor} ${bookingStatusDisplay.textColor}`}
+              className={`ml-2 italic uppercase  font-medium px-2 py-[2px]  rounded-md text-xs ${bookingStatusDisplay.bgColor} ${bookingStatusDisplay.textColor}`}
             >
               {bookingStatusDisplay.text}
             </span>
@@ -385,15 +397,23 @@ useEffect(() => {
             title: evt.event_name,
             src: evt.cover_photo_link,
             content: (
-              <div className="mx-auto max-w-3xl font-sans text-base text-neutral-600 dark:text-neutral-400 md:text-xl">
-                <p className="mb-2">{evt.description}</p>
-                <p className="mb-2">{evt.description}</p>
-                <div className={`text-sm font-medium ${bookingStatusDisplay.textColor} flex items-center gap-1`}>
-                  <span>{bookingStatusDisplay.indicator}</span>
-                  {bookingStatusDisplay.text} – {evt.booking.numberOfSeats} seat(s)
-                </div>
-              </div>
-            ),
+  <div className="mx-auto max-w-3xl font-sans text-base text-neutral-600 dark:text-neutral-400 md:text-xl">
+    {/* description once */}
+    <p className="mb-2">{evt.description}</p>
+
+    {/* status pill */}
+    <div className="mb-2">
+      <span
+        className={`italic uppercase text-xs font-medium px-3 py-[2px] rounded-full ${bookingStatusDisplay.bgColor} ${bookingStatusDisplay.textColor}`}
+      >
+        {bookingStatusDisplay.text}
+      </span>
+    </div>
+
+    {/* line of copy */}
+    <p>{getBookingCopy(evt.booking.bookingStatus)}</p>
+  </div>
+),
           }}
         />
       </div>
@@ -435,6 +455,15 @@ useEffect(() => {
           <div className="mt-1 flex grow flex-col justify-between px-4 pb-4">
             <h3 className="text-[22px] font-[500] leading-snug">{evt.event_name}</h3>
           </div>
+          <span
+  className={`italic uppercase text-[16px] font-[400] px-2  py-[2px] ml-2 w-[102px] rounded-2xl  ${bookingStatusDisplay.bgColor} ${bookingStatusDisplay.textColor}`}
+>
+  {bookingStatusDisplay.text}
+</span>
+          <p className="mt-1 ml-2 text-[18px]">
+  {getBookingCopy(evt.booking.bookingStatus)}
+</p>
+
         </div>
       </div>
     );
