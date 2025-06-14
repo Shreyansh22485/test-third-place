@@ -355,7 +355,7 @@ export default function AuthPage() {
 
       <div className="space-y-4">
         <p className="text-gray-700 text-xl font-light font-[family-name:var(--font-crimson-pro)]" style={{ fontWeight: 300 }}>
-          Enter your phone number to continue
+          Enter your phone number to get started
         </p>
         
         {error && (
@@ -543,7 +543,7 @@ export default function AuthPage() {
           </div>
         )}        <button
           onClick={handleNext}
-          disabled={!formData.firstName || !formData.gender || loading}
+          disabled={!formData.firstName || !formData.gender || !formData.dateOfBirth  || loading}
           className="w-full bg-black text-white py-3 rounded-lg text-xl font-medium disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-800 transition-colors font-[family-name:var(--font-crimson-pro)] flex items-center justify-center gap-2" style={{ fontWeight: 500 }}
         >
           {loading && <Spinner size={20} />}
