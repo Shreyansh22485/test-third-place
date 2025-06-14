@@ -456,7 +456,7 @@ useEffect(() => {
             <h3 className="text-[22px] font-[500] leading-snug">{evt.event_name}</h3>
           </div>
           <span
-  className={`italic uppercase text-[16px] font-[400] px-2  -mt-2 ml-2 w-[102px] rounded-2xl  ${bookingStatusDisplay.bgColor} ${bookingStatusDisplay.textColor}`}
+  className={`italic uppercase text-[16px] font-[400] px-2  -mt-3 ml-2 w-[102px] rounded-2xl  ${bookingStatusDisplay.bgColor} ${bookingStatusDisplay.textColor}`}
 >
   {bookingStatusDisplay.text}
 </span>
@@ -470,15 +470,15 @@ useEffect(() => {
   });
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 mt-2">
       <div className="text-center rounded-xl p-3 md:p-2">
-        <p className="text-[16px]">A few special evenings are waiting –</p>
-        <p className=" text-[16px]">curated just for you</p>
+        <p className="text-[16px]">A few special evenings are curated just for you.</p>
+        <p className=" text-[16px]"></p>
        
-          <div className="md:hidden mt-2 ml-4 mr-2 -mb-2">
+          <div className="md:hidden mt-4 ml-1.5 mr-4 -mb-2">
             <Progress
               value={progressVal}
-              className="h-px w-[340px] bg-[#BDBDBD] [&>div]:bg-[#000]"
+              className="h-px w-[322px] bg-[#BDBDBD] [&>div]:bg-[#000]"
             />
           </div>
      
