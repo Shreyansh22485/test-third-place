@@ -149,9 +149,9 @@ function EventPageContent({ params }: PageProps) {
   // pricing - use backend data  // Calculate pricing based on new logic
   const baseCuration = event.price; // Base curation fee from backend
   const discountPercentage = event.discountedPrice || 0; // Discount percentage from backend
-  const discountAmount = +(baseCuration * (discountPercentage / 100)).toFixed(2);
+  const discountAmount = +(baseCuration * (discountPercentage / 100))
   const curationAfterDiscount = baseCuration - discountAmount;
-  const gstOnCuration = +(curationAfterDiscount * 0.18).toFixed(2); // GST on (baseCuration + discount)
+  const gstOnCuration = +(curationAfterDiscount * 0.18) // GST on (baseCuration + discount)
   const totalCurationWithGST = curationAfterDiscount + gstOnCuration;
   const grandTotal = event.experienceTicketPrice +  totalCurationWithGST;
 
