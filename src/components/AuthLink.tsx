@@ -27,7 +27,7 @@ export default function AuthLink({ children, className, onClick }: AuthLinkProps
         router.push('/dashboard');
       } else {
         // User is not logged in, go to auth page
-        router.push('/');
+        router.push('/auth');
       }
     }
   };
