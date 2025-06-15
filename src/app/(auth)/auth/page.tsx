@@ -82,8 +82,9 @@ export default function AuthPage() {
       isExistingUser
     });    // If user is already authenticated, redirect to dashboard immediately
     if (user && !authLoading) {
-      console.log('User already authenticated, redirecting to dashboard...');
+      console.log('🔐 Auth Page: User already authenticated, redirecting to dashboard...');
       router.replace('/dashboard');
+      return;
     }
   }, [user, authLoading, isExistingUser, router]);
   // Initialize reCAPTCHA when component mounts
@@ -554,6 +555,34 @@ export default function AuthPage() {
       </div>
     </div>
   );
+
+  // Show loading state when user is authenticated (prevents flash of wrong step)
+  if (user && !authLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Spinner size={32} />
+          <p className="text-gray-600 text-lg font-[family-name:var(--font-crimson-pro)]">
+            Redirecting to dashboard...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading state during auth loading
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Spinner size={32} />
+          <p className="text-gray-600 text-lg font-[family-name:var(--font-crimson-pro)]">
+            Loading...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
