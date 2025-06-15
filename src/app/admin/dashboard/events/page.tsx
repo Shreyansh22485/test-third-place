@@ -25,6 +25,7 @@ interface Event {
   description: string;
   price: number;
   experienceTicketPrice: number;
+  discountedPrice?: number;
   eventLocation: {
     venueName: string;
     address: string;
@@ -55,6 +56,7 @@ interface EventFormData {
   description: string;
   price: number;
   experienceTicketPrice: number;
+  discountedPrice?: number; // Discount percentage
   venueName: string;
   address: string;
   lat?: number;
@@ -80,6 +82,7 @@ interface ValidationErrors {
   description?: string;
   price?: string;
   experienceTicketPrice?: string;
+  discountedPrice?: string;
   venueName?: string;
   address?: string;
   capacity?: string;
@@ -117,6 +120,7 @@ function EventsContent() {
     description: '',
     price: 0,
     experienceTicketPrice: 0,
+    discountedPrice: 0,
     venueName: '',
     address: '',
     lat: undefined,
@@ -179,11 +183,10 @@ function EventsContent() {
     event.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-      // Update form data
+    const { name, value } = e.target;      // Update form data
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'price' || name === 'experienceTicketPrice' || name === 'capacity' || name === 'lat' || name === 'lng'
+      [name]: name === 'price' || name === 'experienceTicketPrice' || name === 'discountedPrice' || name === 'capacity' || name === 'lat' || name === 'lng'
         ? parseFloat(value) || 0 
         : value
     }));
@@ -287,6 +290,7 @@ function EventsContent() {
       description: '',
       price: 0,
       experienceTicketPrice: 0,
+      discountedPrice: 0,
       venueName: '',
       address: '',
       lat: undefined,
@@ -308,13 +312,14 @@ function EventsContent() {
     });
     setFormError('');
     setSuccessMessage('');
-  };  const openEditModal = (event: Event) => {
-    setSelectedEvent(event);
-    setFormData({
+  };  
+  const openEditModal = (event: Event) => {
+    setSelectedEvent(event);    setFormData({
       title: event.title,
       description: event.description,
       price: event.price,
       experienceTicketPrice: event.experienceTicketPrice,
+      discountedPrice: event.discountedPrice || 0,
       venueName: event.eventLocation.venueName,
       address: event.eventLocation.address,
       lat: event.eventLocation.lat,
@@ -363,9 +368,13 @@ function EventsContent() {
       case 'price':
         if (value < 0) return 'Price cannot be negative';
         return '';
-      
-      case 'experienceTicketPrice':
+        case 'experienceTicketPrice':
         if (value < 0) return 'Experience ticket price cannot be negative';
+        return '';
+      
+      case 'discountedPrice':
+        if (value < 0) return 'Discount percentage cannot be negative';
+        if (value > 100) return 'Discount percentage cannot exceed 100%';
         return '';
       
       case 'capacity':
@@ -419,11 +428,11 @@ function EventsContent() {
   // Validate all fields
   const validateForm = (): boolean => {
     const errors: ValidationErrors = {};
-    
-    Object.keys(formData).forEach((key) => {
+      Object.keys(formData).forEach((key) => {
       if (key !== 'matchingTags' && key !== 'lat' && key !== 'lng' && key !== 'subCategory' && 
           key !== 'hostId' && key !== 'safetyInfo' && key !== 'rsvpDeadline' && 
-          key !== 'cancellationPolicy' && key !== 'feedbackEnabled' && key !== 'status') {
+          key !== 'cancellationPolicy' && key !== 'feedbackEnabled' && key !== 'status' && 
+          key !== 'discountedPrice' && key !== 'images' && key !== 'existingImageUrls') {
         const error = validateField(key, formData[key as keyof EventFormData]);
         if (error) {
           errors[key as keyof ValidationErrors] = error;
@@ -806,9 +815,7 @@ function EventFormModal({
               {!validationErrors.price && (
                 <span className="text-xs text-gray-500">Curation fee for third place</span>
               )}
-            </div>
-
-            <div>
+            </div>            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Experience Ticket Price *
               </label>
@@ -829,6 +836,31 @@ function EventFormModal({
               )}
               {!validationErrors.experienceTicketPrice && (
                 <span className="text-xs text-gray-500">Main event experience cost</span>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Discount Percentage
+              </label>
+              <input
+                type="number"
+                name="discountedPrice"
+                value={formData.discountedPrice || ''}
+                onChange={onChange}
+                min="0"
+                max="100"
+                step="0.01"
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  validationErrors.discountedPrice ? 'border-red-300' : 'border-gray-300'
+                }`}
+                placeholder="0.00"
+              />
+              {validationErrors.discountedPrice && (
+                <span className="text-xs text-red-600">{validationErrors.discountedPrice}</span>
+              )}
+              {!validationErrors.discountedPrice && (
+                <span className="text-xs text-gray-500">Discount percentage (0-100%)</span>
               )}
             </div>
           </div>          {/* Location Fields */}

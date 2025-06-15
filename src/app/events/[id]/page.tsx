@@ -146,13 +146,14 @@ function EventPageContent({ params }: PageProps) {
   const itinerary = event.description || 
     "This experience will start with dinner with your closest matches and continue with going to a nearby bar for a holiday party with a live band.";
 
-  // pricing - use backend data
-  const curationFee = event.price; // This is the curation fee from backend
-  const baseFee = +(curationFee / 6).toFixed(2);
-  const gstOnCuration = +(curationFee * 0.18).toFixed(2);
-  const originalCuration = baseFee + gstOnCuration;
-  const discountAmt = originalCuration - curationFee;
-  const grandTotal = event.experienceTicketPrice + curationFee;
+  // pricing - use backend data  // Calculate pricing based on new logic
+  const baseCuration = event.price; // Base curation fee from backend
+  const discountPercentage = event.discountedPrice || 0; // Discount percentage from backend
+  const discountAmount = +(baseCuration * (discountPercentage / 100)).toFixed(2);
+  const curationAfterDiscount = baseCuration - discountAmount;
+  const gstOnCuration = +((baseCuration + discountAmount) * 0.18).toFixed(2); // GST on (baseCuration + discount)
+  const totalCurationWithGST = curationAfterDiscount + gstOnCuration;
+  const grandTotal = event.experienceTicketPrice + baseCuration + gstOnCuration;
 
   // date & time - use backend startTime
   const dateObj = new Date(event.startTime);
@@ -483,30 +484,32 @@ function EventPageContent({ params }: PageProps) {
               strokeLinejoin="round"
             />
           </svg>
-        </div>
-
-        <div className="text-right leading-[1.1]">
-          <span className="inline-block rounded-2xl mr-13 bg-green-100 px-[6px] py-[1px] text-[12px] font-medium text-green-600">
-            50% off
-          </span>
-          <span className="block text-xs text-gray-400 -mt-4 line-through font-[300]">
-            ₹{originalCuration.toLocaleString()}
-          </span>
+        </div>        <div className="text-right leading-[1.1]">
+          {discountPercentage > 0 && (
+            <>
+              <span className="inline-block rounded-2xl mr-13 bg-green-100 px-[6px] py-[1px] text-[12px] font-medium text-green-600">
+                {discountPercentage}% off
+              </span>
+              <span className="block text-xs text-gray-400 -mt-4 line-through font-[300]">
+                ₹{baseCuration.toLocaleString()}
+              </span>
+            </>
+          )}
           <span className="block font-[300]">
-            ₹{curationFee.toLocaleString()}
+            ₹{totalCurationWithGST.toLocaleString()}
           </span>
         </div>
-      </summary>
-
-      {/* breakdown lines */}
+      </summary>      {/* breakdown lines */}
       <div className="pl-19 space-y-0.5">
-        <Line label="Base curation fee" value={baseFee} small />
-        <Line
-          label="Discount(- 50%)"
-          value={` ${discountAmt.toLocaleString()}`}
-          small
-          extraClass="text-green-600"
-        />
+        <Line label="Base curation fee" value={baseCuration} small />
+        {discountPercentage > 0 && (
+          <Line
+            label={`Discount (-${discountPercentage}%)`}
+            value={`-₹${discountAmount.toLocaleString()}`}
+            small
+            extraClass="text-green-600"
+          />
+        )}
         <Line label="GST on base fee" value={gstOnCuration} small />
       </div>
     </details>
