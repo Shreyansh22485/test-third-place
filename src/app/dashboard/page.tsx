@@ -17,7 +17,23 @@ function DashboardContent() {
 
   console.log('Dashboard - authLoading:', authLoading, 'authUser:', authUser?.uid, 'user:', user?.id);
 
-  const [showTakeTest, setShowTakeTest] = useState(true);
+  const [showTakeTest, setShowTakeTest] = useState(() => {
+    // Check session storage on initial load
+    if (typeof window !== 'undefined') {
+      const dismissed = sessionStorage.getItem('takeTestDismissed');
+      return dismissed !== 'true';
+    }
+    return true;
+  });
+
+  // Handle closing the take test component
+  const handleCloseTakeTest = () => {
+    setShowTakeTest(false);
+    // Remember dismissal for this session
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('takeTestDismissed', 'true');
+    }
+  };
 
   // Handle user data refresh when returning from personality test
   usePersonalityTestReturn();
@@ -50,7 +66,7 @@ function DashboardContent() {
       </div>
         {/* Fixed Personality Test Component - Only show if test not completed */}
       {shouldShowPersonalityTest && (
-        <TakeTest onClose={() => setShowTakeTest(false)} />
+        <TakeTest onClose={handleCloseTakeTest} />
       )}
     </>
   );
