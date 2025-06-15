@@ -9,6 +9,7 @@ import { authService } from '@/services/auth.service';
 import { ConfirmationResult } from 'firebase/auth';
 import { useAuth } from '@/components/AuthProvider';
 import { auth } from '@/lib/firebase';
+import { DashboardSkeleton } from '@/components/ui/skeleton';
 
 // Simple spinner component
 const Spinner = ({ size = 16 }: { size?: number }) => (
@@ -550,21 +551,11 @@ export default function AuthPage() {
         </button>
       </div>
     </div>
-  );
-  // Early return for authenticated user to prevent flash
+  );  // Early return for authenticated user to prevent flash
   if (user && !authLoading) {
     console.log('🔐 Auth Page: User authenticated, redirecting...');
     router.replace('/dashboard');
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <Spinner size={32} />
-          <p className="text-gray-600 text-lg font-[family-name:var(--font-crimson-pro)]">
-            Redirecting to dashboard...
-          </p>
-        </div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   // Show loading during auth check
@@ -580,19 +571,9 @@ export default function AuthPage() {
       </div>
     );
   }
-
   // Show loading state when redirecting
   if (redirecting) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <Spinner size={32} />
-          <p className="text-gray-600 text-lg font-[family-name:var(--font-crimson-pro)]">
-            Redirecting to dashboard...
-          </p>
-        </div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   return (
