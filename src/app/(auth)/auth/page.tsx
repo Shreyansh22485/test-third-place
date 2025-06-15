@@ -212,7 +212,14 @@ export default function AuthPage() {
         // Existing user - redirect to dashboard
         console.log('Existing user sign-in successful, redirecting to dashboard...');
         setRedirecting(true);
-        router.replace('/dashboard');
+        
+        // Wait for AuthProvider to update user state
+        await refreshUserState();
+        
+        // Small delay to ensure AuthProvider is fully updated
+        setTimeout(() => {
+          router.replace('/dashboard');
+        }, 150);
       } else {
         // New user - proceed to registration info
         setCurrentStep(3);
@@ -251,13 +258,15 @@ export default function AuthPage() {
       };
 
       await authService.registerUser(userData);
-      
-      // Refresh auth state to check if user profile now exists
+        // Refresh auth state to check if user profile now exists
       await refreshUserState();
-      
-      // Registration successful, redirect to dashboard will happen automatically
-      // when AuthProvider detects the user profile exists
+        // Registration successful, set redirecting state and redirect to dashboard
       console.log('✅ Registration completed successfully');
+      setRedirecting(true);
+      // Small delay to ensure AuthProvider is fully updated
+      setTimeout(() => {
+        router.replace('/dashboard');
+      }, 150);
     } catch (error: any) {
       console.error('Registration error:', error);
       setError(error.message || 'Failed to create account. Please try again.');
