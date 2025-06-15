@@ -21,8 +21,6 @@ const SIZE_INNER = 200; // for /3.png & /4.png
 const GAP_X = 110;  // horizontal
 const GAP_Y = 140;  // vertical for both top & bottom
 
-/* ─────────────────────── COMPONENT ─────────────────────── */
-
 export default function FindTribe() {
   /* transforms for top, left, right, bottom positions */
   const transforms = [
@@ -36,7 +34,7 @@ export default function FindTribe() {
   const zIndices = [10, 5, 5, 10];
 
   return (
-    <div className="bg-black rounded-2xl pt-13 flex flex-col items-center w-full overflow-visible">
+    <div className="bg-black rounded-2xl pt-13 flex flex-col items-center w-full overflow-hidden">
       {/* Heading */}
       <h2 className="text-[32px] text-white mb-1">
         FIND YOUR <span className="italic"> PEOPLE</span>
@@ -51,7 +49,7 @@ export default function FindTribe() {
       {/* Collage container */}
       <div
         className="relative w-full max-w-4xl flex items-center justify-center"
-        style={{ height: 500 }} /* room for bottom card */
+        style={{ height: 500 }}
       >
         {IMAGES.map((img, idx) => {
           const size = idx === 1 || idx === 2 ? SIZE_INNER : SIZE_OUTER;
