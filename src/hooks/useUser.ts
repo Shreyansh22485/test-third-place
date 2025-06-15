@@ -120,12 +120,11 @@ export const useUser = (): UseUserReturn => {
       window.location.href = '/';
     } catch (error: any) {
       console.error('Error during logout:', error);
-      
-      // Even if Firebase signOut fails, clear local state and redirect
+        // Even if Firebase signOut fails, clear local state and redirect
       localStorage.removeItem('authToken');
       setUser(null);
       setError(null);
-      window.location.href = '/auth';
+      window.location.href = '/';
     }
   }, []);  useEffect(() => {
     console.log('useUser effect - authLoading:', authLoading, 'authUser:', authUser?.uid);
