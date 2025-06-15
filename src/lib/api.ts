@@ -69,7 +69,7 @@ api.interceptors.response.use(
       // Clear invalid token and redirect to sign-in (only on client side)
       if (typeof window !== 'undefined') {
         localStorage.removeItem('authToken');
-        window.location.href = '/auth';
+        window.location.href = '/';
       }
     }
     return Promise.reject(error);
