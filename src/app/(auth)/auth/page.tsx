@@ -42,7 +42,8 @@ interface FormData {
 export default function AuthPage() {
   const router = useRouter();
   const { user, loading: authLoading, refreshUserState } = useAuth();
-  const [currentStep, setCurrentStep] = useState(1);  const [loading, setLoading] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [error, setError] = useState('');const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [isExistingUser, setIsExistingUser] = useState<boolean | null>(null);
@@ -607,10 +608,9 @@ export default function AuthPage() {
       {/* Content */}
       <div className="px-6  max-w-md mx-auto">
         {renderProgressBar()}
-        
-        {currentStep === 1 && renderPhoneStep()}
-        {currentStep === 2 && renderOtpStep()}
-        {currentStep === 3 && !isExistingUser && renderBasicInfoStep()}
+          {currentStep === 1 && !user && renderPhoneStep()}
+        {currentStep === 2 && !user && renderOtpStep()}
+        {currentStep === 3 && !user && !isExistingUser && renderBasicInfoStep()}
         
         {/* reCAPTCHA container (invisible) */}
         <div id="recaptcha-container"></div>
