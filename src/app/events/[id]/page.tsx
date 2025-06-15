@@ -153,7 +153,7 @@ function EventPageContent({ params }: PageProps) {
   const curationAfterDiscount = baseCuration - discountAmount;
   const gstOnCuration = +(curationAfterDiscount * 0.18).toFixed(2); // GST on (baseCuration + discount)
   const totalCurationWithGST = curationAfterDiscount + gstOnCuration;
-  const grandTotal = event.experienceTicketPrice + baseCuration + gstOnCuration;
+  const grandTotal = event.experienceTicketPrice +  totalCurationWithGST;
 
   // date & time - use backend startTime
   const dateObj = new Date(event.startTime);
