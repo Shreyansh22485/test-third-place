@@ -79,14 +79,8 @@ export default function AuthPage() {
       uid: user?.uid,
       phoneNumber: user?.phoneNumber,
       authLoading,
-      isExistingUser
-    });    // If user is already authenticated, redirect to dashboard immediately
-    if (user && !authLoading) {
-      console.log('🔐 Auth Page: User already authenticated, redirecting to dashboard...');
-      router.replace('/dashboard');
-      return;
-    }
-  }, [user, authLoading, isExistingUser, router]);
+      isExistingUser    });
+  }, [user, authLoading, isExistingUser]);
   // Initialize reCAPTCHA when component mounts
   useEffect(() => {
     authService.initializeRecaptcha();
@@ -555,9 +549,10 @@ export default function AuthPage() {
       </div>
     </div>
   );
-
-  // Show loading state when user is authenticated (prevents flash of wrong step)
+  // Early return for authenticated user to prevent flash
   if (user && !authLoading) {
+    console.log('🔐 Auth Page: User authenticated, redirecting...');
+    router.replace('/dashboard');
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center space-y-4">
@@ -570,7 +565,7 @@ export default function AuthPage() {
     );
   }
 
-  // Show loading state during auth loading
+  // Show loading during auth check
   if (authLoading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
