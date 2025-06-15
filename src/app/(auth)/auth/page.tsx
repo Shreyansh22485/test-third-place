@@ -9,6 +9,7 @@ import { authService } from '@/services/auth.service';
 import { ConfirmationResult } from 'firebase/auth';
 import { useAuth } from '@/components/AuthProvider';
 import { auth } from '@/lib/firebase';
+import { DashboardSkeleton } from '@/components/ui/skeleton';
 
 // Simple spinner component
 const Spinner = ({ size = 16 }: { size?: number }) => (
@@ -42,13 +43,15 @@ interface FormData {
 export default function AuthPage() {
   const router = useRouter();
   const { user, loading: authLoading, refreshUserState } = useAuth();
-  const [currentStep, setCurrentStep] = useState(1);  const [loading, setLoading] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [error, setError] = useState('');const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [isExistingUser, setIsExistingUser] = useState<boolean | null>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
   const [resendTimer, setResendTimer] = useState(0);
   const [canResend, setCanResend] = useState(true);
+  const [redirecting, setRedirecting] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
     phoneNumber: '',
@@ -79,13 +82,8 @@ export default function AuthPage() {
       uid: user?.uid,
       phoneNumber: user?.phoneNumber,
       authLoading,
-      isExistingUser
-    });    // If user is already authenticated, redirect to dashboard immediately
-    if (user && !authLoading) {
-      console.log('User already authenticated, redirecting to dashboard...');
-      router.replace('/dashboard');
-    }
-  }, [user, authLoading, isExistingUser, router]);
+      isExistingUser    });
+  }, [user, authLoading, isExistingUser]);
   // Initialize reCAPTCHA when component mounts
   useEffect(() => {
     authService.initializeRecaptcha();
@@ -207,14 +205,21 @@ export default function AuthPage() {
     setLoading(true);
     setError('');
 
-    try {
-      await authService.verifyOTP(confirmationResult, formData.otp);
+    try {      await authService.verifyOTP(confirmationResult, formData.otp);
       console.log('OTP verification successful');
       
       if (isExistingUser) {
         // Existing user - redirect to dashboard
         console.log('Existing user sign-in successful, redirecting to dashboard...');
-        router.push('/dashboard');
+        setRedirecting(true);
+        
+        // Wait for AuthProvider to update user state
+        await refreshUserState();
+        
+        // Small delay to ensure AuthProvider is fully updated
+        setTimeout(() => {
+          router.replace('/dashboard');
+        }, 150);
       } else {
         // New user - proceed to registration info
         setCurrentStep(3);
@@ -253,13 +258,15 @@ export default function AuthPage() {
       };
 
       await authService.registerUser(userData);
-      
-      // Refresh auth state to check if user profile now exists
+        // Refresh auth state to check if user profile now exists
       await refreshUserState();
-      
-      // Registration successful, redirect to dashboard will happen automatically
-      // when AuthProvider detects the user profile exists
+        // Registration successful, set redirecting state and redirect to dashboard
       console.log('✅ Registration completed successfully');
+      setRedirecting(true);
+      // Small delay to ensure AuthProvider is fully updated
+      setTimeout(() => {
+        router.replace('/dashboard');
+      }, 150);
     } catch (error: any) {
       console.error('Registration error:', error);
       setError(error.message || 'Failed to create account. Please try again.');
@@ -553,7 +560,30 @@ export default function AuthPage() {
         </button>
       </div>
     </div>
-  );
+  );  // Early return for authenticated user to prevent flash
+  if (user && !authLoading) {
+    console.log('🔐 Auth Page: User authenticated, redirecting...');
+    router.replace('/dashboard');
+    return <DashboardSkeleton />;
+  }
+
+  // Show loading during auth check
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Spinner size={32} />
+          <p className="text-gray-600 text-lg font-[family-name:var(--font-crimson-pro)]">
+            Loading...
+          </p>
+        </div>
+      </div>
+    );
+  }
+  // Show loading state when redirecting
+  if (redirecting) {
+    return <DashboardSkeleton />;
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -582,11 +612,9 @@ export default function AuthPage() {
 
       {/* Content */}
       <div className="px-6  max-w-md mx-auto">
-        {renderProgressBar()}
-        
-        {currentStep === 1 && renderPhoneStep()}
-        {currentStep === 2 && renderOtpStep()}
-        {currentStep === 3 && !isExistingUser && renderBasicInfoStep()}
+        {renderProgressBar()}        {currentStep === 1 && !user && !redirecting && renderPhoneStep()}
+        {currentStep === 2 && !user && !redirecting && renderOtpStep()}
+        {currentStep === 3 && !user && !isExistingUser && !redirecting && renderBasicInfoStep()}
         
         {/* reCAPTCHA container (invisible) */}
         <div id="recaptcha-container"></div>
