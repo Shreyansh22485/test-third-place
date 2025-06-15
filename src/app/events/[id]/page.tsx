@@ -147,13 +147,14 @@ function EventPageContent({ params }: PageProps) {
     "This experience will start with dinner with your closest matches and continue with going to a nearby bar for a holiday party with a live band.";
 
   // pricing - use backend data  // Calculate pricing based on new logic
-  const baseCuration = event.price; // Base curation fee from backend
-  const discountPercentage = event.discountedPrice || 0; // Discount percentage from backend
-  const discountAmount = +(baseCuration * (discountPercentage / 100))
-  const curationAfterDiscount = baseCuration - discountAmount;
-  const gstOnCuration = +(curationAfterDiscount * 0.18) // GST on (baseCuration + discount)
-  const totalCurationWithGST = curationAfterDiscount + gstOnCuration;
-  const grandTotal = event.experienceTicketPrice +  totalCurationWithGST;
+ const baseCuration = event.price; // Base curation fee from backend
+const discountPercentage = event.discountedPrice || 0; // Discount percentage from backend
+
+const discountAmount = Math.round(baseCuration * (discountPercentage / 100));
+const curationAfterDiscount = Math.round(baseCuration - discountAmount);
+const gstOnCuration = Math.round(curationAfterDiscount * 0.18); // 18% GST
+const totalCurationWithGST = Math.round(curationAfterDiscount + gstOnCuration);
+const grandTotal = Math.round(event.experienceTicketPrice + totalCurationWithGST);
 
   // date & time - use backend startTime
   const dateObj = new Date(event.startTime);
