@@ -41,7 +41,7 @@ function DashboardContent() {
   // Redirect to sign-in if not authenticated
   if (!authLoading && !authUser) {
     console.log('No auth user, redirecting to sign-in');
-    router.push('/auth');
+    router.push('/');
     return <DashboardSkeleton />;
   }
 
