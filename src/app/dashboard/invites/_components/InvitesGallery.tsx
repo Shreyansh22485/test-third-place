@@ -300,28 +300,33 @@ export default function InvitesGallery() {
     [bookedEvents]
   );
 
+/* ─── Progress-bar sync ─── */
 useEffect(() => {
   const el = scrollRef.current;
   if (!el) return;
 
-  const updateProgress = () => {
-    const { scrollLeft, scrollWidth, clientWidth } = el;
+  const totalCards = displayEvents.length;
 
-    // If there is only ONE card (no horizontal scroll possible) → 100 %
-    if (scrollWidth <= clientWidth) {
+  const updateProgress = () => {
+    /* 1️⃣  One card → bar always full */
+    if (totalCards <= 1) {
       setProgressVal(100);
       return;
     }
 
-    // Otherwise: proportion of the scrollable track we’ve travelled
-    const pct = (scrollLeft / (scrollWidth - clientWidth)) * 100;
+    /* 2️⃣  More than one card
+           scrollRatio goes 0 → 1 across the track        */
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    const scrollRatio = scrollLeft / (scrollWidth - clientWidth); // 0-1
+
+    /* 3️⃣  Convert to “cards seen”:
+           start = 1/total, end = 1                              */
+    const pct = ((scrollRatio * (totalCards - 1) + 1) / totalCards) * 100;
     setProgressVal(pct);
   };
 
   el.addEventListener("scroll", updateProgress, { passive: true });
-
-  // Initialise immediately after render
-  updateProgress();
+  updateProgress();            // initialise on mount
 
   return () => el.removeEventListener("scroll", updateProgress);
 }, [displayEvents.length]);
@@ -473,9 +478,8 @@ useEffect(() => {
 
   return (
     <div className="space-y-5 ">
-      <div className="text-center rounded-xl p-3 md:p-2">
-        <p className="text-[16px]">A few special evenings are curated just for you.</p>
-        <p className=" text-[16px]"></p>
+      <div className="text-left rounded-xl p-3 ">
+        <span className="text-[16px] ml-4 ">A few special evenings are curated just for you.</span>
        
           <div className="md:hidden mt-2 ml-1.5 mr-4 -mb-2">
             <Progress

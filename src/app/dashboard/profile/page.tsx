@@ -92,8 +92,8 @@ const Row = ({
         {sub && <p className="text-[13px] text-[#8E8E93] leading-tight mt-1">{sub}</p>}
       </div>
     </div>
-    <div className="flex items-center gap-1 pr-1">
-      {right && <p className="text-[18px] text-[#8E8E93]">{right}</p>}
+    <div className="flex items-center  gap-1 pr-1">
+      {right && <p className="text-[18px]  text-[#8E8E93]">{right}</p>}
       {arrow && <div className="text-gray-400"><ChevronRight size={arrowSize} /></div>}
     </div>
   </div>
@@ -127,7 +127,7 @@ function ProfilePageContent() {
         {/* BASIC INFO */}
         <SectionTitle>BASIC INFO</SectionTitle>
 
-        <div className="rounded-2xl border border-[#E5E5EA] overflow-hidden mb-5 bg-white">
+        <div className="rounded-2xl border border-[#E5E5EA] divide-y divide-[#E5E5EA] overflow-hidden mb-5 bg-white">
           <Row icon={<UserIcon />} title="Name" right={`${user.firstName}`}  />
           <Row icon={<PhoneIcon />} title="Phone number" right={user.phoneNumber}  />
         </div>
