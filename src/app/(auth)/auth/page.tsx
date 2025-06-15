@@ -50,6 +50,7 @@ export default function AuthPage() {
   const [userProfile, setUserProfile] = useState<any>(null);
   const [resendTimer, setResendTimer] = useState(0);
   const [canResend, setCanResend] = useState(true);
+  const [redirecting, setRedirecting] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
     phoneNumber: '',
@@ -203,14 +204,14 @@ export default function AuthPage() {
     setLoading(true);
     setError('');
 
-    try {
-      await authService.verifyOTP(confirmationResult, formData.otp);
+    try {      await authService.verifyOTP(confirmationResult, formData.otp);
       console.log('OTP verification successful');
       
       if (isExistingUser) {
         // Existing user - redirect to dashboard
         console.log('Existing user sign-in successful, redirecting to dashboard...');
-        router.push('/dashboard');
+        setRedirecting(true);
+        router.replace('/dashboard');
       } else {
         // New user - proceed to registration info
         setCurrentStep(3);
@@ -580,6 +581,20 @@ export default function AuthPage() {
     );
   }
 
+  // Show loading state when redirecting
+  if (redirecting) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Spinner size={32} />
+          <p className="text-gray-600 text-lg font-[family-name:var(--font-crimson-pro)]">
+            Redirecting to dashboard...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -607,10 +622,9 @@ export default function AuthPage() {
 
       {/* Content */}
       <div className="px-6  max-w-md mx-auto">
-        {renderProgressBar()}
-          {currentStep === 1 && !user && renderPhoneStep()}
-        {currentStep === 2 && !user && renderOtpStep()}
-        {currentStep === 3 && !user && !isExistingUser && renderBasicInfoStep()}
+        {renderProgressBar()}        {currentStep === 1 && !user && !redirecting && renderPhoneStep()}
+        {currentStep === 2 && !user && !redirecting && renderOtpStep()}
+        {currentStep === 3 && !user && !isExistingUser && !redirecting && renderBasicInfoStep()}
         
         {/* reCAPTCHA container (invisible) */}
         <div id="recaptcha-container"></div>
