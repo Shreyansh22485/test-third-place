@@ -11,8 +11,8 @@ const crimsonPro = Crimson_Pro({
 });
 
 export const metadata: Metadata = {
-  title: "The Third Place",
-  description: "Where community meets connection",
+  title: "Third Place",
+  description: "Real Connections, Real Life",
 };
 
 export default function RootLayout({
